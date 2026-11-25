@@ -29,6 +29,7 @@ Phones work today. Nothing in M24 may make the phone layouts worse.
 | [09-overprint-redesign.md](09-overprint-redesign.md) | M32 Overprint redesign (superseded by 11) | `F143`–`F152` |
 | [10-live-review-fixes.md](10-live-review-fixes.md) | M33 fixes from the 2026-11-17 live review | `F153`–`F162` |
 | [11-hum-redesign.md](11-hum-redesign.md) | M34 Hum redesign (superseded 2026-11-25 by the Marquee redesign in Figma; never built) | `F163`–`F173` |
+| [12-marquee-redesign.md](12-marquee-redesign.md) | M35 Marquee redesign: the read, the picks, the bulb-ring buzzer, the mocks, per-feature targets. The system is `design.md`; the source is the Figma file | `F174`–`F184` |
 
 Each issue has:
 - an ID, such as `PLY-04`

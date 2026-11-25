@@ -21,3 +21,6 @@ graphify-out/
 .claude/
 CLAUDE.md
 claude-code-setup-prompt.md
+
+# Local MCP server config (Figma); per-machine, not part of the app.
+.mcp.json
