@@ -3,7 +3,7 @@ import type { RankedPlayer, SessionView, TeamView } from '../../../shared/types.
 import { useCopy } from '../lib/copy.js';
 import { ColourDot } from './ColourDot.js';
 import { PlayerAvatar } from './PlayerAvatar.js';
-import { ordinal, podiumSteps, replayOrder, type PodiumStep } from '../lib/results.js';
+import { climbs, ordinal, podiumSteps, replayOrder, type PodiumStep } from '../lib/results.js';
 import { teamsByRank } from '../lib/teams.js';
 import { prefersReducedMotion, useFlip } from '../lib/useFlip.js';
 import { useShrinkToFit } from '../lib/useShrinkToFit.js';
@@ -16,12 +16,14 @@ import { PODIUM_NAME, nameFitSize } from '../lib/nameFit.js';
  */
 const SCREEN_COLUMN = 'pt-[min(2vw,3.5vh)]';
 
-/** A card's heading: Full ranking, Tonight. Wide capitals (design.md Rules). */
+/** A column's label: Full ranking, Tonight. Sofia Sans, sentence case, muted (design.md Rules). */
 const CARD_HEADING =
-  'shrink-0 font-display text-[max(var(--screen-min-body),min(2vw,3.6vh))] text-ink uppercase';
+  'shrink-0 font-sans text-[max(var(--screen-min-body),min(1.6vw,2.9vh))] font-semibold text-muted';
 
-/** Ranks and scores: the display face in tabular figures (F179 sets them in DotGothic16). */
-const FIGURE = 'font-display font-black tabular-nums font-stretch-150%';
+/** A figure of 40px and up: DotGothic16, which smears below that (design.md Rules). */
+const DOT_FIGURE = 'font-outlier leading-none';
+/** A smaller figure: Sofia Sans 800 in tabular figures (design.md Rules). */
+const SMALL_FIGURE = 'font-sans font-extrabold tabular-nums';
 
 /** How long the scoreboard shows the previous standings before it reorders. */
 export const REORDER_DELAY_MS = 800;
@@ -37,14 +39,18 @@ interface ScoreboardProps {
 }
 
 /**
- * The scoreboard overlay (UI spec, Screen view: Scoreboard), set as a bill: the head in wide
- * capitals, the rows ruled under the ink bar, every score a figure (M32). It opens in the order it last showed,
- * then slides into the current ranking, so the audience sees who climbed. Later score changes
- * slide too. With reduced motion it opens in the current ranking.
+ * The scoreboard overlay (UI spec, Screen view: Scoreboard): the head in amber Antonio, then a
+ * scoreboard row per player, the leader's amber and a climber's figures blue with "▲ N"
+ * (`screen-scoreboard-1080.png`, F179). It opens in the order it last showed, then slides into the
+ * current ranking, so the audience sees who climbed. Later score changes slide too. With reduced
+ * motion it opens in the current ranking.
  */
 export function Scoreboard({ players, lastOrder, onShown, teams = null }: ScoreboardProps) {
   const [replaying, setReplaying] = useState(() => lastOrder.length > 0 && !prefersReducedMotion());
   const shown = replaying ? replayOrder(lastOrder, players) : players;
+  // The order it opened from: `lastOrder` becomes the current order once it is shown.
+  const [opened] = useState(lastOrder);
+  const climbed = replaying ? undefined : climbs(opened, shown);
   const t = useCopy();
 
   useEffect(() => {
@@ -64,7 +70,7 @@ export function Scoreboard({ players, lastOrder, onShown, teams = null }: Scoreb
       className="absolute inset-0 flex flex-col bg-bg px-[min(3.75vw,6.67vh)] pt-[1vh] pb-[max(3vh,var(--hint-reserve,0px))]"
     >
       <div className={`${SCREEN_COLUMN} flex min-h-0 flex-1 flex-col gap-[3vh]`}>
-        <h2 className="shrink-0 font-display text-[max(var(--screen-min-name),min(4.4vw,8vh))] leading-none text-ink uppercase">
+        <h2 className="shrink-0 font-display text-[max(var(--screen-min-name),min(4.4vw,8vh))] leading-none text-accent uppercase">
           {t('scoreboard')}
         </h2>
         {teams && <TeamStandings teams={teams} />}
@@ -75,7 +81,7 @@ export function Scoreboard({ players, lastOrder, onShown, teams = null }: Scoreb
           </p>
         ) : (
           // Under the teams, the players take the smaller text, so both fit the card.
-          <RankingList rows={shown} dense={teams !== null} />
+          <RankingList rows={shown} dense={teams !== null} board climbs={climbed} />
         )}
       </div>
     </section>
@@ -119,7 +125,7 @@ export function FinalResults({
         aria-label={teams ? 'Team podium' : 'Podium'}
         className={`flex min-w-0 flex-col gap-[3vh] ${tonight ? 'flex-[2]' : 'flex-[3]'}`}
       >
-        <h1 className="shrink-0 font-display text-[max(var(--screen-min-name),min(4.4vw,9vh))] leading-none text-ink uppercase">
+        <h1 className="shrink-0 font-display text-[max(var(--screen-min-name),min(4.4vw,9vh))] leading-none text-accent uppercase">
           {t('finalResults')}
         </h1>
         <ol className="flex min-h-0 flex-1 items-end justify-center gap-[min(1.5vw,2.67vh)]">
@@ -141,12 +147,16 @@ export function FinalResults({
         className={`${SCREEN_COLUMN} flex min-w-0 ${rankingFlex} flex-col gap-[2vh]`}
       >
         <h2 className={CARD_HEADING}>{t('fullRanking')}</h2>
-        <RankingList rows={players} dense={tonight !== null} />
+        {/* Beside the podium the column is narrow, so up to 10 keep one column, as beside the
+            Tonight card; two columns wrapped names mid-word at 1080 and shrank them to 14px at
+            720 (F179 playtest). */}
+        <RankingList rows={players} dense />
       </section>
       {tonight && (
+        // The night's totals in a well on a 2px rule edge (`screen-final-*.png`).
         <section
           aria-label="Tonight"
-          className={`${SCREEN_COLUMN} flex min-w-0 flex-[2] flex-col gap-[2vh]`}
+          className="flex min-h-0 min-w-0 flex-[2] flex-col gap-[2vh] self-start border-2 border-edge bg-surface p-[min(1.5vw,2.67vh)]"
         >
           <h2 className={CARD_HEADING}>{t('tonight')}</h2>
           <RankingList rows={tonightRows(tonight.slice(0, TONIGHT_ROWS), players)} dense />
@@ -221,8 +231,10 @@ function Step({ step }: { step: PodiumStep<PodiumEntry> }) {
     step.players.length > 3
       ? 'text-[max(var(--screen-min-body),min(1.6vw,3vh))]'
       : 'text-[max(var(--screen-min-name),min(2.6vw,5vh))]';
-  // The winners' step floods the teal pass, win, its word the "1st" on it; the others are paper-2 under the ink bar.
+  // The winners' step is amber in a bulb border, ground type on it; the others are the well on a
+  // 2px rule edge, the place in amber (design.md Rules, Bulbs).
   const top = step.rank === 1;
+  const shared = step.players.length > 1;
   return (
     <li
       aria-label={`${ordinal(step.rank)} place`}
@@ -231,36 +243,39 @@ function Step({ step }: { step: PodiumStep<PodiumEntry> }) {
     >
       {/* Each name steps down from the step's size until its longest word fits the step, and
           wraps at a space rather than truncating (F153). */}
-      <ul className={`@container flex min-h-0 flex-col gap-[0.8vh] overflow-hidden ${names}`}>
+      <ul className={`@container flex min-h-0 flex-col gap-[2vh] overflow-hidden pt-1 ${names}`}>
         {step.players.map((player) => (
           <li
             key={player.id}
             style={{ fontSize: nameFitSize(player.name, PODIUM_NAME, player.avatar !== undefined) }}
-            className="bg-surface px-[0.4em] py-[0.6vh] text-center font-semibold text-ink [overflow-wrap:anywhere]"
+            // The swatch over the name in Antonio capitals (`screen-final-*.png`). Tied names take a
+            // small swatch, so a shared step's stack stays under the heading at 720.
+            className={`flex items-center justify-center gap-[0.2em] text-center font-display leading-[1.1] text-ink uppercase [overflow-wrap:anywhere] ${shared ? 'flex-wrap' : 'flex-col'}`}
           >
             <ColourDot
-              square
               color={player.color}
-              className="mr-[0.3em] size-[0.6em] ring-2 ring-ink"
+              className={`${shared ? 'size-[0.7em]' : 'size-[1.6em]'} border-[0.06em] border-paper ring-2 ring-ink`}
             />
-            <PlayerAvatar avatar={player.avatar} className="mr-[0.3em]" />
+            <PlayerAvatar avatar={player.avatar} />
             {player.name}
           </li>
         ))}
       </ul>
       <div
         data-winner={top || undefined}
-        className={`flex shrink-0 flex-col items-center justify-start gap-[0.5vh] border-t-4 border-ink pt-[2vh] ${STEP_HEIGHT[step.height]} ${
-          top ? 'bg-win text-win-ink' : 'bg-surface text-ink'
+        className={`flex shrink-0 flex-col items-center justify-start gap-[1vh] ${STEP_HEIGHT[step.height]} ${
+          top
+            ? // Its bulbs are the ground's colour on the amber, as on the buzz banner (F178); the
+              // padding keeps the figures clear of the band.
+              'bulbs bg-accent p-[2.25rem] text-accent-ink [--bulb-dim:color-mix(in_oklab,var(--color-paper)_40%,transparent)] [--bulb-lit:var(--color-paper)]'
+            : 'border-2 border-edge bg-surface pt-[2vh] text-accent'
         }`}
       >
-        <span
-          className={`text-[max(var(--screen-min-name),min(3.4vw,6.8vh))] leading-none uppercase ${FIGURE}`}
-        >
+        <span className={`text-[max(var(--screen-min-figure),min(5.7vw,10vh))] ${DOT_FIGURE}`}>
           {ordinal(step.rank)}
         </span>
         <span
-          className={`text-[max(var(--screen-min-body),min(2vw,4vh))] ${FIGURE} ${top ? 'text-win-ink' : 'text-muted'}`}
+          className={`text-[max(var(--screen-min-figure),min(2.2vw,4vh))] ${DOT_FIGURE} ${top ? '' : 'text-ink'}`}
         >
           {step.players[0]!.score}
         </span>
@@ -270,9 +285,12 @@ function Step({ step }: { step: PodiumStep<PodiumEntry> }) {
 }
 
 /**
- * The teams on the scoreboard, best first: one square paper-2 tile each in a row, rank, the
- * team's colour as a ringed square, its name and the summed score (F82). Cards slide when the order changes.
+ * The teams on the scoreboard, best first: one scoreboard row each, side by side: rank, the
+ * team's colour as a ringed swatch, its name in Antonio and the summed score (F82, F179). Rows
+ * slide when the order changes.
  */
+const TEAM_FIGURE = `${DOT_FIGURE} text-[max(var(--screen-min-figure),1.2em)]`;
+
 function TeamStandings({ teams }: { teams: TeamView[] }) {
   const list = useRef<HTMLOListElement>(null);
   const ranked = teamsByRank(teams);
@@ -287,12 +305,14 @@ function TeamStandings({ teams }: { teams: TeamView[] }) {
         <li
           key={team.index}
           data-flip-key={team.index}
-          className="flex min-w-0 items-center gap-[0.5em] bg-surface px-[0.6em] py-[0.35em]"
+          className="flex min-w-0 items-center gap-[0.5em] border-2 border-edge bg-bg px-[0.6em] py-[0.25em]"
         >
-          <span className={`shrink-0 text-muted ${FIGURE}`}>{team.rank}</span>
-          <ColourDot square data-team-color color={team.color} />
-          <span className="min-w-0 flex-1 truncate font-semibold">{team.name}</span>
-          <span className={`shrink-0 ${FIGURE}`}>{team.score}</span>
+          <span className={`shrink-0 text-accent ${TEAM_FIGURE}`}>{team.rank}</span>
+          <ColourDot data-team-color color={team.color} />
+          <span className="min-w-0 flex-1 font-display uppercase [overflow-wrap:anywhere]">
+            {team.name}
+          </span>
+          <span className={`shrink-0 text-accent ${TEAM_FIGURE}`}>{team.score}</span>
         </li>
       ))}
     </ol>
@@ -324,11 +344,28 @@ export function rankingColumns(count: number): number {
 /**
  * Ranked rows of rank, name and score, filling down each column, in `rankingColumns` columns
  * (F100), and the text shrinks to keep 50 on screen. `dense` never uses the largest text, and
- * keeps one column up to 10, for a short list in a narrower card beside the Tonight card (F77).
+ * keeps one column up to 10, for a list in a narrower card: the Final's, beside the podium (F179) and the Tonight card (F77).
  * The list takes the card's remaining height, and its text shrinks below the step when the rows
  * would not fit it, so no row is ever cut off (SCR-04).
+ *
+ * `board` sets the scoreboard's rows: each a box on a 2px rule edge with the name in Antonio
+ * capitals, the leader's amber, a climber's figures blue after its "▲ N" (design.md Controls,
+ * F179). Otherwise rows are plain: the rank amber, the name in Sofia Sans, the score in ink. A
+ * scoreboard at the largest text sets figures in DotGothic, at 40px or more; elsewhere they are
+ * Sofia Sans 800 (design.md Rules).
  */
-function RankingList({ rows: players, dense = false }: { rows: RankingRow[]; dense?: boolean }) {
+function RankingList({
+  rows: players,
+  dense = false,
+  board = false,
+  climbs,
+}: {
+  rows: RankingRow[];
+  dense?: boolean;
+  board?: boolean;
+  /** Places risen since the scoreboard last showed, by player id. */
+  climbs?: ReadonlyMap<string, number> | undefined;
+}) {
   const list = useRef<HTMLOListElement>(null);
   useFlip(list, players.map((p) => p.id).join(','));
   useShrinkToFit(
@@ -341,6 +378,12 @@ function RankingList({ rows: players, dense = false }: { rows: RankingRow[]; den
   const columns = dense ? size + 1 : rankingColumns(players.length);
   const rows = Math.max(Math.ceil(players.length / columns), 1);
   const text = RANKING_TEXT[dense ? Math.max(size, 1) : size];
+  // DotGothic only on the scoreboard's largest rows, which have the width for 40px figures; a
+  // narrower column of them would shrink the names to fit (F179 playtest).
+  const figure =
+    board && !dense && size === 0
+      ? `${DOT_FIGURE} text-[max(var(--screen-min-figure),1.25em)]`
+      : SMALL_FIGURE;
   return (
     <ol
       ref={list}
@@ -351,35 +394,63 @@ function RankingList({ rows: players, dense = false }: { rows: RankingRow[]; den
         gridTemplateRows: `repeat(${rows}, auto)`,
         gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`,
       }}
-      // Ruled under the 4px ink bar, a hairline under each row (design.md Rules).
-      className={`grid min-h-0 flex-1 grid-flow-col content-start gap-x-[min(1.5vw,2.67vh)] overflow-hidden border-t-4 border-ink ${text}`}
+      className={`grid min-h-0 flex-1 grid-flow-col content-start gap-x-[min(1.5vw,2.67vh)] overflow-hidden ${
+        board ? 'gap-y-[min(0.8vw,1.4vh)]' : ''
+      } ${text}`}
     >
-      {players.map((player) => (
-        <li
-          key={player.id}
-          data-flip-key={player.id}
-          // As on the standings rail, a name never truncates (F153): when it and the score do not
-          // share a line, the score drops under it, on the right, and a name wider still wraps.
-          className={`flex flex-wrap items-baseline gap-x-[0.6em] border-b border-edge py-[0.35em] leading-tight ${player.connected ? '' : 'opacity-40'}`}
-        >
-          <span className="flex min-w-0 flex-auto items-baseline gap-[0.6em]">
-            {/* Two wide digits fit 1.6em, as on the standings rail; the room it frees goes to the name. */}
-            <span className={`w-[1.6em] shrink-0 text-right text-muted ${FIGURE}`}>
-              {player.rank}
-            </span>
-            <ColourDot square color={player.color} />
-            {/* The avatar sits inside the name, not in a column of its own, so it costs no extra gap. */}
-            <span className="min-w-0 font-semibold [overflow-wrap:anywhere]">
-              <PlayerAvatar
-                avatar={player.avatar}
-                className="mr-[0.3em] text-[max(var(--screen-min-label),0.85em)]"
+      {players.map((player) => {
+        // Rank 1 with points: a scoreboard of noughts has no leader.
+        const lead = board && player.rank === 1 && player.score > 0;
+        const rise = climbs?.get(player.id);
+        // The leader's row is ground on amber throughout; a climber's figures are blue.
+        const tone = lead ? '' : rise ? 'text-accent-2' : 'text-accent';
+        return (
+          <li
+            key={player.id}
+            data-flip-key={player.id}
+            data-leader={lead || undefined}
+            // As on the standings rail, a name never truncates (F153): when it and the score do not
+            // share a line, the score drops under it, on the right, and a name wider still wraps.
+            // A board row is opaque, so rows sliding past each other never mix their text (F154).
+            className={`flex flex-wrap items-baseline gap-x-[0.6em] leading-tight ${
+              board
+                ? `border-2 px-[0.6em] py-[0.25em] ${lead ? 'border-accent bg-accent text-accent-ink' : 'border-edge bg-bg'}`
+                : 'py-[0.3em]'
+            } ${player.connected ? '' : 'opacity-40'}`}
+          >
+            <span className="flex min-w-0 flex-auto items-baseline gap-[0.6em]">
+              {/* Two wide digits fit 1.6em, as on the standings rail; the room it frees goes to the name. */}
+              <span className={`w-[1.6em] shrink-0 text-right ${figure} ${tone}`}>
+                {player.rank}
+              </span>
+              <ColourDot
+                color={player.color}
+                className="size-[0.6em] self-center border-[0.1em] border-paper ring-2 ring-ink"
               />
-              {player.name}
+              {/* The avatar sits inside the name, not in a column of its own, so it costs no extra gap. */}
+              <span
+                className={`min-w-0 [overflow-wrap:anywhere] ${board ? 'font-display uppercase' : 'font-semibold'}`}
+              >
+                <PlayerAvatar
+                  avatar={player.avatar}
+                  className="mr-[0.3em] text-[max(var(--screen-min-label),0.85em)]"
+                />
+                {player.name}
+              </span>
             </span>
-          </span>
-          <span className={`ml-auto shrink-0 ${FIGURE}`}>{player.score}</span>
-        </li>
-      ))}
+            <span className="ml-auto flex shrink-0 items-baseline gap-[0.5em]">
+              {rise !== undefined && (
+                <span
+                  className={`font-sans text-[max(var(--screen-min-label),0.6em)] font-extrabold ${tone}`}
+                >
+                  ▲ {rise}
+                </span>
+              )}
+              <span className={`${figure} ${board ? tone : 'text-ink'}`}>{player.score}</span>
+            </span>
+          </li>
+        );
+      })}
     </ol>
   );
 }

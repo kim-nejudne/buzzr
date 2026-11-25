@@ -2446,7 +2446,8 @@ describe('Screen result states', () => {
       expect(rows('Scoreboard')[2]).toBe('1Cy400');
 
       act(() => vi.advanceTimersByTime(REORDER_DELAY_MS));
-      expect(names()).toEqual(['Cy', 'Ana', 'Ben']);
+      // Once reordered, Cy's row says how far Cy climbed (F179).
+      expect(rows('Scoreboard')).toEqual(['1Cy▲ 2400', '2Ana300', '3Ben200']);
     });
 
     it('moves rows when a score changes while it is showing', () => {

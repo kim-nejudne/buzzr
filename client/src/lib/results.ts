@@ -62,3 +62,20 @@ export function replayOrder(
   const seen = new Set(previousIds);
   return [...kept, ...players.filter((p) => !seen.has(p.id))];
 }
+
+/**
+ * How many places each player rose since the scoreboard last showed, for its "▲ N" (design.md
+ * Controls, F179). Only climbers are in the map; a new player, a faller or a stayer is not.
+ */
+export function climbs(
+  previousIds: readonly string[],
+  players: readonly { id: string }[],
+): Map<string, number> {
+  const before = new Map(previousIds.map((id, i) => [id, i]));
+  return new Map(
+    players.flatMap((p, i): [string, number][] => {
+      const was = before.get(p.id);
+      return was !== undefined && was > i ? [[p.id, was - i]] : [];
+    }),
+  );
+}

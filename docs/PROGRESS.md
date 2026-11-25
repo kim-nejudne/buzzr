@@ -10,6 +10,52 @@ Handoff log, one entry per feature or bug. Newest first. Template:
 **How to try it:** exact commands / URLs / which devices
 ```
 
+## F179 — Scoreboard and final results (2026-11-26)
+**What changed:**
+- `ScreenResults.tsx`, Scoreboard:
+  - The head is amber Antonio.
+  - Each row is a box on a 2px rule edge: rank, round swatch, the name in Antonio capitals, and the points.
+  - The leader's row (rank 1, points > 0) is amber with ground type, marked `data-leader`.
+  - After the climb, a climber shows "▲ N" and its rank and points turn blue. N comes from the new `climbs(previousIds, players)` in `lib/results.ts`, measured from the order the overlay opened from.
+  - Team cards are the same boxes, with the name wrapping instead of truncating.
+  - The climb animation itself (replay, then FLIP) is untouched. Under reduced motion it opens in the new order with ▲ N at once.
+- Final results:
+  - The head is amber.
+  - Podium: a lone name stands under a 1.6em swatch; tied names take a 0.7em swatch. 1st is amber in a ground-bulb border, and 2nd and 3rd are the well on a rule edge. Places and points are DotGothic, at 40px or more.
+  - Full ranking and Tonight heads are muted Sofia Sans. Tonight is a well box.
+  - The Full ranking always takes `dense`: one column up to 10.
+- Figures:
+  - DotGothic only on the scoreboard's largest rows and the team cards.
+  - Elsewhere Sofia Sans 800 tabular (design.md: never DotGothic under 40px).
+- Tests: 3489 in total. No new dependency.
+  - `results.test.ts` +2 (`climbs`).
+  - `ScreenResults.test.tsx` +6: leader amber; no leader at all-0; reduced motion opens reordered with ▲ 2; climber's figures blue after the delay; Final of 10 in one column; 1st step bulbs and amber, others the well.
+  - **Changed assertions:**
+    - `ScreenResults.test.tsx` "shows each team with its colour…": the podium name was a `bg-surface` tile and is now `font-display uppercase`.
+    - `Screen.test.tsx` "opens in the order it last showed…": after the reorder it expected names `['Cy','Ana','Ben']` and now expects rows `['1Cy▲ 2400','2Ana300','3Ben200']`, because the climber's row carries "▲ 2".
+
+**Decisions:** the five DECISIONS rows dated 2026-11-26 for F179 (rows, leader and climb; DotGothic only where it is ≥ 40px; the Final's Full ranking always dense; podium; heads and Tonight).
+
+**Notes for next session:**
+- The mock's leader "+20" is not built (no view carries the last change); it is in Backlog.
+- Playtest (Playwright, Screen tab with the host token; bots and socket scripts in `.playtest/F179/`):
+  - Scoreboard with 3 teams and 6 bots at 1080 and 720.
+  - Scoreboard of 10 sixteen-letter names: names 57.6px and 38.4px, DotGothic points 72px and 48px, all on one line.
+  - Climb: rows slide, and the climber shows "▲ 3" in blue (`climb-blue-720-recheck.png`, checked).
+  - Reduced motion (emulated): opens reordered at once, with no movement between 50 and 1500 ms.
+  - Final with a tie for 2nd at 720 and 1080: names whole and breaking only at spaces; ranking one column at 25.6px and 38px.
+  - Team podium at 720 and 1080.
+  - No console errors.
+- Found and fixed in the playtest:
+  - Two-column Full ranking broke names mid-word and shrank them to 14px at 720.
+  - Podium swatch rings were clipped (`pt-1`).
+  - Tied names with large swatches reached the heading at 720.
+  - Antonio names sat low beside Sofia figures (rows are now baseline-aligned).
+- sloplint static tier: 0 FAIL on `ScreenResults.tsx`. The render tier was not run: the scoreboard and Final need a live game, not a route.
+- Main `index` chunk 520.30 (F178) → 521.50 kB.
+
+**How to try it:** `npm run dev`. Host the sample set at `http://localhost:5173`, open the Screen, add bots at `/dev/bots/<code>`, set **Scoreboard every** to 1 or 2, and judge a few questions (a low scorer winning shows "▲ N"). **End game** shows Final results. Check at 1920×1080 and 1280×720, and with teams on.
+
 ## F178 — Screen game (2026-11-26)
 **What changed:**
 - **Title card** (`Screen.tsx`): a bulb-bordered well board, "Get ready" in muted Antonio, the set's title in amber Antonio (three length steps), the details in Sofia Sans.

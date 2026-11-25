@@ -461,15 +461,7 @@ Source: `docs/ux/10-live-review-fixes.md` (every finding from the 2026-11-17 UI/
 
 - [x] F178 Screen game
 
-- [ ] F179 Scoreboard and final results
-  - Spec: `12` § Surfaces F179; mocks `screen-scoreboard-1080.png`, `screen-final-*.png`
-  - Depends: F178
-  - Done when:
-    - The scoreboard rows and the podium (1st amber, with a bulb border) are restyled for players and teams. The rankings below are unchanged.
-    - The climb animation is kept, and ends at once under reduced motion.
-    - Names read in full at 1280×720 and 1920×1080 (M33).
-    - `/playtest` shows the scoreboard after a few questions, and final results with teams.
-  - Tests: `ScreenResults.test.tsx` green, updated only where it asserts markup that changed, with each change in PROGRESS.
+- [x] F179 Scoreboard and final results
 
 - [ ] F180 Host remote
   - Spec: `12` § Surfaces F180; mock `host.png`
@@ -521,8 +513,9 @@ Source: `docs/ux/10-live-review-fixes.md` (every finding from the 2026-11-17 UI/
 
 ## Backlog (not scheduled)
 
+- Scoreboard: the leader's "+20" in `screen-scoreboard-1080.png` (points since the scoreboard last showed). Needs the previous scores kept beside `lastOrder` on the Screen (F179).
 - (F152 finish review) The disabled primaries (Join on the phone, Pair on the remote, Join on Landing) empty to a 2px ink-2 outline as `design.md` Controls says, which the review read as another field under the name or PIN box. Kim to judge: a dimmed ink block would read as the action still.
-- (F153) Team names still truncate on the Screen (the standings rail's team rows, the scoreboard's team tiles). F153 covered player names only; teams could take the same wrap rule.
+- (F153) Team names still truncate on the standings rail's team rows (the scoreboard's team cards wrap since F179). F153 covered player names only; teams could take the same wrap rule.
 - (F153) The Screen name fit estimates width from the character count. A name of wide letters (W, M) wraps to a second line instead of stepping down further; a measured fit would keep it on one line.
 - (F175) Landing at 1440 keeps `PageShell wide` (72rem), so the marquee sign is 1088px wide against the mock's 1246. Kim to judge: a wider Landing-only shell (it would need `data-width` beyond `wide`).
 - (F152 finish review) The two phone forms (`/play` join, `/host` pairing) are bare stock with outlines and no pass or ink bar, so they carry the least Overprint of any screen. Composition.

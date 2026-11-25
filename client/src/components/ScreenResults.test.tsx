@@ -1,10 +1,16 @@
 // @vitest-environment jsdom
-import { cleanup, render, screen, within } from '@testing-library/react';
-import { afterEach, describe, expect, it } from 'vitest';
+import { act, cleanup, render, screen, within } from '@testing-library/react';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { PLAYER_NAME_MAX, PLAYER_PALETTE, TEAMS } from '../../../shared/constants.js';
 import type { RankedPlayer, RankedTotal, SessionView, TeamView } from '../../../shared/types.js';
 import { pureWidthSizes, textSizesWithoutFloor } from '../test/screenSizes.js';
-import { FinalResults, rankingColumns, Scoreboard, TONIGHT_ROWS } from './ScreenResults.js';
+import {
+  FinalResults,
+  rankingColumns,
+  REORDER_DELAY_MS,
+  Scoreboard,
+  TONIGHT_ROWS,
+} from './ScreenResults.js';
 
 afterEach(cleanup);
 
@@ -75,6 +81,23 @@ describe('FinalResults long names (F153)', () => {
     expect(podiumName.style.fontSize).toContain('100cqw');
   });
 
+  it('lights the 1st step amber in a bulb border, and sets the others in the well (F179)', () => {
+    render(
+      <FinalResults
+        players={[player(1, 'Ana', 300, 1), player(2, 'Ben', 200, 2), player(3, 'Cy', 100, 3)]}
+      />,
+    );
+    const block = (place: string) =>
+      screen.getByRole('listitem', { name: place }).querySelector(':scope > div')!.className;
+    expect(block('1st place')).toContain('bulbs');
+    expect(block('1st place')).toContain('bg-accent');
+    for (const place of ['2nd place', '3rd place']) {
+      expect(block(place)).not.toContain('bulbs');
+      expect(block(place)).toContain('bg-surface');
+      expect(block(place)).toContain('border-edge');
+    }
+  });
+
   it('keeps the shortest step tall enough for its rank and score', () => {
     render(
       <FinalResults
@@ -101,6 +124,11 @@ describe('FinalResults full ranking', () => {
   ])('with %i players uses %i columns that may shrink below their content', (count, columns) => {
     render(<FinalResults players={many(count)} />);
     expect(ranking().style.gridTemplateColumns).toBe(`repeat(${columns}, minmax(0, 1fr))`);
+  });
+
+  it('keeps 10 players in one column beside the podium, so long names keep their words (F179)', () => {
+    render(<FinalResults players={many(10)} />);
+    expect(ranking().style.gridTemplateColumns).toBe('repeat(1, minmax(0, 1fr))');
   });
 });
 
@@ -195,7 +223,9 @@ describe('FinalResults with teams', () => {
     const dot = name.querySelector<HTMLElement>('[data-colour-dot]')!;
     expect(dot.style.backgroundColor).toBe(probe.style.backgroundColor);
     expect(dot.className).toContain('ring-ink');
-    expect(name.className).toContain('bg-surface');
+    // The swatch stands over the name in Antonio capitals (F179; was a bg-surface tile).
+    expect(name.className).toContain('font-display');
+    expect(name.className).toContain('uppercase');
     expect(within(podium()).getByText('500')).toBeTruthy();
   });
 
@@ -208,6 +238,74 @@ describe('FinalResults with teams', () => {
       '3Cy100',
       '4Dee0',
     ]);
+  });
+});
+
+describe('Scoreboard rows (F179)', () => {
+  const board = () => screen.getByRole('region', { name: 'Scoreboard' });
+  const rowsOf = () => within(board()).getAllByRole('listitem');
+
+  it('marks the leader’s row amber, and only theirs', () => {
+    render(
+      <Scoreboard
+        players={[player(1, 'Ana', 300, 1), player(2, 'Ben', 100, 2)]}
+        lastOrder={[]}
+        onShown={() => {}}
+      />,
+    );
+    const [ana, ben] = rowsOf();
+    expect(ana!.className).toContain('bg-accent');
+    expect(ana!.hasAttribute('data-leader')).toBe(true);
+    expect(ben!.hasAttribute('data-leader')).toBe(false);
+  });
+
+  it('has no leader while nobody has scored', () => {
+    render(
+      <Scoreboard
+        players={[player(1, 'Ana', 0, 1), player(2, 'Ben', 0, 1)]}
+        lastOrder={[]}
+        onShown={() => {}}
+      />,
+    );
+    expect(board().querySelector('[data-leader]')).toBeNull();
+  });
+
+  it('under reduced motion opens in the current ranking at once, a climber showing ▲ N in blue', () => {
+    const matchMedia = window.matchMedia;
+    window.matchMedia = ((query: string) => ({ matches: query.includes('reduce') })) as never;
+    try {
+      render(
+        <Scoreboard
+          players={[player(3, 'Cy', 400, 1), player(1, 'Ana', 300, 2), player(2, 'Ben', 200, 3)]}
+          lastOrder={['p1', 'p2', 'p3']}
+          onShown={() => {}}
+        />,
+      );
+    } finally {
+      window.matchMedia = matchMedia;
+    }
+    expect(rowsOf().map((li) => li.textContent)).toEqual(['1Cy▲ 2400', '2Ana300', '3Ben200']);
+  });
+
+  it('after the climb, sets the climber’s rank and score blue, and nobody else’s', () => {
+    vi.useFakeTimers();
+    try {
+      render(
+        <Scoreboard
+          players={[player(1, 'Ana', 300, 1), player(3, 'Cy', 200, 2), player(2, 'Ben', 100, 3)]}
+          lastOrder={['p1', 'p2', 'p3']}
+          onShown={() => {}}
+        />,
+      );
+      act(() => vi.advanceTimersByTime(REORDER_DELAY_MS));
+    } finally {
+      vi.useRealTimers();
+    }
+    const [, cy, ben] = rowsOf();
+    expect(cy!.textContent).toBe('2Cy▲ 1200');
+    expect(within(cy!).getByText('200').className).toContain('text-accent-2');
+    expect(within(cy!).getByText('2').className).toContain('text-accent-2');
+    expect(within(ben!).getByText('100').className).not.toContain('text-accent-2');
   });
 });
 

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { PLAYER_PALETTE } from '../../../shared/constants.js';
 import type { RankedPlayer } from '../../../shared/types.js';
-import { ordinal, podiumSteps, replayOrder, signedPoints } from './results.js';
+import { climbs, ordinal, podiumSteps, replayOrder, signedPoints } from './results.js';
 
 function player(id: string, score: number, rank: number): RankedPlayer {
   return { id, name: id, color: PLAYER_PALETTE[0], score, connected: true, rank };
@@ -104,5 +104,17 @@ describe('replayOrder', () => {
 
   it('with no earlier order, is the current ranking', () => {
     expect(ids(replayOrder([], now))).toEqual(['b', 'a', 'c']);
+  });
+});
+
+describe('climbs (F179)', () => {
+  const now = [player('c', 400, 1), player('a', 300, 2), player('b', 200, 3), player('d', 0, 4)];
+
+  it('counts the places each climber rose, and leaves out fallers, stayers and newcomers', () => {
+    expect([...climbs(['a', 'b', 'c'], now)]).toEqual([['c', 2]]);
+  });
+
+  it('with no earlier order, has no climbers', () => {
+    expect(climbs([], now).size).toBe(0);
   });
 });
