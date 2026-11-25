@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Buzzr in Hum: the scoreboard garden</title>
+<meta name="description" content="The Screen's scoreboard and final results as a garden of glyph plants, one per player or team, grown from the score.">
+<link rel="preconnect" href="https://api.fontshare.com">
+<link href="https://api.fontshare.com/v2/css?f[]=chillax@500,600&display=swap" rel="stylesheet">
+<style>
+/* Hallmark · shape: app screen · genre: playful · theme: Hum (by request) · redesign: full
+ * hero: kept · nav: kept (ScreenChrome) · footer: kept (none) · imagery: none · signature: the scoreboard as a garden of Chillax glyphs, each plant's height its share of the leader's score
+ * axes: light/rounded-sans/chromatic-yellow · posture: full-palette · contrast: pass · fold: pass · v2.0.0 */
+/* Hallmark · pre-emit critique: P4 H4 E4 S5 R4 V5 · weakest: E, a zero score is a seed with no flower, so the name tag carries it */
+@import url("./hum.css");
+main { padding-block: var(--space-2xl); display: grid; gap: var(--space-lg); }
+main > p { color: var(--color-muted); }
+main > p + * { margin-bottom: var(--space-xl); }
+.tv { overflow-x: auto; padding: var(--space-xs); }
+.tv:focus-visible { outline: 3px solid var(--color-focus); outline-offset: 3px; }
+.tv-stage { container-type: inline-size; min-width: 880px; }
+.tv-in { position: relative; aspect-ratio: 16 / 9; overflow: hidden; background: var(--color-paper); border-radius: var(--radius-card); box-shadow: var(--shadow-card), inset 0 0 0 1px var(--color-rule); padding: 3cqw 3.5cqw 0; display: grid; grid-template-rows: auto 1fr; }
+.tv-in h1 { font-size: 4.4cqw; max-width: none; }
+.tv-in .label { font-size: max(12px, 1.4cqw); margin-top: 0.6cqw; }
+.bed { position: relative; margin-inline: -3.5cqw; display: grid; grid-template-rows: 1fr auto; }
+.bed .garden { --seg: 2.6cqw; --head: 7cqw; padding: 0 5cqw; z-index: 1; }
+.bed .ground { position: relative; height: 12cqw; margin-top: -0.6cqw; }
+.bed .ground .sheet { position: absolute; left: 0; right: 0; bottom: 0; }
+.bed .grass { height: 12cqw; --sheet-c: var(--color-mint); }
+.bed .soil { height: 8cqw; --sheet-c: var(--color-leaf); }
+.bed .kraft { height: 4cqw; --sheet-c: var(--color-kraft); }
+.tags { position: absolute; inset: auto 0 1.6cqw; display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); padding: 0 5cqw; z-index: 2; }
+.tag { justify-self: center; display: grid; justify-items: center; gap: 0.2cqw; padding: 0.9cqw 1.6cqw; border-radius: 1.2cqw; background: var(--color-card); box-shadow: inset 0 0 0 1px var(--color-rule), 0 0.4cqw 0 0 var(--color-edge); }
+.tag b { display: flex; align-items: center; gap: 0.7cqw; font-size: 2cqw; line-height: 1.1; }
+.tag b .swatch { width: 1.3cqw; height: 1.3cqw; }
+.tag span { font-size: max(12px, 1.5cqw); color: var(--color-ink-2); font-variant-numeric: tabular-nums; }
+.tag.lead { background: var(--color-accent); box-shadow: 0 0.4cqw 0 0 var(--color-accent-deep); }
+.tag.lead span { color: var(--color-ink); }
+</style>
+</head>
+<body class="tex">
+<main class="container">
+  <p>Scoreboard, players: each plant’s height is its share of the leader’s score; a zero score is a seed</p>
+  <div class="tv" tabindex="0" role="region" aria-label="Scoreboard with four players">
+    <div class="tv-stage"><div class="tv-in tex">
+      <div>
+        <h1 class="display">Scoreboard</h1>
+        <p class="label">Question 6 of 12</p>
+      </div>
+      <div class="bed">
+        <div class="garden" data-top="1200" data-segs="9" aria-hidden="true">
+          <span class="plant" data-score="1200" data-head="A" data-colour="var(--player-red)"></span>
+          <span class="plant" data-score="700" data-head="B" data-colour="var(--player-yellow)"></span>
+          <span class="plant" data-score="300" data-head="C" data-colour="var(--player-teal)"></span>
+          <span class="plant" data-score="0" data-head="D" data-colour="var(--player-violet)"></span>
+        </div>
+        <div class="ground" aria-hidden="true">
+          <div class="sheet grass" data-tear="top" data-seed="3"></div>
+          <div class="sheet soil" data-tear="top" data-seed="13"></div>
+          <div class="sheet kraft" data-tear="top" data-seed="29"></div>
+        </div>
+        <ol class="tags" style="list-style: none; margin: 0">
+          <li class="tag lead"><b><span class="swatch" style="background: var(--player-red)"></span>Ana</b><span>1,200 points</span></li>
+          <li class="tag"><b><span class="swatch" style="background: var(--player-yellow)"></span>Ben</b><span>700 points</span></li>
+          <li class="tag"><b><span class="swatch" style="background: var(--player-teal)"></span>Chidi</b><span>300 points</span></li>
+          <li class="tag"><b><span class="swatch" style="background: var(--player-violet)"></span>Dee</b><span>0 points</span></li>
+        </ol>
+      </div>
+    </div></div>
+  </div>
+
+  <p>Final results, teams: the same garden, the winner’s tag in pear</p>
+  <div class="tv" tabindex="0" role="region" aria-label="Final results with three teams">
+    <div class="tv-stage"><div class="tv-in tex">
+      <div>
+        <h1 class="display">Final results</h1>
+        <p class="label">Red team wins</p>
+      </div>
+      <div class="bed">
+        <div class="garden" data-top="2100" data-segs="9" aria-hidden="true">
+          <span class="plant" data-score="2100" data-head="R" data-colour="var(--player-red)"></span>
+          <span class="plant" data-score="1500" data-head="B" data-colour="var(--player-blue)"></span>
+          <span class="plant" data-score="600" data-head="Y" data-colour="var(--player-yellow)"></span>
+        </div>
+        <div class="ground" aria-hidden="true">
+          <div class="sheet grass" data-tear="top" data-seed="5"></div>
+          <div class="sheet soil" data-tear="top" data-seed="17"></div>
+          <div class="sheet kraft" data-tear="top" data-seed="37"></div>
+        </div>
+        <ol class="tags" style="list-style: none; margin: 0">
+          <li class="tag lead"><b><span class="swatch" style="background: var(--player-red)"></span>Red team</b><span>2,100 points</span></li>
+          <li class="tag"><b><span class="swatch" style="background: var(--player-blue)"></span>Blue team</b><span>1,500 points</span></li>
+          <li class="tag"><b><span class="swatch" style="background: var(--player-yellow)"></span>Yellow team</b><span>600 points</span></li>
+        </ol>
+      </div>
+    </div></div>
+  </div>
+</main>
+<script src="./hum.js"></script>
+</body>
+</html>

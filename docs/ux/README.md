@@ -26,6 +26,9 @@ Phones work today. Nothing in M24 may make the phone layouts worse.
 | [06-screen.md](06-screen.md) | `/screen/:code`, every phase, host bar and overlays | `SCR` |
 | [07-admin.md](07-admin.md) | `/admin`, `/admin/generate`, category and level review (audited 2026-11-03 for M29) | `ADM` |
 | [08-hallmark-redesign.md](08-hallmark-redesign.md) | M31 Hallmark redesign: the read, the picks, per-feature targets. The system is `design.md` | `F132`–`F142` |
+| [09-overprint-redesign.md](09-overprint-redesign.md) | M32 Overprint redesign (superseded by 11) | `F143`–`F152` |
+| [10-live-review-fixes.md](10-live-review-fixes.md) | M33 fixes from the 2026-11-17 live review | `F153`–`F162` |
+| [11-hum-redesign.md](11-hum-redesign.md) | M34 Hum redesign: the read, the picks, the coral dome, the garden, per-feature targets. The system is `design.md` | `F163`–`F173` |
 
 Each issue has:
 - an ID, such as `PLY-04`
