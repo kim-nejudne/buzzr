@@ -221,10 +221,14 @@ describe('Set list tabs', () => {
     );
   });
 
-  it('a chosen level turns the blue answer, and Host is the amber primary (F139, F149, F174)', async () => {
+  it('a chosen level turns the blue answer, and Host is an outline like Preview (F139, F149, F184)', async () => {
     renderSets();
     const sample = await card(SAMPLE_SET.title);
-    expect(sample.getByRole('button', { name: /^Host / }).className.split(' ')).toContain(
+    // New set is the page's one amber fill; a row's Host is outlined, as sets-pickers-editor.png.
+    expect(sample.getByRole('button', { name: /^Host / }).className.split(' ')).toEqual(
+      expect.arrayContaining(['border-accent', 'bg-surface']),
+    );
+    expect(sample.getByRole('button', { name: /^Host / }).className.split(' ')).not.toContain(
       'bg-accent',
     );
     expect(sample.getByRole('button', { name: /^Preview / }).className.split(' ')).not.toContain(

@@ -14,7 +14,9 @@ Buzzr has three kinds of device, and each needs something different:
 
 > ~~**Superseded 2026-11-16 by M31:** Kim replaced Prime Time with the Hallmark Squeeze system.~~ Struck by M32.
 >
-> **Superseded 2026-11-17 by M32:** Kim replaced Squeeze with the Hallmark **Overprint** system: newsprint stock, near-black ink, wide Anybody capitals over Archivo and Archivo Narrow, teal and orange passes printing moss where they cross, square and flat, and the red Lit buzzer on the phone. Read `design.md` and [09-overprint-redesign.md](09-overprint-redesign.md). The layout rules below still hold.
+> ~~**Superseded 2026-11-17 by M32:** Kim replaced Squeeze with the Hallmark Overprint system.~~ Struck by M35.
+>
+> **Superseded 2026-11-26 by M35:** Kim replaced Overprint with **Marquee**, a custom sibling of Hallmark's Arcade: a warm-black ground, sodium amber leading and electric blue answering, Antonio capitals on buttons and display lines over Sofia Sans, every figure (scores, timers, the room code) in DotGothic16, bulb borders round the boards, and the amber buzzer in its bulb ring on the phone. Read `design.md` and [12-marquee-redesign.md](12-marquee-redesign.md). The layout rules below still hold.
 
 ## Rules
 
@@ -172,7 +174,7 @@ The surface features fix their own targets. F92 fixes the shared pieces and the 
 
 ## Kept as they are
 
-Since M31 (Overprint since M32) the colours, type, focus ring and motion rules are the locked system in [`design.md`](../../design.md) (tokens in `client/src/tokens.css`, base rules in `client/src/base.css`). Read it, not this list, for any of them.
+Since M31 (Marquee since M35) the colours, type, focus ring and motion rules are the locked system in [`design.md`](../../design.md) (tokens in `client/src/tokens.css`, base rules in `client/src/base.css`). Read it, not this list, for any of them.
 
 - **Reduced motion.** Every keyframe animation is behind `motion-safe:`.
 - **Tailwind setup.** Tailwind v4 through `@tailwindcss/vite`.

@@ -377,7 +377,7 @@ describe('Play', () => {
     expect(bar.textContent).toContain('Room WXYZ');
     const dot = bar.querySelector<HTMLElement>('[data-player-color]')!;
     expect(dot.style.backgroundColor).toBe(hexToRgb(PLAYER_PALETTE[3]));
-    // Inside a 2px ink ring, which holds 3:1 on newsprint.
+    // Inside a 2px ink ring, which holds 3:1 on the ground.
     expect(dot.className).toContain('ring-ink');
     expect(screen.getByLabelText('Score').textContent).toBe('0');
   });

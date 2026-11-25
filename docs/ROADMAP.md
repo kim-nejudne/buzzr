@@ -471,17 +471,7 @@ Source: `docs/ux/10-live-review-fixes.md` (every finding from the 2026-11-17 UI/
 
 - [x] F183 Admin
 
-- [ ] F184 Redesign sweep and handoff
-  - Spec: `12` § Surfaces F184; `redesign.md` § After
-  - Depends: F175, F176, F177, F178, F179, F180, F181, F182, F183
-  - Done when:
-    - `sloplint --kept` is clean across every route.
-    - `compare.html` is written.
-    - The finish review has run, with defects fixed and compositions sent to Backlog.
-    - `00-foundations.md` names Marquee.
-    - No comment in `client/src` still names Anybody, Archivo or the passes.
-    - The `.hallmark/log.json` entry carries `mode: redesign`, `depth: full`, `scope: app`.
-  - Tests: `buzzer:verify` green.
+- [x] F184 Redesign sweep and handoff
 
 ## Bugs
 
@@ -489,6 +479,11 @@ Source: `docs/ux/10-live-review-fixes.md` (every finding from the 2026-11-17 UI/
 
 ## Backlog (not scheduled)
 
+- (F184 finish review) /sets at 375 is 3900px tall (Overprint's was 3145): each row stacks name, the level line and a row of three 54px buttons. A denser phone row (level line beside the actions, or Size s buttons under 54px) would shorten the list. Composition.
+- (F184 finish review) /sets: the level line ("Easy · 15 questions") repeats the chosen pill, and the "Other" row repeats "10 questions" under its name. Overprint showed every pill's own count, so levels compared at a glance; the pills now hide counts (sr-only, F181). Kim to judge: counts on the pills, or drop the line.
+- (F184 finish review) /sets at 1440: the pills are packed right, so a one-pill row ("None") starts ~160px right of the three-pill rows' Easy. A fixed three-slot pill column would line them up. Composition.
+- (F184 finish review) The two phone forms disagree: `/play` join is top-aligned (as `player.png`), `/host` pairing is centred in the window. Pick one. Composition.
+- (F184 finish review) Marquee's bulb border and DotGothic figures live on Landing, the Screen and the phone's buzzer; /sets, the join and pairing forms and the admin sign-in are plain dark forms with amber heads until a code or PIN is typed. A per-screen composition (a bulb rule on the form heads, say) would carry the idea there. Composition.
 - Scoreboard: the leader's "+20" in `screen-scoreboard-1080.png` (points since the scoreboard last showed). Needs the previous scores kept beside `lastOrder` on the Screen (F179).
 - (F152 finish review) The disabled primaries (Join on the phone, Pair on the remote, Join on Landing) empty to a 2px ink-2 outline as `design.md` Controls says, which the review read as another field under the name or PIN box. Kim to judge: a dimmed ink block would read as the action still.
 - (F153) Team names still truncate on the standings rail's team rows (the scoreboard's team cards wrap since F179). F153 covered player names only; teams could take the same wrap rule.

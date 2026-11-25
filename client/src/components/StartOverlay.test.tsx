@@ -35,7 +35,7 @@ describe('StartOverlay', () => {
     expect(word.className).toContain('group-hover:bg-accent-2');
     // The focus ring is on the word, in ground on the amber (11:1), since the button fills the window.
     expect(word.className).toContain('group-focus-visible:outline-accent-ink');
-    // Inside the pass, so the window's edges can't clip it to bars over the caption (F152).
+    // Inside the amber, so the window's edges can't clip it to bars over the caption (F152).
     expect(word.className).toContain('group-focus-visible:-outline-offset-');
     // Ground type on the amber, never blended (design.md Tokens, F174).
     expect(word.className).toContain('text-accent-ink');

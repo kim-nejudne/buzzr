@@ -567,7 +567,7 @@ function BuzzResult({ winner, judgedWrong, countdown, alsoBuzzed, players }: Buz
           judgedWrong ? 'bg-warn text-stop-ink' : 'bg-buzz text-buzz-ink'
         }`}
       >
-        {/* Their palette colour, so the player can tell it is them: a paper gap in an ink ring, so
+        {/* Their palette colour, so the player can tell it is them: a ground gap in an ink ring, so
             a red player's swatch still reads on the stop banner (F154). */}
         <ColourDot
           data-player-color

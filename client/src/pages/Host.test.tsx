@@ -1353,7 +1353,7 @@ describe('Host remote', () => {
       expect(rows()[0]!.dataset.correct).toBe('true');
     });
 
-    it('groups are ruled rows on no box: a marked one floods the teal pass, win (M32)', () => {
+    it('groups are ruled rows on no box: a marked one floods the answer blue, win (M32)', () => {
       remote(typedView('ANSWERING'));
       expect(panel().className).not.toContain('bg-surface');
       expect(rows()[0]!.className).toContain('bg-win');

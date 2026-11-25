@@ -76,5 +76,44 @@
   "prompt": "a TV quiz night game-show buzzer: questions on the TV, buzzers on phones, a host judging",
   "supersedes": "squeeze (2026-11-16)",
   "date": "2026-11-17"
+ },
+ {
+  "mode": "redesign",
+  "depth": "full",
+  "scope": "app",
+  "status": "built",
+  "shape": "app screen",
+  "theme": "marquee (custom, a sibling of Arcade; Figma aTbiy97Iu6rpuTcveQ7Vpr, direction B)",
+  "axes": "dark/display-condensed/chromatic-amber",
+  "posture": "committed (two inks: amber leads, blue answers)",
+  "hero": "Landing: the bulb-bordered BUZZR marquee sign (F175); app screens none",
+  "nav": "kept shells: PageShell, AdminLayout, ScreenChrome",
+  "footer": "kept",
+  "imagery": "none",
+  "photos": [],
+  "entry": "/",
+  "sections": [
+   "landing",
+   "player",
+   "screen lobby",
+   "screen game",
+   "host",
+   "sets",
+   "editor",
+   "admin"
+  ],
+  "signature": "the bulb-bordered marquee sign on Landing; the room board with DotGothic code tiles on the Screen; the amber buzzer in its bulb ring on the phone; the full-width buzz banner",
+  "waived": [
+   "39b",
+   "23"
+  ],
+  "before": "23 FAIL (30a fixture emoji in tests) · 0 REFLEX · 0 WARN",
+  "after": "23 FAIL (the same 30a in test files; 0 on every rendered route) · 0 REFLEX · 1 WARN (kept: the Screen lobby's code h1 reads letter by letter in its four tiles)",
+  "kept": "links 26/26, fields 39/44 (5 dropped on record: the icon names of F176/F180), handlers 329/329, test hooks 10/10, headings 28/29 (the tiled code), figures 1/1",
+  "dropped": "the locked-out X icon (F176); the lobby Start game arrow (F146); the remote's action icons (F180); the Buzzers open pulse (F178)",
+  "finish": "fix: 8 findings; 4 defects fixed (row Host outlined on /sets, Landing's Host a game level with Join, the phone join head's spacing, the pairing line's room code kept whole), 5 to Backlog (sets phone density, the level line and per-pill counts, the one-pill row, the phone forms' alignment, the idiom beyond Landing, the Screen and the buzzer)",
+  "prompt": "a TV quiz night game-show buzzer: questions on the TV, buzzers on phones, a host judging",
+  "supersedes": "overprint (2026-11-17)",
+  "date": "2026-11-26"
  }
 ]

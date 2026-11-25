@@ -896,7 +896,7 @@ function CardActions({
         onClick={() => onHost(set)}
         disabled={busy}
         aria-label={`Host ${set.title}`}
-        className={BUTTON_PRIMARY_SMALL}
+        className={BUTTON_SMALL}
       >
         Host
       </button>

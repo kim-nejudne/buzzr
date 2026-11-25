@@ -133,7 +133,10 @@ describe('Landing', () => {
     const hostCard = screen.getByRole('region', { name: 'Host a game' });
     expect(joinCard.parentElement).toBe(hostCard.parentElement);
     expect(joinCard.nextElementSibling).toBe(hostCard);
-    expect(joinCard.parentElement!.className.split(' ')).toContain('lg:grid-cols-[13fr_7fr]');
+    expect(joinCard.parentElement!.className.split(' ')).toEqual(
+      // Host a game sits level with the code tiles and Join, as landing.png (F184 finish review).
+      expect.arrayContaining(['lg:grid-cols-[13fr_7fr]', 'lg:items-center']),
+    );
     expect(joinCard.className.split(' ')).toEqual(
       expect.arrayContaining(['bg-surface', 'border', 'border-edge']),
     );
@@ -514,7 +517,7 @@ describe('Host a game', () => {
     expect(summary.textContent).toContain('Pub quiz');
     expect(summary.textContent).toContain('8 questions');
     fireEvent.click(screen.getByRole('radio', { name: 'Animals – Easy' }));
-    // The ticket: emoji, kicker, the category as its title, then the level (on the teal pass) and the count.
+    // The ticket: emoji, kicker, the category as its title, then the level (on the blue chip) and the count.
     expect(summary.textContent).toContain('🐾');
     expect(summary.textContent).toContain('Built-in category');
     expect(within(summary).getAllByText('Animals')).toHaveLength(1);

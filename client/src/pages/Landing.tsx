@@ -59,7 +59,7 @@ export function Landing() {
         className={
           hosting
             ? 'grid gap-8 md:grid-cols-2'
-            : 'grid items-start gap-6 lg:grid-cols-[13fr_7fr] [@media(orientation:landscape)_and_(max-height:500px)]:grid-cols-[13fr_7fr]'
+            : 'grid items-start gap-6 lg:items-center lg:grid-cols-[13fr_7fr] [@media(orientation:landscape)_and_(max-height:500px)]:grid-cols-[13fr_7fr]'
         }
       >
         {!hosting && (

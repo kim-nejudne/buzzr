@@ -50,7 +50,9 @@ export function HostPinEntry({ code, onPaired }: HostPinEntryProps) {
         </h1>
         <p className="text-lg text-ink-2">
           On the Screen, tap <strong className="text-ink">Pair host phone</strong>, then type the
-          PIN shown beside the QR. Room {code}.
+          PIN shown beside the QR.{' '}
+          {/* Kept whole, so the code never wraps to a line of its own at 375. */}
+          <span className="whitespace-nowrap">Room {code}.</span>
         </p>
         <label htmlFor="pairing-pin" className={LABEL}>
           Pairing PIN

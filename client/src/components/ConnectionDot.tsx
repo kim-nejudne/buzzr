@@ -7,7 +7,7 @@ const DOT: Record<Connection, { color: string; label: string }> = {
 };
 
 /**
- * The small teal / orange / red square for the page's socket (UI spec, Player view). The ring keeps
+ * The small blue / amber / red square for the page's socket (UI spec, Player view). The ring keeps
  * it visible on any player colour. The label is for screen readers and the hover title.
  */
 export function ConnectionDot() {

@@ -252,7 +252,7 @@ function NameForm({ code, name, avatar, error, onName, onAvatar, onSubmit }: Nam
       <form onSubmit={onSubmit} aria-labelledby="name-heading" className="flex flex-col gap-4">
         <h1
           id="name-heading"
-          className="font-display text-[44px] leading-none text-accent uppercase"
+          className="mb-4 font-display text-[44px] leading-none text-accent uppercase"
         >
           Join room <span className="tabular-nums">{code}</span>
         </h1>

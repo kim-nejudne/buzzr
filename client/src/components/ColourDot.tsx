@@ -2,9 +2,9 @@ import type { HTMLAttributes } from 'react';
 
 /**
  * A player's or team's colour as a dot in a 2px ink ring: red, blue and violet need it on the
- * green (design.md). A paper gap inside the ring keeps the fill a fill on a pass of its own colour,
+ * ground (design.md). A gap inside the ring keeps the fill a fill on a block of its own colour,
  * the red player on the red banner (F154). `className` replaces the size, gap and ring. `square`
- * drops the rounding: Overprint squares every colour but the buzzer's corner chip (design.md Rules).
+ * drops the rounding, for the few square swatches left.
  */
 export function ColourDot({
   color,

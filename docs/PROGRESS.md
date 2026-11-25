@@ -10,6 +10,43 @@ Handoff log, one entry per feature or bug. Newest first. Template:
 **How to try it:** exact commands / URLs / which devices
 ```
 
+## F184 — Redesign sweep and handoff (2026-11-26)
+**What changed:**
+- **Sweep** (`sloplint client/src --genre playful --scope app --render --kept` on `/`, `/sets`, `/play/<code>`, `/screen/<code>`, `/host/<code>`, `/admin`; dev server with `ADMIN_PASSWORD_HASH`, `GENERATE_FAKE=1`; `.playtest/F184/kept.txt`):
+  - Every rendered route has 0 FAIL and 0 REFLEX. 7 WAIVED (23 accent area, 39b 54/56px controls), 4 DISMISSED (49 ×2, 70, F3).
+  - kept: links 26/26, fields 39/44 (5 dropped on record: the icon names F176/F180 dropped), handlers 329/329, test hooks 10/10, headings 28/29, figures 1/1.
+  - The one WARN is the Screen lobby's code `<h1>`. It is the same code in four DotGothic tiles, so `innerText` reads "n t t y" where the record had "ntty".
+  - The 23 FAIL are all rule 30a: category emoji as fixtures in test files, the same 23 the before record holds. 30a is a floor gate and can't be waived (DECISIONS F184).
+  - `.hallmark/compare.html` (gitignored, local) pairs the before and after shots for all six routes.
+- **Finish review** (independent subagent, `review-finish.md`): verdict `fix`, 8 findings.
+  - Fixed:
+    - /sets: a row's **Host** is an outline like Preview, so New set is the page's one amber fill (`sets-pickers-editor.png`).
+    - Landing: Host a game sits level with the join card from `lg` (`lg:items-center`, `landing.png`).
+    - The phone's "Join room CODE" head has 32px under it (was 16).
+    - The remote's pairing line keeps "Room CODE." whole, so the code no longer wraps alone at 375.
+  - 5 to Backlog: /sets' phone row height, the repeated level line and per-pill counts (what Overprint did better), the one-pill row's alignment, the two phone forms' vertical alignment, and the bulb and dot-matrix idiom beyond Landing, the Screen and the buzzer.
+- **Records:**
+  - `00-foundations.md` names Marquee (M35) and strikes the M32 line.
+  - `.hallmark/log.json` has the third entry (`mode: redesign`, `depth: full`, `scope: app`, `supersedes: overprint`).
+  - The stamp's pre-emit critique line in `index.css` is rewritten, now that F175–F183 are built.
+- **Comments:** none in `client/src` names Anybody, Archivo, the passes, teal, moss, newsprint or Overprint any more (ColourDot, ConnectionDot, ScreenQuestion, tokens.css, index.css and four test comments).
+- **Tests:** the Sets test now asserts an outlined Host; the Landing test asserts `lg:items-center`. 3492 tests. No new dependency.
+
+**Decisions:** two DECISIONS rows dated 2026-11-26 for F184 (how the sweep reads "clean" and the before record's dead room; the finish review's fixes and Backlog).
+
+**Notes for next session:**
+- M35 is complete: every roadmap feature is `[x]`.
+- **Kim:**
+  - Run `npm uninstall @fontsource-variable/anybody @fontsource/archivo @fontsource/archivo-narrow` (`12` § Open 1).
+  - Judge the Backlog's "level line and per-pill counts" item.
+- **Re-running the sweep:** the before record's room (WJTZ) no longer exists. Copy `.hallmark/before.json`, rewrite WJTZ to a live room's code, copy the `before/*WJTZ*` shots under that code, then restore the record. A room script is in `.playtest/F184/room.mjs`.
+- Review (`review-feature`): no Must-fix. Should-fix fixed: the "paper gap" comment in `ScreenQuestion.tsx`. Kept on purpose: the struck M32 line in `00-foundations.md`, because the file keeps each earlier system struck.
+- Main `index` chunk 522.59 → 522.68 kB.
+
+**Playtest:** puppeteer through sloplint's render tier: 30 shots of the six routes at 1280×800, 1440×900, 1920×1080, plus full pages at 1440 and 375. I viewed Landing at 1440, /sets at 1280 and the remote's pairing page at 375 after the fixes; each finding is fixed in them. No Playwright run, because the changes are four class tweaks.
+
+**How to try it:** `npm run dev`. Open `http://localhost:5173/` at 1440 wide (Host a game sits level with the join card), `/sets` (Host outlined, New set the only fill), and on a phone `/play/<code>` and `/host/<code>` (heading spacing; "Room CODE." on one line). Open `.hallmark/compare.html` in a browser for before and after.
+
 ## F183 — Admin (2026-11-26)
 **What changed:**
 - **Figures** (`lib/ui.ts`): `FIGURE` is DotGothic16 amber, tabular, 40px on a phone and 48px from `sm` (was Anybody at 150%). New `FIGURE_SMALL` (Sofia Sans 800) for the replacements line under 40px. `AdminTile` is a well box on a 2px rule edge with the figure over its label (was a ruled cell under a 4px ink bar). Overview and History lay them out in a gapped grid.
