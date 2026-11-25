@@ -1,4 +1,6 @@
-# 11 — Hum redesign (M34)
+# 11 — Hum redesign (M34, superseded)
+
+> **Superseded on 2026-11-25. Do not build from this file.** Kim scrapped Hum before any feature shipped. The replacement is the Marquee redesign, inspired by Hallmark's Arcade and designed in Figma (file `aTbiy97Iu6rpuTcveQ7Vpr`). The Hum mocks in `.hallmark/mocks/hum/` and the Chillax fetch setup have been removed. This file is kept as a record.
 
 A third full Hallmark redesign, planned 2026-11-24 with `/hallmark redesign buzzer/client`. It replaces M32's Overprint with Hum. **Kim's calls:** no deal: Kim named Hum from Hallmark's gallery. Mock Landing, the Screen lobby and the phone buzzer, then approve (approved 2026-11-24). The phone buzzer stays the Lit dome, recast in Hum's coral. The Screen is cream paper like everything else. The scoreboard and final results become a garden of glyph plants that grow with the scores. The locked system is `design.md` at the project root: read it first. This file holds the read, the picks, the buzzer's states, the garden and what each feature changes. Every rule in `00-foundations.md` still holds except its look: the breakpoints, the variants, the floors and the device matrix.
 

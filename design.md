@@ -1,5 +1,7 @@
 # Design: Buzzr
 
+> **Superseded on 2026-11-25. Do not build from this file.** Kim scrapped Hum, the system below, before any of it shipped. The live app still wears Overprint (M32); `git log -- design.md` has that version. The replacement is the Marquee system, designed in Figma (file `aTbiy97Iu6rpuTcveQ7Vpr`). This file will be rewritten for Marquee once Kim approves the full Figma set. The Hum mocks and the Chillax files it names below have been removed.
+
 The locked system. Every Hallmark run reads this first, and every screen shares it. Change it on purpose: this file is the rule. It replaces the 2026-11-16 Overprint look (M32) with Hum (M34, `docs/ux/11-hum-redesign.md`). The approved mocks are `.hallmark/mocks/hum/index.html` (Landing, Screen lobby, phone buzzer), `.hallmark/mocks/hum/buzzers.html` (the coral Lit dome in every state) and `.hallmark/mocks/hum/garden.html` (the scoreboard garden).
 
 ## System

@@ -428,11 +428,13 @@ Source: `docs/ux/10-live-review-fixes.md` (every finding from the 2026-11-17 UI/
 
 - [x] F162 Live review sweep
 
-## M34 — Hum redesign
+## M34 — Hum redesign (superseded)
+
+**Superseded on 2026-11-25.** Kim scrapped Hum before any of it was built, in favour of the Marquee redesign: Arcade-inspired, designed in Figma (file `aTbiy97Iu6rpuTcveQ7Vpr`). Every entry below is marked `[!]` and is kept only as a record. Do not build them. Marquee's features get their own milestone once Kim approves the Figma set.
 
 Source: `design.md` (the locked Hum system), `docs/ux/11-hum-redesign.md` (the picks, the buzzer's states, the garden, per-feature targets and **How each M34 feature runs**) and the mocks in `.hallmark/mocks/hum/`. Kim chose this on 2026-11-24: Hum by name from Hallmark's gallery, every surface, full depth, cream paper on the Screen too, the phone buzzer as the Lit dome in Hum's coral, and the scoreboard and final results as a garden of glyph plants. Kim approved the mocks the same day. Content, routes, handlers and `data-testid`s stay. No game logic changes. Every feature runs Hallmark's `sloplint --kept` against the record F163 takes, and the device matrix in `docs/ux/README.md`. Kim answers `11` § Open before launch; unanswered items take their defaults.
 
-- [ ] F163 Hum foundations
+- [!] F163 Hum foundations
   - Spec: `design.md` Tokens, Rules, Controls; `11` § Surfaces F163
   - Depends: none
   - Done when:
@@ -445,8 +447,9 @@ Source: `design.md` (the locked Hum system), `docs/ux/11-hum-redesign.md` (the p
     - The `index.css` stamp names Hum, M34 and the two exceptions (the coral dome, the garden).
     - Font imports are untouched (F163b). Until then Chillax falls back to the system rounded sans; note it in PROGRESS.
   - Tests: existing suites green. `tokens.test.ts` updated to the new token names and values. `torn.test.ts`: the same seed gives the same polygon, sides not torn stay straight, every point stays within the amplitude.
+  - Blocked: Superseded 2026-11-25: Kim scrapped Hum for the Marquee redesign (Figma file aTbiy97Iu6rpuTcveQ7Vpr). Do not build.
 
-- [ ] F163b Chillax fonts
+- [!] F163b Chillax fonts
   - Spec: `design.md` Tokens; DECISIONS 2026-10-28 (self-hosted fonts)
   - Depends: F163
   - The font files are already in place: `client/public/fonts/` (gitignored), filled by `scripts/fetch-fonts.sh` (`11` § Open 1). The unattended run may not `npm uninstall`.
@@ -456,32 +459,37 @@ Source: `design.md` (the locked Hum system), `docs/ux/11-hum-redesign.md` (the p
     - `lib/nameFit.ts` letter widths are measured for Chillax 600; `lib/resultsCard.ts` loads and uses Chillax.
     - `/playtest` shows `document.fonts` holding Chillax 500 and 600 on / and /screen, with no request to a third-party host.
   - Tests: existing suites green; `nameFit` tests updated only where a width constant changed, with the reason in PROGRESS.
+  - Blocked: Superseded 2026-11-25: Kim scrapped Hum for the Marquee redesign (Figma file aTbiy97Iu6rpuTcveQ7Vpr). Do not build.
 
-- [ ] F164 Landing and join
+- [!] F164 Landing and join
   - Spec: `11` § Surfaces F164, § The garden (Landing); mock `.hallmark/mocks/hum/index.html` (Landing)
   - Depends: F163, F168 (the strip uses `GlyphGarden`)
   - Done when: Landing matches the mock at 1280×800, 1440 and 375 (the columns stack at 60rem). The head, the sentence and the join card are on the first screen at 1280×800. Host a game and Question sets are not under the mat. The host picker and created room keep their slot. `sloplint --kept` is clean on /.
   - Tests: `Landing.test.tsx` green, with no test hook renamed.
+  - Blocked: Superseded 2026-11-25: Kim scrapped Hum for the Marquee redesign (Figma file aTbiy97Iu6rpuTcveQ7Vpr). Do not build.
 
-- [ ] F165 Player phone and the coral Lit dome
+- [!] F165 Player phone and the coral Lit dome
   - Spec: `11` § The buzzer, § Surfaces F165; mock `.hallmark/mocks/hum/buzzers.html` and `index.html` (phone)
   - Depends: F163
   - Done when: every `BuzzerKind` renders per the `11` table. Only the cap's `translate` and the bulb's `opacity` animate. The bulb holds at 0.6 under reduced motion. BUZZ is ink on the coral at 3:1 or better. The join form, top bar, choice, typed, reveal and final are restyled. `/playtest` covers lobby test, live, pressed, won, lost, early and out at 375×667 and 390×844.
   - Tests: `buzzerState.test.ts` and `Play.test.tsx` green.
+  - Blocked: Superseded 2026-11-25: Kim scrapped Hum for the Marquee redesign (Figma file aTbiy97Iu6rpuTcveQ7Vpr). Do not build.
 
-- [ ] F166 Screen lobby and chrome
+- [!] F166 Screen lobby and chrome
   - Spec: `11` § Surfaces F166, § Open 3; mock `index.html` (Screen lobby)
   - Depends: F163
   - Done when: the lobby matches the mock at 1280×720, 1920×1080 and 3840×2160, with and without a host token, and with 2, 5 and 20 players. M33's lobby fit holds (the join URL breaks only at "/", Start game does not move when the host bar shows). No text sits under another element. The text floors hold. The start gate and ScreenChrome are restyled.
   - Tests: `Screen.test.tsx` green.
+  - Blocked: Superseded 2026-11-25: Kim scrapped Hum for the Marquee redesign (Figma file aTbiy97Iu6rpuTcveQ7Vpr). Do not build.
 
-- [ ] F167 Screen game
+- [!] F167 Screen game
   - Spec: `11` § Surfaces F167
   - Depends: F166
   - Done when: question, board, buzz banner, flash, reveal, standings rail and the host bar are restyled per `design.md`, each game state with its word. M33's full names hold on the banner and rail. `/playtest` runs a full game on the Screen at 1920×1080. (Scoreboard and results are F168.)
   - Tests: existing suites green.
+  - Blocked: Superseded 2026-11-25: Kim scrapped Hum for the Marquee redesign (Figma file aTbiy97Iu6rpuTcveQ7Vpr). Do not build.
 
-- [ ] F168 Scoreboard garden
+- [!] F168 Scoreboard garden
   - Spec: `11` § The garden; `design.md` Controls (The garden), Motion; mock `.hallmark/mocks/hum/garden.html`
   - Depends: F167
   - Done when:
@@ -491,36 +499,42 @@ Source: `design.md` (the locked Hum system), `docs/ux/11-hum-redesign.md` (the p
     - Names on the tags read in full at 1280×720 and 1920×1080 (M33).
     - `/playtest` shows the scoreboard after a few questions with scores 0, a mid score and a leader, and final results with teams, at 1920×1080 and 1280×720.
   - Tests: `garden.test.ts` (the cases in `11` § The garden); `ScreenResults.test.tsx` green, updated only where it asserts the podium's markup, with each change in PROGRESS.
+  - Blocked: Superseded 2026-11-25: Kim scrapped Hum for the Marquee redesign (Figma file aTbiy97Iu6rpuTcveQ7Vpr). Do not build.
 
-- [ ] F169 Host remote
+- [!] F169 Host remote
   - Spec: `11` § Surfaces F169
   - Depends: F163
   - Done when: the pairing, dashboard, players, settings, typed marking, read-aloud and board picker are restyled on phone and `lg`. The chosen language and preset are ink with `aria-pressed`.
   - Tests: `Host.test.tsx` green.
+  - Blocked: Superseded 2026-11-25: Kim scrapped Hum for the Marquee redesign (Figma file aTbiy97Iu6rpuTcveQ7Vpr). Do not build.
 
-- [ ] F170 Set library and pickers
+- [!] F170 Set library and pickers
   - Spec: `11` § Surfaces F170
   - Depends: F163
   - Done when: /sets and the five pickers share the card listing. A chosen level is ink. One row at 375.
   - Tests: `Sets.test.tsx` and the picker tests green.
+  - Blocked: Superseded 2026-11-25: Kim scrapped Hum for the Marquee redesign (Figma file aTbiy97Iu6rpuTcveQ7Vpr). Do not build.
 
-- [ ] F171 Set editor and answer sheet
+- [!] F171 Set editor and answer sheet
   - Spec: `11` § Surfaces F171
   - Depends: F163
   - Done when: the editor is restyled. The answer sheet prints ink on white with no grain, sheets or shadows (print preview checked).
   - Tests: `SetEditor.test.tsx` and `AnswerSheet.test.tsx` green.
+  - Blocked: Superseded 2026-11-25: Kim scrapped Hum for the Marquee redesign (Figma file aTbiy97Iu6rpuTcveQ7Vpr). Do not build.
 
-- [ ] F172 Admin
+- [!] F172 Admin
   - Spec: `11` § Surfaces F172
   - Depends: F163
   - Done when: every admin route is restyled. Figures are Chillax 600 and show only their own numbers.
   - Tests: the admin suites green.
+  - Blocked: Superseded 2026-11-25: Kim scrapped Hum for the Marquee redesign (Figma file aTbiy97Iu6rpuTcveQ7Vpr). Do not build.
 
-- [ ] F173 Redesign sweep and handoff
+- [!] F173 Redesign sweep and handoff
   - Spec: `11` § Surfaces F173; `redesign.md` § After
   - Depends: F163b, F164 to F172
   - Done when: `sloplint --kept` is clean across every route. `compare.html` is written. The finish review has run, with defects fixed and compositions sent to Backlog. `00-foundations.md` names Hum. No comment in `client/src` still names Anybody, Archivo or the passes. The `.hallmark/log.json` entry carries `mode: redesign`, `depth: full`, `scope: app`.
   - Tests: `buzzer:verify` green.
+  - Blocked: Superseded 2026-11-25: Kim scrapped Hum for the Marquee redesign (Figma file aTbiy97Iu6rpuTcveQ7Vpr). Do not build.
 
 ## Bugs
 

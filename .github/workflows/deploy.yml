@@ -156,13 +156,6 @@ jobs:
         if: steps.tag.outputs.mode == 'build'
         run: npm ci
 
-      # Chillax is gitignored (its licence forbids redistribution from a public
-      # repository), so it is fetched from Fontshare into client/public/fonts/
-      # before the build copies it into the image.
-      - name: fetch fonts
-        if: steps.tag.outputs.mode == 'build'
-        run: scripts/fetch-fonts.sh
-
       # Builds buzzr:<tag> and runs it with the droplet's own settings, read
       # from compose.deploy.yaml: /healthz, the client, the WebSocket, the
       # forwarded-IP rate limit, the node user, SIGTERM. The image it tested is
