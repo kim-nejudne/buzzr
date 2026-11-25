@@ -8,8 +8,10 @@
 # Sessions run with --dangerously-skip-permissions and a hard deny list (push, reset, clean,
 # checkout, rebase, gh, ssh, scp, docker, rm -rf, sudo). Their environment also points
 # origin's push URL nowhere and gives gh a dead token, so a push or gh call that slips past
-# the deny list still fails. This script does the push and deploy itself. A live-games deploy
-# failure is forced at once (force=true ends live games).
+# the deny list still fails. This script does the push and deploy itself. It refuses to run
+# unless origin is kim-nejudne/buzzr, and to push commits that carry agent files or
+# secret-looking lines or that changed docs/SPEC.md or this script during the run. A live-games
+# deploy failure is forced at once (force=true ends live games).
 # Logs: ~/.cache/buzzr-autopilot/<UTC timestamp>/ (run.log, status.txt, one .jsonl per session,
 # durations.tsv and rl.tsv for the ETA; later runs read earlier runs' durations).
 #
@@ -33,6 +35,7 @@ SESSION_TIMEOUT=${AUTOPILOT_SESSION_TIMEOUT:-3h}
 LIVE_URL=${AUTOPILOT_LIVE_URL:-'https://buzzr.kimnejudne.dev'}
 WAIT_DIVISOR=${AUTOPILOT_WAIT_DIVISOR:-1}
 WORKFLOW='deploy.yml'
+GH_REPO='kim-nejudne/buzzr'
 # The option loop shifts them away; the systemd-inhibit re-exec below needs them all.
 ORIG_ARGS=("$@")
 
@@ -433,7 +436,7 @@ eta_compute() {
 Q_DONE=() Q_NEXT=() Q_LEFT=0
 queue_refresh() {
   local lines=() i
-  mapfile -t lines < <(git log --format=%s -n 30 -- . 2>/dev/null | sed -nE 's/^feat\(buzzer\): ([FB][0-9]+[a-z]?) /\1 /p' | head -2)
+  mapfile -t lines < <(git log --format=%s -n 30 -- . 2>/dev/null | sed -nE 's/^feat(\([a-z]+\))?: ([FB][0-9]+[a-z]?) /\2 /p' | head -2)
   Q_DONE=()
   for ((i = ${#lines[@]} - 1; i >= 0; i--)); do Q_DONE+=("${lines[i]}"); done
   mapfile -t Q_NEXT < <(sed -nE 's/^- \[ \] ([FB][0-9]+[a-z]?) (.*)/\1 \2/p' docs/ROADMAP.md | grep -v "^${FEATURE:-—} " | head -3)
@@ -625,7 +628,7 @@ feature_title() { sed -nE "s/^- \[.\] $1 (.*)/\1/p" docs/ROADMAP.md | head -1; }
 feature_mark() { sed -nE "s/^- \[(.)\] $1 .*/\1/p" docs/ROADMAP.md | head -1; }
 dirty() { [[ -n $(git status --porcelain --untracked-files=all -- .) ]]; }
 
-# Kill dev servers (3000, 5173) left behind by an earlier session, only if they run from buzzer/.
+# Kill dev servers (3000, 5173) left behind by an earlier session, only if they run from this repo.
 kill_strays() {
   local pid cwd
   for pid in $(ss -ltnpH '( sport = :3000 or sport = :5173 )' 2>/dev/null | grep -o 'pid=[0-9]*' | cut -d= -f2 | sort -u); do
@@ -675,14 +678,14 @@ run_gate() {
 
 UNATTENDED_RULES=$(
   cat <<'EOF'
-You are running unattended, launched by buzzer/scripts/autopilot.sh. Kim is away from the keyboard and cannot answer.
+You are running unattended, launched by scripts/autopilot.sh. Kim is away from the keyboard and cannot answer.
 - Never ask questions and never wait for input. Wherever a skill or instruction says to ask Kim, choose the option a careful senior engineer would pick (simplest choice that meets the spec, the roadmap entry and docs/ux/ when it applies), record it in docs/DECISIONS.md, and continue.
-- At the start, if buzzer/ has uncommitted changes and a roadmap feature is marked [~], they are an earlier unattended attempt at that feature: inspect them, keep what is sound, fix the rest, and resume. Never discard them.
-- If buzzer/ has uncommitted changes and no feature is marked [~], put them aside with `git stash push --include-untracked -m "autopilot: unexplained changes" -- .` and continue.
+- At the start, if the repo has uncommitted changes and a roadmap feature is marked [~], they are an earlier unattended attempt at that feature: inspect them, keep what is sound, fix the rest, and resume. Never discard them.
+- If the repo has uncommitted changes and no feature is marked [~], put them aside with `git stash push --include-untracked -m "autopilot: unexplained changes" -- .` and continue.
 - If Playwright or the playtest skill cannot run, write exact manual test steps in the PROGRESS entry instead and continue.
 - The roadmap mark, the PROGRESS entry and any DECISIONS rows go into the feature's single commit.
 - If a feature is genuinely blocked after three real fix attempts, mark it with roadmap.mjs as the skill describes, and leave the code uncommitted.
-- Never push, deploy, run gh, ssh, docker or sudo, edit docs/SPEC.md, or touch files outside buzzer/. The script does the push and deploy.
+- Never push, deploy, run gh, ssh, docker or sudo, edit docs/SPEC.md or scripts/autopilot.sh, or touch files outside this repository. The script does the push and deploy.
 - Build exactly one feature, commit it, then stop.
 EOF
 )
@@ -885,6 +888,56 @@ feature_prompt() {
 }
 
 # ---------------------------------------------------------------------------------------------
+# Push guard and remote check (from the bootstrap-autopilot standalone template)
+
+# origin must be this app's own GitHub repo, so nothing ever lands in another project's (or a
+# client's) repository, whatever happens to be configured.
+check_remote() {
+  local url
+  url=$(git remote get-url --push origin 2>/dev/null) || die "no origin remote"
+  [[ $url =~ ^(https://github\.com/|git@github\.com:|ssh://git@github\.com/)(.+)$ && ${BASH_REMATCH[2]%.git} == "$GH_REPO" ]] ||
+    die "origin ($url) is not github.com/$GH_REPO; nothing runs"
+}
+
+# The range a push would carry: everything not yet on origin/main.
+push_range() {
+  if git rev-parse -q --verify origin/main >/dev/null; then echo 'origin/main..HEAD'; else echo 'HEAD'; fi
+}
+
+# Before every push: no agent files or secrets in what would ship, and the files only Kim
+# changes unchanged since the run started (a session that got past the hook with a shell edit).
+# Prints the problems to $RUN/push-guard.txt and returns 1 if there are any.
+SECRET_RE='-----BEGIN ([A-Z]+ )?PRIVATE KEY-----|gh[pousr]_[A-Za-z0-9]{36}|github_pat_[A-Za-z0-9_]{20,}|sk-ant-[A-Za-z0-9_-]{20,}|sk-(proj-)?[A-Za-z0-9]{32,}|AKIA[0-9A-Z]{16}|xox[baprs]-[A-Za-z0-9-]{10,}|AIza[0-9A-Za-z_-]{35}|-----BEGIN OPENSSH PRIVATE KEY-----'
+FORBIDDEN_PATHS_RE='(^|/)(\.env(\..*)?|.*\.pem|.*\.key|id_(rsa|ed25519|ecdsa)(\.pub)?|CLAUDE(\.local)?\.md)$|^\.claude/'
+push_guard() {
+  local range out="$RUN/push-guard.txt" bad paths hits
+  range=$(push_range)
+  : >"$out"
+  paths=$(git log --format= --name-only "$range" | sed '/^$/d' | sort -u)
+  bad=$(grep -E "$FORBIDDEN_PATHS_RE" <<<"$paths" | grep -vE '(^|/)\.env\.example$' || true)
+  [[ -n $bad ]] && printf 'Agent files or secrets in commits (%s):\n%s\n\n' "$range" "$bad" >>"$out"
+  # This file holds the patterns themselves; any change to it is caught below instead.
+  hits=$(git log -p --format='commit %h' "$range" -- . ':!scripts/autopilot.sh' | grep -E '^(commit |\+)' | grep -E "^commit |$SECRET_RE" |
+    awk '/^commit / { c = $2; next } { print c ": " substr($0, 1, 60) "…" }' || true)
+  [[ -n $hits ]] && printf 'Lines that look like secrets:\n%s\n\n' "$hits" >>"$out"
+  if command -v gitleaks >/dev/null && ! gitleaks git --no-banner --redact --log-opts="$range" >>"$out" 2>&1; then
+    printf 'gitleaks found leaks (above).\n\n' >>"$out"
+  fi
+  if ! git diff --quiet "$RUN_HEAD_AT_START" HEAD -- docs/SPEC.md scripts/autopilot.sh; then
+    printf 'Changed during this run (only Kim changes them):\n%s\n\n' \
+      "$(git diff --name-only "$RUN_HEAD_AT_START" HEAD -- docs/SPEC.md scripts/autopilot.sh)" >>"$out"
+  fi
+  [[ -s $out ]] && return 1
+  return 0
+}
+
+check_push_scope() {
+  push_guard && return 0
+  notify 'Not pushed' "the push guard refused (see $RUN/push-guard.txt)"
+  die "the push guard refused: $(head -1 "$RUN/push-guard.txt") (see $RUN/push-guard.txt); nothing pushed"
+}
+
+# ---------------------------------------------------------------------------------------------
 # Preflight
 
 RUN_HEAD_AT_START=$(git rev-parse HEAD)
@@ -910,6 +963,14 @@ done
 gh auth status >/dev/null 2>&1 || die "gh is not logged in (gh auth login)"
 [[ $(git rev-parse --abbrev-ref HEAD) == main ]] || die "not on main"
 git fetch -q origin main 2>>"$RUN_LOG" || log warn "git fetch failed; continuing offline until the push"
+check_remote
+if ((DRY_RUN)); then
+  if push_guard; then
+    log ok "Push guard: $(push_range) carries no secrets or agent files."
+  else
+    die "the push guard would refuse: $(head -1 "$RUN/push-guard.txt") (see $RUN/push-guard.txt)"
+  fi
+fi
 
 RM_DONE_AT_START=$(roadmap_next | sed -nE 's/^Done: ([0-9]+)\/.*/\1/p') || true
 [[ -n $RM_DONE_AT_START ]] || die "roadmap.mjs did not report progress"
@@ -924,10 +985,10 @@ if dirty; then
     RESUMING=1
     log warn "Uncommitted changes belong to the [~] feature; the first session resumes them."
   elif ((DRY_RUN)); then
-    log warn "buzzer/ has uncommitted changes; a real run would refuse to start."
+    log warn "the repo has uncommitted changes; a real run would refuse to start."
   else
     # Kim is still at the keyboard at this point, so ask for a clean tree rather than stash.
-    die "buzzer/ has uncommitted changes; commit or stash them, then start again"
+    die "the repo has uncommitted changes; commit or stash them, then start again"
   fi
 fi
 
@@ -978,13 +1039,13 @@ while :; do
   run_session "$FEATURE-a$ATTEMPT" "$(feature_prompt)"
 
   mark=$(feature_mark "$FEATURE")
-  new_feat=$(git log --format=%s "$before..HEAD" -- . | grep -c '^feat(buzzer): ' || true)
+  new_feat=$(git log --format=%s "$before..HEAD" -- . | grep -cE '^feat(\([a-z]+\))?: ' || true)
 
   if [[ $mark == '!' ]]; then
     log err "$FEATURE was marked blocked: $(sed -n "/^- \[!\] $FEATURE /,/^- \[/p" docs/ROADMAP.md | grep -m1 'Blocked:' | sed 's/^ *- //')"
     notify "$FEATURE blocked" "$FEATURE_TITLE"
     # Keep the marker and its notes; set the half-built code aside.
-    commit_docs "docs(buzzer): $FEATURE blocked (autopilot)"
+    commit_docs "docs: $FEATURE blocked (autopilot)"
     stash_changes "$FEATURE blocked, uncommitted work"
     GIVEUPS_IN_A_ROW=$((GIVEUPS_IN_A_ROW + 1))
   elif [[ -f $STATE/no_skill && ! -f $STATE/inline_skill && $before == "$(git rev-parse HEAD)" ]]; then
@@ -1039,7 +1100,7 @@ while :; do
       [[ -n $(feature_mark "$target") ]] || target=${FEATURE%[a-z]}
       "${ROADMAP_JS[@]}" mark "$target" '!' "autopilot: $ATTEMPT unattended sessions did not finish it; logs in $RUN" >/dev/null ||
         die "could not mark $target blocked in docs/ROADMAP.md"
-      commit_docs "docs(buzzer): $target blocked (autopilot)"
+      commit_docs "docs: $target blocked (autopilot)"
       GIVEUPS_IN_A_ROW=$((GIVEUPS_IN_A_ROW + 1))
     else
       wait_with_status "$(secs 60)" 'retrying soon'
@@ -1056,7 +1117,7 @@ summary=$(roadmap_next | grep -E '^(Done|Blocked|Not eligible)' | paste -sd' ' -
 log info "Roadmap loop finished: $summary"
 if ! roadmap_next | grep -q '^Blocked: none'; then
   notify 'Autopilot finished with blocked features' "$summary"
-  die "some features are blocked, so nothing is pushed or deployed (a push to buzzer/ deploys)"
+  die "some features are blocked, so nothing is pushed or deployed (a push to main deploys)"
 fi
 # No eligible feature but nothing blocked: a dependency is missing or circular.
 roadmap_next | grep -q '^Nothing left' || die "features remain but none is eligible: $summary"
@@ -1080,7 +1141,7 @@ repair() {
 
 $context
 
-Fix only what makes them fail, without weakening, skipping or deleting tests. Run the verify skill until it is green, then make one commit: fix(buzzer): <what you fixed>. Do not start any roadmap feature."
+Fix only what makes them fail, without weakening, skipping or deleting tests. Run the verify skill until it is green, then make one commit: fix: <what you fixed>. Do not start any roadmap feature."
     blocker=$(session_blocker "$name")
     [[ -n $blocker ]] || return 0
     ((try < 8)) || die "repair sessions kept hitting usage limits or API errors"
@@ -1127,6 +1188,7 @@ push_main() {
           die "rebase onto origin/main conflicted; nothing pushed"
         fi
       fi
+      check_push_scope
       if git push -q origin HEAD:main >>"$RUN_LOG" 2>&1; then
         log ok "Pushed $(git rev-parse --short HEAD) to origin/main."
         return 0
@@ -1139,6 +1201,12 @@ push_main() {
   done
   die "git push failed three times"
 }
+
+# deploy_said REGEX LOG: a line the workflow's step printed, not its script as GitHub echoes it
+# (the echo carries a colour escape after the timestamp, so a grep for the text alone matched the
+# script's own `echo "ABORT: …"` and read every droplet failure as live connections).
+TS_RE=$'\t[0-9]{4}-[0-9-]+T[0-9:.]+Z '
+deploy_said() { grep -qE "${TS_RE}$1" "$2" 2>/dev/null; }
 
 # find_run EVENT SINCE_EPOCH [SHA]: newest matching deploy run id, waiting up to 5 min.
 find_run() {
@@ -1225,7 +1293,7 @@ FORCED=0
 until watch_run "$RUN_ID"; do
   failed_log="$RUN/deploy-$RUN_ID-failed.log"
   failed_steps=$(cat "$RUN/deploy-$RUN_ID-failed-steps.txt" 2>/dev/null || true)
-  if grep -q 'live connection(s) after 10 min' "$failed_log" && ((FORCED == 0)); then
+  if deploy_said 'ABORT: [0-9]+ live connection' "$failed_log" && ((FORCED == 0)); then
     FORCED=1
     dispatch_force
   elif grep -qE "$CI_STEPS" <<<"$failed_steps" && ((REPAIRS < 2)); then
