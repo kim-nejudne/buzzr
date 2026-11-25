@@ -13,6 +13,7 @@ import {
   uploadSetImages,
 } from '../lib/hostRoom.js';
 import { setDetail } from '../lib/setLabels.js';
+import { HEADING } from '../lib/ui.js';
 import { BuiltInSetsError } from './BuiltInSetsError.js';
 import { CategoryPicker } from './CategoryPicker.js';
 import { GameBuilder, type BuiltGame } from './GameBuilder.js';
@@ -230,12 +231,7 @@ export function NewGamePicker({
   // Drafts stay pickable, as on Host a game: choosing one says what to fix (DECISIONS F50).
   const detail = (set: QuestionSet) => setDetail(set, checkPlayable(set).ok);
   const heading = (
-    <h2
-      id="new-game-heading"
-      ref={headingRef}
-      tabIndex={-1}
-      className="text-3xl uppercase outline-none"
-    >
+    <h2 id="new-game-heading" ref={headingRef} tabIndex={-1} className={`${HEADING} outline-none`}>
       New game
     </h2>
   );
@@ -250,7 +246,7 @@ export function NewGamePicker({
         // Behind an open preview, nothing in the picker takes focus or clicks.
         inert={previewing !== null}
         // The whole dialog scrolls, list included, so a short window reaches every control (LND-06).
-        className={`flex max-h-full w-full max-w-md flex-col gap-4 overflow-y-auto overscroll-contain rounded-card border-t-4 border-ink bg-bg p-6 text-lg [scrollbar-color:var(--color-edge)_transparent] short:max-w-2xl md:max-w-3xl lg:max-w-5xl ${className}`}
+        className={`flex max-h-full w-full max-w-md flex-col gap-4 overflow-y-auto overscroll-contain rounded-card border-2 border-edge bg-bg p-6 text-lg [scrollbar-color:var(--color-edge)_transparent] short:max-w-2xl md:max-w-3xl lg:max-w-5xl ${className}`}
       >
         {picking && building ? (
           <>

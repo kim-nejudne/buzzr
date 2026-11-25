@@ -21,18 +21,21 @@ import {
 } from '../lib/gameBuilder.js';
 import type { LoadImage } from '../lib/hostRoom.js';
 import { DIFFICULTY_LABELS, questionCount } from '../lib/setLabels.js';
-import {
-  BUTTON_OUTLINE,
-  BUTTON_PRIMARY,
-  BUTTON_SMALL,
-  CHOICE_TILE,
-  FIELD,
-  LINK,
-  RULED,
-} from '../lib/ui.js';
+import { BUTTON_OUTLINE, BUTTON_PRIMARY, BUTTON_SMALL, FIELD, LINK, RULED } from '../lib/ui.js';
 
-/** A running total: display capitals at normal width, so "Total: 105 questions" fits a phone. */
-const TOTAL = 'font-display text-xl font-black uppercase tabular-nums font-stretch-normal';
+/** A running total: a muted Sofia Sans label in tabular figures (F181). */
+const TOTAL = 'font-sans text-lg font-semibold text-muted tabular-nums';
+
+/**
+ * The kind of game, two buttons around sr-only radios: the amber secondary, and the chosen one blue
+ * with ground type (design.md Controls, Chosen; F181).
+ */
+const MODE_BUTTON =
+  'flex min-h-[54px] cursor-pointer items-center justify-center rounded-control border-2 border-accent bg-surface px-4 text-center font-display text-xl leading-none text-accent uppercase not-has-checked:not-has-disabled:hover:hover-tint has-checked:border-accent-2 has-checked:bg-accent-2 has-checked:text-accent-2-ink has-focus-visible:outline-3 has-focus-visible:outline-offset-4 has-focus-visible:outline-focus has-disabled:cursor-default has-disabled:opacity-40';
+
+/** A board category: the well on a 2px rule edge; ticked, a blue edge and a blue "Column N" (F181). */
+const BOARD_PICK =
+  'flex min-h-11 cursor-pointer items-center gap-3 rounded-control bg-surface px-3 py-2 text-lg text-ink inset-ring-2 inset-ring-edge not-has-checked:not-has-disabled:hover:hover-tint has-checked:inset-ring-accent-2 has-focus-visible:outline-3 has-focus-visible:outline-offset-4 has-focus-visible:outline-focus has-disabled:cursor-default has-disabled:opacity-40';
 
 /** A built game and where its pictures come from, for `hostSet` or `hostNextSet`. */
 export interface BuiltGame {
@@ -174,18 +177,15 @@ export function GameBuilder({
 
   return (
     <div className="flex min-h-0 flex-col gap-4">
-      {/* A segmented control: one ink-edged track, the chosen kind on the teal pass (LND-07, F149).
-          Native radios, so the arrow keys move between the two. */}
+      {/* Two buttons, the chosen kind blue (LND-07, F181). Native radios, so the arrow keys move
+          between the two. */}
       <div
         role="radiogroup"
         aria-label="Kind of game"
-        className="grid shrink-0 grid-cols-2 rounded-control border-2 border-ink"
+        className="grid shrink-0 grid-cols-2 gap-3 sm:flex"
       >
         {MODES.map((option) => (
-          <label
-            key={option.mode}
-            className="flex min-h-11 cursor-pointer items-center justify-center rounded-control px-3 py-2 text-center font-display text-base font-semibold text-ink-2 uppercase not-has-checked:not-has-disabled:hover:hover-tint has-checked:bg-accent has-checked:text-accent-ink has-focus-visible:outline-3 has-focus-visible:outline-offset-2 has-focus-visible:outline-focus has-disabled:cursor-default has-disabled:opacity-40"
-          >
+          <label key={option.mode} className={MODE_BUTTON}>
             <input
               type="radio"
               name="game-kind"
@@ -317,7 +317,7 @@ export function GameBuilder({
           type="button"
           onClick={() => void run('host')}
           disabled={locked || problem !== null}
-          className={`${BUTTON_PRIMARY} shrink-0 text-2xl`}
+          className={`${BUTTON_PRIMARY} shrink-0`}
         >
           {busy === 'host' ? hostingLabel : hostLabel}
         </button>
@@ -325,7 +325,7 @@ export function GameBuilder({
           type="button"
           onClick={() => void run('save')}
           disabled={locked || problem !== null}
-          className={`${BUTTON_OUTLINE} shrink-0 text-xl`}
+          className={`${BUTTON_OUTLINE} shrink-0`}
         >
           {busy === 'save' ? 'Saving…' : 'Save to My sets'}
         </button>
@@ -368,20 +368,17 @@ function BoardPicks({ options, picked, onToggle, locked }: BoardPicksProps) {
         {options.map((category) => {
           const column = picked.indexOf(category);
           return (
-            <label
-              key={category}
-              className={`${CHOICE_TILE} flex min-h-11 items-center gap-3 px-3 py-2 text-lg`}
-            >
+            <label key={category} className={BOARD_PICK}>
               <input
                 type="checkbox"
                 checked={column !== -1}
                 onChange={() => onToggle(category)}
                 disabled={locked || (full && column === -1)}
-                className="size-5 accent-accent"
+                className="size-5 accent-accent-2"
               />
               <span className="min-w-0 flex-1 break-words">{category}</span>
               {column !== -1 && (
-                <span className="shrink-0 font-sans text-base font-semibold">
+                <span className="shrink-0 font-sans text-sm font-bold text-accent-2">
                   Column {column + 1}
                 </span>
               )}

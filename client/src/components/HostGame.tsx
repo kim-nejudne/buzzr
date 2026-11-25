@@ -5,7 +5,7 @@ import { findPick, firstPick, pickerSections, ticketOf } from '../lib/categoryCa
 import { hostableRows } from '../lib/hostable.js';
 import { hostSet } from '../lib/hostRoom.js';
 import { setDetail } from '../lib/setLabels.js';
-import { LANDING_ACTION, LANDING_BUTTON_LINE } from '../lib/ui.js';
+import { HEADING, LANDING_ACTION, LANDING_BUTTON_LINE } from '../lib/ui.js';
 import { BuiltInSetsError } from './BuiltInSetsError.js';
 import { CategoryPicker } from './CategoryPicker.js';
 import { GameBuilder } from './GameBuilder.js';
@@ -181,7 +181,7 @@ export function HostGame({
     >
       {building ? (
         <>
-          <h2 id="pick-heading" className="text-3xl uppercase">
+          <h2 id="pick-heading" className={HEADING}>
             Build a game
           </h2>
           <GameBuilder
@@ -203,7 +203,7 @@ export function HostGame({
       ) : (
         <SetPicker
           heading={
-            <h2 id="pick-heading" className="text-3xl uppercase">
+            <h2 id="pick-heading" className={HEADING}>
               Pick a question set
             </h2>
           }

@@ -5,6 +5,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { BUILT_IN_SETS } from '../../../shared/builtInSets.js';
 import type { QuestionSet } from '../../../shared/types.js';
 import { NO_CATEGORY } from '../lib/setFilter.js';
+import { RULED } from '../lib/ui.js';
 import { SetBrowser } from './SetBrowser.js';
 
 afterEach(cleanup);
@@ -222,10 +223,10 @@ describe('SetBrowser catalogue', () => {
         radio.closest('label')!.firstChild!.nextSibling!.textContent,
       ]);
 
-  it("names the chosen level on the phone's action line, so it is not read as the total (F152)", () => {
+  it('names the chosen level on the action line, so it is not read as the total (F152, F181)', () => {
     renderCatalogue();
     const row = screen.getByRole('group', { name: 'Quiz' });
-    const line = () => row.querySelector('.\\@2xl\\:hidden')!.textContent;
+    const line = () => row.querySelector('.truncate')!.textContent;
     expect(line()).toBe(`Easy · ${sets[2]!.questions.length} questions`);
     fireEvent.click(screen.getByRole('radio', { name: /^Quiz hard/ }));
     expect(line()).toBe(`Hard · ${sets[1]!.questions.length} questions`);
@@ -293,8 +294,7 @@ describe('SetBrowser cards', () => {
     renderCards();
     const animals = within(screen.getByRole('region', { name: 'Animals' }));
     expect(animals.getByRole('list').className).toContain('flex-col');
-    expect(animals.getByRole('list').className).toContain('border-t-4 border-ink');
-    expect(animals.getByRole('list').className).toContain('divide-y');
+    expect(animals.getByRole('list').className).toBe(RULED);
     const row = animals.getAllByRole('listitem')[0]!;
     expect(row.className).not.toContain('bg-surface');
     expect(row.className).toContain('md:flex-row');

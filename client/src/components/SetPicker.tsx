@@ -35,9 +35,9 @@ interface SetPickerProps {
 /**
  * The set picker of **Host a game** and **New game** (LND-02/03/04/06, F131): Back and the heading
  * on top, the cards flowing with the page, and the picked set with the main action always in view.
- * On a phone or tablet that is a bar stuck to the bottom under the ink bar, its emoji in a 44px
- * square; at `lg` a ticket stuck to the right, paper-2 under the ink bar (emoji, tear line, kicker,
- * title, chips; F149). The bar's negative margins
+ * On a phone or tablet that is a bar stuck to the bottom over a rule hairline, its emoji in a 44px
+ * square; at `lg` a ticket stuck to the right, the well in a 2px amber outline on the lead-deep key
+ * edge (emoji, tear line, kicker, title, chips; F149, F181). The bar's negative margins
  * reach the edges of the card or dialog around it, which pads by 24px.
  */
 export function SetPicker({
@@ -81,7 +81,7 @@ export function SetPicker({
         aria-label="Picked set"
         // index.css keeps focus and scrollIntoView above the bar while it is stuck to the bottom.
         data-sticky-bar=""
-        className={`sticky z-10 ${inDialog ? '-bottom-6' : 'bottom-0'} -mx-6 -mb-6 grid grid-cols-[2.75rem_minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1 border-t-4 border-ink bg-bg px-6 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))] lg:top-6 lg:bottom-auto lg:mx-0 lg:mb-0 lg:flex lg:flex-col lg:items-stretch lg:gap-0 lg:self-start lg:bg-surface lg:p-0`}
+        className={`sticky z-10 ${inDialog ? '-bottom-6' : 'bottom-0'} -mx-6 -mb-6 grid grid-cols-[2.75rem_minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1 border-t border-edge bg-bg px-6 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))] lg:top-6 lg:bottom-auto lg:mx-0 lg:mb-0 lg:flex lg:flex-col lg:items-stretch lg:gap-0 lg:self-start lg:rounded-card lg:border-2 lg:border-accent lg:bg-surface lg:p-0 lg:shadow-[0_var(--edge-key)_0_var(--color-lead-deep)]`}
       >
         <span
           aria-hidden="true"
@@ -110,7 +110,7 @@ export function SetPicker({
                 {ticket.chips.map((chip) => (
                   <li
                     key={chip.label}
-                    className={`rounded-pill px-3 py-1 font-sans text-sm font-semibold ${chip.level ? 'bg-accent text-accent-ink' : 'inset-ring-2 inset-ring-ink text-ink'}`}
+                    className={`rounded-pill px-3 py-1 font-sans text-sm font-bold ${chip.level ? 'bg-accent-2 text-accent-2-ink' : 'inset-ring-2 inset-ring-edge text-ink'}`}
                   >
                     {chip.label}
                   </li>

@@ -20,6 +20,7 @@ import {
   type Answer,
   AdminRoutes,
 } from '../test/adminServer.js';
+import { RULED } from '../lib/ui.js';
 import { AdminCategory } from './AdminCategory.js';
 
 const PUBLISH = 'POST /api/admin/categories/Rivers/publish';
@@ -107,7 +108,7 @@ describe('Category page', () => {
     }
     expect(within(easy).getByText('Reviewed').className).toMatch(/\bbg-win\b.*\btext-win-ink\b/);
     // The levels are a ruled listing (F151), not tiles.
-    expect(easy.closest('ul')!.className).toMatch(/border-t-4 border-ink/);
+    expect(easy.closest('ul')!.className).toBe(RULED);
   });
 
   it('lists every level, live or draft, by difficulty then title, each with its count, state and review mark', async () => {

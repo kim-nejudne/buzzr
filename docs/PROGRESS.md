@@ -10,6 +10,42 @@ Handoff log, one entry per feature or bug. Newest first. Template:
 **How to try it:** exact commands / URLs / which devices
 ```
 
+## F181 — Set library and pickers (2026-11-26)
+**What changed:**
+- **Shared classes** (`lib/ui.ts`): new `LEVEL_PILL` (a round 44px pill, a 2px rule ring on the ground, chosen blue), `SET_CARD` (the well on a 2px rule edge) and `HEADING` (amber Antonio capitals). `CHOICE_TILE` moved to the well. `RULED` is now rule hairlines above, between and under the rows (no 4px ink bar).
+- **Category row** (`CategoryRow.tsx`, shared by /sets and the pickers):
+  - Each row sits on the well; the picker's chosen row turns well-2 (`markChosen`). `LevelTile` is a pill, E/M/H below 42rem and the word above it; its count is sr-only.
+  - Below 42rem the row is a wrapping flex row. The name never shrinks below its longest word, so when "Philippine" or "Superheroes" can't sit beside the pills, the pills drop under the name, right-aligned. From 42rem it's the grid as before, with the pills packed to the right of their column.
+  - The emoji column is 24px below 42rem (was 32).
+- **Picker** (`CategoryPicker`, `SetPicker`): set tiles are cards with the title at the foot, a picked one blue. "+ Build a game" is a `SET_CARD`. The "N questions each" line hides below 42rem. The `lg` ticket has a 2px amber outline on the lead-deep key edge and a blue level chip; the phone bar sits over a hairline.
+- **Room created:** the code in four DotGothic tiles, read once as a word. Four text-only option cards, the first amber, four to a row from 56rem. Icons dropped, since the mock has none.
+- **Build a game:** the two modes are buttons, the chosen one blue. Ticked board categories get a blue edge and a blue "Column N". The total is muted Sofia Sans.
+- **/sets:**
+  - Tabs are Sofia Sans; the open one is amber, underlined under label and count alike. Filter chips are round pills, blue when on.
+  - The chosen level's "Easy · N questions" line now shows at every width. On a phone it gets its own line above HOST / PREVIEW / ⋯ instead of being cut to "Easy · 1…".
+  - The My sets empty state lost its ink bar. `HostGame` and `NewGamePicker` headings use `HEADING`.
+- **Tests:** restyle assertions updated in `CategoryPicker`, `SetBrowser`, `Sets`, `Landing`, `AdminCategory` and `AdminLayout` (the last two import `RULED`). New: GameBuilder's blue "Column N" and edge, RoomCreated's four-to-a-row class, and the phone row's wrap rule (`Sets.test.tsx`). 3490 tests. No new dependency.
+
+**Decisions:** two DECISIONS rows dated 2026-11-26 for F181 (category rows and their phone layout; set cards, ticket, Room created, Build a game, tabs and chips).
+
+**Notes for next session:**
+- This resumed an unattended attempt. It had left 5 test files without their `RULED`/`SET_CARD` imports (typecheck red) and 4 files unformatted, and the picker rows at 375 wrapped names mid-word. All fixed.
+- `hyphens-auto` was tried for the names and does nothing in Chromium on Linux, so the wrap rule above replaced it.
+- At 375, /sets rows are 154–170px: the name and pills, the level line, then the actions. They hug their content, with no minimum height and nothing clipped. Picker rows are 64–93px (93 when the pills drop under a long word).
+- **sloplint `--kept`** on `/sets` with `base.css` and `index.css` (`.playtest/F181/kept.txt`): 0 FAIL, 0 REFLEX, 2 WAIVED (accent area, the 56px search field), 2 DISMISSED, 2 WARN ("not compared"). kept: links 5/5, fields 26/26, handlers 67/67, test hooks 2/2, headings 22/22.
+- Main `index` chunk 521.8 → 522.49 kB.
+
+**Playtest:**
+- **Playwright** (playtester agent, 375×812 and 1440×900), measurements only:
+  - /sets: pills are E/M/H at 375 and words at 1440; a picked pill is blue (`oklch(0.68 0.16 255)`); tabs amber and underlined; chips round.
+  - Picker: a chosen level is blue, its row darker, the amber ticket at 1440, the phone's bottom bar showing the pick.
+  - Build a game: the chosen mode is blue; Animals and Movies get blue edges and "Column 1/2".
+  - Room created: 4 code tiles, the first card amber, four in one row at 1440 (2 per row from /sets, a narrower card).
+  - No horizontal scroll and no mid-word breaks at 375. The only console error is the expected `/api/admin/session` 404.
+- **Puppeteer** (`/sets` and the picker at 1440 and 375; `.playtest/F181/sets-*.png`, `picker-*.png`, all viewed): match `sets-pickers-editor.png`.
+
+**How to try it:** `npm run dev`. On a laptop open `http://localhost:5173/sets`, then `/` → **Host a game** (pick a level, **Build a game**, then **Create room**). Repeat on a phone at `http://<LAN-IP>:5173`, or with devtools at 375 wide.
+
 ## F180 — Host remote (2026-11-26)
 **What changed:**
 - **Pairing** (`HostPinEntry.tsx`): "Pair this phone" in amber Antonio, left-aligned. The one PIN input is drawn as six DotGothic code tiles on shade, as Landing's join: the next tile has a blue edge, and all take a stop edge after a wrong PIN. Pair is the primary at Size s across the column.

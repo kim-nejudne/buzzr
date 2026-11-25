@@ -465,13 +465,7 @@ Source: `docs/ux/10-live-review-fixes.md` (every finding from the 2026-11-17 UI/
 
 - [x] F180 Host remote
 
-- [ ] F181 Set library and pickers
-  - Spec: `12` § Surfaces F181; mock `sets-pickers-editor.png`
-  - Depends: F174
-  - Done when:
-    - /sets, CategoryPicker, GameBuilder, NewGamePicker, RoomCreated and HostGame share the category row and set card.
-    - A chosen level is blue. Rows hug their height at 375.
-  - Tests: `Sets.test.tsx` and the picker tests green.
+- [x] F181 Set library and pickers
 
 - [ ] F182 Set editor and answer sheet
   - Spec: `12` § Surfaces F182; mock `sets-pickers-editor.png`

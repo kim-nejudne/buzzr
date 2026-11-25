@@ -7,6 +7,7 @@ import { STARTER_SETS } from '../../../shared/starterSets/index.js';
 import type { QuestionSet } from '../../../shared/types.js';
 import { pickerSections } from '../lib/categoryCards.js';
 import { setDetail } from '../lib/setLabels.js';
+import { RULED } from '../lib/ui.js';
 import { CategoryPicker } from './CategoryPicker.js';
 
 afterEach(cleanup);
@@ -111,22 +112,23 @@ describe('CategoryPicker', () => {
     expect(checkedName()).toBe(SAMPLE_SET.title);
   });
 
-  it('a category is a row of the ruled listing; its levels and the tiles flood teal when picked (F149)', () => {
+  it('a category is a well row of the ruled listing; a chosen level and a picked tile turn blue (F149, F181)', () => {
     renderPicker({ first: 'built-in:starter-animals-medium' });
     const animals = screen.getByRole('group', { name: 'Animals' });
-    // No tile inside a tile: the row has no fill of its own.
-    expect(animals.className).not.toContain('bg-surface');
+    // Each row on the well, the chosen one well-2, hairlines between them (sets-pickers-editor.png).
+    expect(animals.className.split(' ')).toEqual(
+      expect.arrayContaining(['bg-surface', 'has-checked:bg-bg-deep']),
+    );
     expect(animals.textContent).toContain('🐾');
-    // The rows sit under the ink bar, a hairline between them.
-    expect(animals.parentElement!.className).toContain('border-t-4 border-ink');
-    expect(animals.parentElement!.className).toContain('divide-y');
-    for (const name of ['Animals – Medium', SAMPLE_SET.title]) {
-      const tile = screen.getByRole('radio', { name }).closest('label')!;
-      expect(tile.className).toContain('has-checked:bg-accent');
-      expect(tile.className).toContain('has-checked:bg-accent-2');
-      // A choice does not tween.
-      expect(tile.className).not.toContain('transition');
-    }
+    expect(animals.parentElement!.className).toBe(RULED);
+    const pill = screen.getByRole('radio', { name: 'Animals – Medium' }).closest('label')!;
+    expect(pill.className.split(' ')).toEqual(
+      expect.arrayContaining(['rounded-pill', 'size-11', 'has-checked:bg-accent-2']),
+    );
+    const tile = screen.getByRole('radio', { name: SAMPLE_SET.title }).closest('label')!;
+    expect(tile.className.split(' ')).toContain('has-checked:bg-accent-2');
+    // A choice does not tween.
+    for (const label of [pill, tile]) expect(label.className).not.toContain('transition');
     expect(
       screen.getByRole('radio', { name: 'Animals – Medium' }).closest('label')!.textContent,
     ).toBe('Medium');

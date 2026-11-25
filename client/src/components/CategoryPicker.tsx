@@ -13,7 +13,7 @@ import {
   type SetTile,
 } from '../lib/categoryCards.js';
 import { DIFFICULTY_LABELS } from '../lib/setLabels.js';
-import { CHOICE_TILE, INPUT, LABEL, RULED } from '../lib/ui.js';
+import { CHOICE_TILE, INPUT, LABEL, RULED, SET_CARD } from '../lib/ui.js';
 import { CategoryRow, LEVEL_WORD, LevelTile } from './CategoryRow.js';
 import { Icon } from './Icon.js';
 
@@ -79,7 +79,10 @@ export function CategoryPicker({
 
   function tile(item: SetTile) {
     return (
-      <label key={item.key} className={`${CHOICE_TILE} group flex min-w-0 flex-col gap-1 p-3`}>
+      <label
+        key={item.key}
+        className={`${CHOICE_TILE} group flex min-h-32 min-w-0 flex-col justify-end gap-1 p-3`}
+      >
         <input
           type="radio"
           name={name}
@@ -92,7 +95,7 @@ export function CategoryPicker({
         <span aria-hidden="true" className="mb-1 text-3xl leading-none">
           {item.emoji}
         </span>
-        <span className="line-clamp-2 font-sans text-base leading-tight font-semibold break-words">
+        <span className="line-clamp-2 font-sans text-lg leading-tight font-semibold break-words">
           {item.set.title}
         </span>
         <span className="font-sans text-sm font-semibold text-muted group-has-checked:text-ink">
@@ -114,10 +117,13 @@ export function CategoryPicker({
         headingId={`${id}-card-${item.id}`}
         emoji={item.emoji}
         name={item.name}
-        meta={cardMeta(item)}
+        // Beside three 44px pills a phone's name column has no room for it: the chosen level's
+        // count is in the ticket bar, so the line shows from 42rem (F181).
+        meta={<span className="hidden @2xl:inline">{cardMeta(item)}</span>}
         onClick={pickBody}
+        markChosen
       >
-        <div className="grid grid-cols-[repeat(3,2.75rem)] gap-1.5 @2xl:grid-cols-3 @2xl:gap-2">
+        <div className="ml-auto grid grid-cols-[repeat(3,2.75rem)] gap-1.5 @2xl:ml-0 @2xl:grid-cols-[repeat(3,auto)] @2xl:justify-end @2xl:gap-2">
           {DIFFICULTIES.map((level) => {
             const keyed = item.levels[level];
             // A level the category lacks keeps its place, so the tiles line up across rows.
@@ -126,7 +132,7 @@ export function CategoryPicker({
                 <span
                   key={level}
                   aria-hidden="true"
-                  className="flex min-h-11 items-center justify-center rounded-control inset-ring-1 inset-ring-edge text-muted @2xl:justify-start @2xl:px-3"
+                  className="flex size-11 items-center justify-center rounded-pill inset-ring-1 inset-ring-edge text-muted @2xl:w-auto @2xl:px-4"
                 >
                   <span data-initial={DIFFICULTY_LABELS[level][0]} className={LEVEL_WORD}>
                     {DIFFICULTY_LABELS[level]}
@@ -168,16 +174,13 @@ export function CategoryPicker({
       disabled={buildDisabled}
       aria-label="Build a game"
       aria-describedby={`${id}-build-hint`}
-      className="flex min-h-32 flex-col items-center justify-center gap-2 rounded-control border-2 border-ink p-4 text-center text-ink not-disabled:hover:hover-tint not-disabled:active:bg-bg-deep disabled:opacity-40"
+      // A set card, as the tiles beside it (`sets-pickers-editor.png`).
+      className={`${SET_CARD} flex min-h-32 flex-col justify-end gap-1 p-3 text-left`}
     >
-      <span aria-hidden="true" className="font-display text-3xl leading-none">
-        +
+      <span className="font-sans text-lg leading-tight font-semibold">
+        <span aria-hidden="true">+ </span>Build a game
       </span>
-      <span className="font-display text-base font-semibold uppercase">Build a game</span>
-      <span
-        id={`${id}-build-hint`}
-        className="max-w-[18ch] font-sans text-sm font-semibold text-muted"
-      >
+      <span id={`${id}-build-hint`} className="font-sans text-sm font-semibold text-muted">
         Mix categories or make a category board
       </span>
     </button>

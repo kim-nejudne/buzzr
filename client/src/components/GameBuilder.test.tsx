@@ -287,6 +287,12 @@ describe('GameBuilder: Category board mode (F90)', () => {
     tick('Animals');
     tick('Science');
     expect(screen.getByText('Column 1').closest('label')!.textContent).toContain('World History');
+    // A ticked category takes a blue edge and a blue "Column N"; an unticked one keeps the rule (F181).
+    const ticked = screen.getByText('Column 1');
+    expect(ticked.className.split(' ')).toContain('text-accent-2');
+    expect(ticked.closest('label')!.className.split(' ')).toContain(
+      'has-checked:inset-ring-accent-2',
+    );
     fireEvent.click(hostButton());
     await waitFor(() => expect(onHost).toHaveBeenCalledTimes(1));
 

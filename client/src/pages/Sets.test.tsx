@@ -236,12 +236,19 @@ describe('Set list tabs', () => {
     expect(tile.className).not.toContain('border');
   });
 
-  it('on a phone a category is one row: the name beside E, M, H cells, the actions under them (F149)', async () => {
+  it('on a phone a category is one row: the name beside E, M, H cells, the actions under them (F149, F181)', async () => {
     renderSets();
     await card(SAMPLE_SET.title);
     const animals = screen.getByRole('group', { name: 'Animals' });
-    // Two columns below the 42rem container: the name, then the cells; the actions span the next line.
-    expect(animals.className.split(' ')).toContain('grid-cols-[minmax(0,1fr)_auto]');
+    // Below the 42rem container a wrapping row: the name grows but never below its longest word, so a
+    // word is never split (the cells drop under it instead); the actions take the next line.
+    expect(animals.className.split(' ')).toEqual(
+      expect.arrayContaining(['flex', 'flex-wrap', '@2xl:grid']),
+    );
+    const name = screen.getByRole('heading', { name: 'Animals' }).parentElement!.parentElement!;
+    expect(name.className.split(' ')).toEqual(expect.arrayContaining(['min-w-min', 'grow']));
+    const actions = within(animals).getByRole('button', { name: /host/i }).closest('.basis-full');
+    expect(actions).toBeTruthy();
     const words = within(animals)
       .getAllByRole('radio')
       .map((radio) => radio.closest('label')!.querySelector('[data-initial]')!);
@@ -1067,12 +1074,14 @@ describe('Set list /sets, header and tabs (F94)', () => {
       `Built-in ${BUILT_IN_SETS.length}`,
       'My sets 1',
     ]);
-    // Tabs sit under the ink bar with no outline of their own; a chip is an ink-outlined box (F149).
+    // Tabs are Sofia Sans with no outline, the open one amber and underlined; a chip is a round
+    // outlined pill (F181).
     const chip = screen.getByRole('button', { name: 'Easy' });
-    expect(screen.getByRole('tablist').className).toContain('border-t-4 border-ink');
-    expect(tab('My sets').className).toContain('border-transparent');
-    expect(chip.className).toContain('border-ink');
-    expect(chip.className).not.toContain('border-transparent');
+    expect(tab('Built-in').className).toContain('aria-selected:text-accent');
+    expect(tab('My sets').className).not.toMatch(/\bborder/);
+    expect(chip.className.split(' ')).toEqual(
+      expect.arrayContaining(['rounded-pill', 'border-2', 'border-edge']),
+    );
   });
 
   it('a failed card action is a toast, not a message at the top of the page (LIB-04)', async () => {

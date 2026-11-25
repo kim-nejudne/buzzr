@@ -38,10 +38,10 @@ import {
   BUTTON_DANGER,
   LABEL,
   BADGE,
+  HEADING,
   LINK,
   RULED,
 } from '../lib/ui.js';
-import { HOVER } from '../lib/hover.js';
 import {
   deleteBuiltIn,
   exportBuiltIns,
@@ -437,7 +437,7 @@ export function Sets() {
         ← Buzzr
       </Link>
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between xl:flex-1">
-        <h1 className="text-3xl text-ink uppercase md:text-4xl">Question sets</h1>
+        <h1 className={`${HEADING} md:text-4xl`}>Question sets</h1>
         {/* New set first at every size; on a phone, the other two share the row under it (LIB-03). */}
         <div className="grid grid-cols-[1fr_auto] gap-2 sm:flex">
           <button
@@ -552,7 +552,7 @@ export function Sets() {
             error === null && <p className="text-muted">Loading…</p>
           ) : building ? (
             <section aria-labelledby="build-heading" className="flex flex-col gap-4">
-              <h2 id="build-heading" className="text-3xl uppercase">
+              <h2 id="build-heading" className={HEADING}>
                 Build a game
               </h2>
               <GameBuilder
@@ -575,8 +575,9 @@ export function Sets() {
             </section>
           ) : (
             <div className="flex flex-col gap-4">
-              {/* A tab bar, not chips (LIB-05): square tabs under the ink bar, the open one on the teal pass. */}
-              <div role="tablist" aria-label="Question sets" className="flex border-t-4 border-ink">
+              {/* A tab bar, not chips (LIB-05): Sofia Sans tabs, the open one amber on the well with an
+                  amber underline, as the remote's tabs (F180, F181). */}
+              <div role="tablist" aria-label="Question sets" className="flex gap-1">
                 {TABS.map(({ id, label }) => (
                   <button
                     key={id}
@@ -591,11 +592,11 @@ export function Sets() {
                     tabIndex={tab === id ? 0 : -1}
                     onClick={() => setTab(id)}
                     onKeyDown={onTabKey}
-                    className={`flex min-h-11 items-center gap-2 border-2 border-transparent px-3 font-display text-lg font-semibold whitespace-nowrap text-ink-2 uppercase sm:px-4 aria-selected:bg-accent aria-selected:text-accent-ink ${HOVER}`}
+                    className="flex min-h-11 items-center px-3 font-sans text-base font-bold whitespace-nowrap text-muted not-aria-selected:hover:text-ink hover:bg-surface aria-selected:bg-surface aria-selected:text-accent aria-selected:underline aria-selected:decoration-accent aria-selected:decoration-3 aria-selected:underline-offset-8 sm:px-4"
                   >
-                    {label}{' '}
-                    <span className="font-display text-base font-black tabular-nums font-stretch-150% empty:hidden">
-                      {counts[id]}
+                    {/* One run of text, so the open tab's underline runs under the count too. */}
+                    <span>
+                      {label} <span className="tabular-nums empty:hidden">{counts[id]}</span>
                     </span>
                   </button>
                 ))}
@@ -670,7 +671,7 @@ export function Sets() {
                     </>
                   )
                 ) : sets.length === 0 ? (
-                  <p className="border-t-4 border-ink py-8 text-center text-lg text-muted">
+                  <p className="border-y border-edge py-8 text-center text-lg text-muted">
                     No question sets yet. Use <strong className="text-ink">New set</strong> to write
                     one, or duplicate a built-in set.
                   </p>

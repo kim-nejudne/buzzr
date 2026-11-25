@@ -1,25 +1,26 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
-import { HOVER } from '../lib/hover.js';
+import { HEADING } from '../lib/ui.js';
 import { JoinAddress } from './JoinAddress.js';
 import { usePointerFine } from '../lib/usePointerFine.js';
-import { Icon, type IconName } from './Icon.js';
 
 type Option = 'screen' | 'elsewhere' | 'remote' | 'phoneOnly';
 
-const OPTIONS: Record<Option, { icon: IconName; title: string; hint: string }> = {
-  screen: { icon: 'tv', title: 'This is the Screen', hint: 'Show questions on this device' },
-  elsewhere: { icon: 'cast', title: 'Screen elsewhere', hint: 'Open the Screen on a TV or laptop' },
-  remote: { icon: 'remote', title: 'Host remote', hint: 'Control the game from this phone' },
-  phoneOnly: { icon: 'phone', title: 'Phone only', hint: 'No TV: run everything from here' },
+const OPTIONS: Record<Option, { title: string; hint: string }> = {
+  screen: { title: 'This is the Screen', hint: 'Show questions on this device' },
+  elsewhere: { title: 'Screen elsewhere', hint: 'Open the Screen on a TV or laptop' },
+  remote: { title: 'Host remote', hint: 'Control the game from this phone' },
+  phoneOnly: { title: 'Phone only', hint: 'No TV: run everything from here' },
 };
 
-/** A laptop is most likely the Screen; a phone, the remote (LND-05). The first is the ink block. */
+/** A laptop is most likely the Screen; a phone, the remote (LND-05). The first is the amber card. */
 const MOUSE_ORDER: readonly Option[] = ['screen', 'elsewhere', 'remote', 'phoneOnly'];
 const TOUCH_ORDER: readonly Option[] = ['remote', 'phoneOnly', 'screen', 'elsewhere'];
 
-// The press does not tween (design.md Motion): the primary darkens to ink-2, an outline sinks to paper-3.
-const OPTION_CARD = 'flex min-h-11 items-center gap-4 rounded-control p-4 text-left';
+// Option cards (`sets-pickers-editor.png`, F181): the first amber with ground type, the others the
+// well on a 2px rule edge. Hover tints at once and a press sinks; nothing tweens (design.md Motion).
+const OPTION_CARD =
+  'flex min-h-11 flex-col rounded-control p-4 text-left not-disabled:hover:hover-tint';
 
 /** Creating and joining a room, step 2: once the room exists, ask where the Screen is. */
 export function RoomCreated({ code }: { code: string }) {
@@ -44,16 +45,27 @@ export function RoomCreated({ code }: { code: string }) {
       // On the paper, not a tile: its options are the tiles (F139).
       className="@container/room flex flex-col gap-4"
     >
-      <h2 id="host-heading" className="text-3xl uppercase">
+      <h2 id="host-heading" className={HEADING}>
         Room created
       </h2>
-      <p className="text-center font-display text-6xl font-black tracking-[0.1em] text-ink tabular-nums font-stretch-150%">
-        {code}
+      {/* The code in four DotGothic tiles (design.md Controls, Room code); read once, as a word. */}
+      <p>
+        <span className="sr-only">{code}</span>
+        <span aria-hidden="true" className="grid w-full max-w-[22.25rem] grid-cols-4 gap-3">
+          {[...code].map((letter, index) => (
+            <span
+              key={index}
+              className="flex aspect-square items-center justify-center rounded-control border-2 border-edge bg-shade font-outlier text-5xl leading-none text-accent sm:text-6xl"
+            >
+              {letter}
+            </span>
+          ))}
+        </span>
       </p>
-      {/* Two to a row from the card's own width: Landing and Sets give it different widths (B01). */}
-      <div className="grid gap-3 @xl/room:grid-cols-2">
+      {/* Two to a row from the card's own width, four from 56rem: Landing and Sets give it different widths (B01). */}
+      <div className="grid gap-3 @xl/room:grid-cols-2 @4xl/room:grid-cols-4">
         {order.map((option, index) => {
-          const { icon, title, hint } = OPTIONS[option];
+          const { title, hint } = OPTIONS[option];
           const primary = index === 0;
           return (
             <button
@@ -65,40 +77,32 @@ export function RoomCreated({ code }: { code: string }) {
               aria-expanded={option === 'elsewhere' ? showScreenUrl : undefined}
               className={`${OPTION_CARD} ${
                 primary
-                  ? 'bg-ink text-paper not-disabled:hover:bg-accent-hover not-disabled:hover:text-accent-2-ink active:bg-ink-2 active:text-paper'
-                  : `border-2 border-ink text-ink active:bg-bg-deep ${HOVER}`
+                  ? 'bg-accent text-accent-ink active:bg-lead-deep'
+                  : 'border-2 border-edge bg-surface text-ink active:bg-bg-deep'
               }`}
             >
-              <Icon name={icon} className="size-8" />
-              <span className="flex min-w-0 flex-col">
-                <span
-                  id={`room-${option}`}
-                  className="font-display text-lg leading-tight font-semibold uppercase"
-                >
-                  {title}
-                </span>
-                <span
-                  id={`room-${option}-hint`}
-                  className={`text-base ${primary ? '' : 'text-muted'}`}
-                >
-                  {hint}
-                </span>
+              <span id={`room-${option}`} className="font-display text-2xl leading-tight uppercase">
+                {title}
+              </span>
+              <span
+                id={`room-${option}-hint`}
+                className={`text-base ${primary ? '' : 'text-muted'}`}
+              >
+                {hint}
               </span>
             </button>
           );
         })}
       </div>
       {showScreenUrl && (
-        <p className="text-center text-lg text-muted">
+        <p className="text-lg font-semibold text-muted">
           On the TV device, open{' '}
           <strong className="text-ink">
             <JoinAddress url={screenUrl} />
           </strong>
           <br />
           Room code{' '}
-          <strong className="font-display font-black tracking-widest text-ink font-stretch-150%">
-            {code}
-          </strong>
+          <strong className="font-extrabold tracking-widest text-ink tabular-nums">{code}</strong>
         </p>
       )}
     </section>

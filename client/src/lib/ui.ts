@@ -10,16 +10,29 @@ import { HOVER } from './hover.js';
 export const CARD = 'rounded-card bg-surface p-6';
 
 /**
- * A tile or level cell you choose, around a sr-only radio or checkbox: a 2px rule outline inside the
- * box on the well-2, and once chosen it turns the blue answer with ground type (design.md Controls,
- * Chosen). Hover tints at once; nothing tweens. Level cells, picker tiles, board categories.
+ * A set card you choose, around a sr-only radio: the well with a 2px rule outline inside the box, and
+ * once chosen it turns the blue answer with ground type (design.md Controls, Chosen). Hover tints at
+ * once; nothing tweens. The pickers' set tiles (F181).
  */
 export const CHOICE_TILE =
-  'cursor-pointer rounded-control bg-bg-deep inset-ring-2 inset-ring-edge text-ink not-has-checked:not-has-disabled:hover:hover-tint has-checked:bg-accent-2 has-checked:text-accent-2-ink has-checked:inset-ring-accent-2 has-focus-visible:outline-3 has-focus-visible:outline-offset-4 has-focus-visible:outline-focus has-disabled:cursor-default has-disabled:opacity-40';
+  'cursor-pointer rounded-control bg-surface inset-ring-2 inset-ring-edge text-ink not-has-checked:not-has-disabled:hover:hover-tint has-checked:bg-accent-2 has-checked:text-accent-2-ink has-checked:inset-ring-accent-2 has-focus-visible:outline-3 has-focus-visible:outline-offset-4 has-focus-visible:outline-focus has-disabled:cursor-default has-disabled:opacity-40';
 
-/** A ruled listing: a 4px ink bar over it and a hairline under each row. /sets and the pickers (F149); F181 restyles it. */
-export const RULED =
-  'flex flex-col border-t-4 border-ink divide-y divide-edge border-b border-b-edge';
+/**
+ * A level pill around a sr-only radio (design.md Controls, Level pill): round, a 2px rule ring on the
+ * ground, Sofia Sans 700 in ink; a chosen level is blue with ground type (F181).
+ */
+export const LEVEL_PILL =
+  'cursor-pointer rounded-pill bg-bg inset-ring-2 inset-ring-edge font-sans font-bold text-ink not-has-checked:not-has-disabled:hover:hover-tint has-checked:bg-accent-2 has-checked:text-accent-2-ink has-checked:inset-ring-accent-2 has-focus-visible:outline-3 has-focus-visible:outline-offset-4 has-focus-visible:outline-focus has-disabled:cursor-default has-disabled:opacity-40';
+
+/** A set card that is a button (Build a game): the well with a 2px rule edge, ink type (F181). */
+export const SET_CARD =
+  'rounded-control border-2 border-edge bg-surface text-ink not-disabled:hover:hover-tint not-disabled:active:bg-bg-deep disabled:opacity-40';
+
+/** A page or picker heading: Antonio capitals in amber (F181). */
+export const HEADING = 'text-3xl text-accent uppercase';
+
+/** A ruled listing: hairlines on the rule above, between and under its rows (design.md Shapes, F181). */
+export const RULED = 'flex flex-col divide-y divide-edge border-y border-edge';
 
 /** A small label ("First to buzz", "Also buzzed", a category line): Sofia Sans, sentence case, untracked, muted. 14px: the floor (F92). */
 export const LABEL = 'font-sans text-sm font-semibold text-muted';

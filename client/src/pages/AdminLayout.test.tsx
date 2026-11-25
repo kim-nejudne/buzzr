@@ -4,7 +4,7 @@ import { MemoryRouter, Route, Routes } from 'react-router';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { resetAdminSession } from '../lib/adminSession.js';
 import { DESKTOP_QUERY } from '../lib/useMediaQuery.js';
-import { BUTTON_PRIMARY } from '../lib/ui.js';
+import { BUTTON_PRIMARY, RULED } from '../lib/ui.js';
 import {
   AdminRoutes,
   CATEGORIES,
@@ -322,7 +322,7 @@ describe('AdminLayout: the Overprint look (F141, F151)', () => {
     for (const row of [open, other]) expect(row.className).not.toMatch(/\bborder-|\bring-/);
     expect(other.className).not.toMatch(/bg-accent/);
     expect(open.closest('ul')!.className).toMatch(/divide-y/);
-    expect(open.closest('ul')!.className).toMatch(/border-t-4 border-ink/);
+    expect(open.closest('ul')!.className).toBe(RULED);
     expect(document.querySelector('[data-layout="panes"]')!.firstElementChild!.className).toMatch(
       /border-b-4 border-ink/,
     );

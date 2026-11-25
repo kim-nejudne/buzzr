@@ -11,6 +11,7 @@ import { STARTER_SETS } from '../../../shared/starterSets/index.js';
 import type { QuestionSet } from '../../../shared/types.js';
 import { db } from '../lib/db.js';
 import { loadHostToken } from '../lib/hostTokens.js';
+import { SET_CARD } from '../lib/ui.js';
 import { Landing } from './Landing.js';
 import css from '../index.css?raw';
 
@@ -328,7 +329,7 @@ describe('Host a game', () => {
     const labels = row.getAllByRole('radio').map((radio) => radio.closest('label')!);
     expect(labels.map((label) => label.textContent)).toEqual(['Easy', 'Medium', 'Hard']);
     expect(labels[0]!.querySelector('input')!.getAttribute('aria-label')).toBe('Animals – Easy');
-    expect(labels.every((label) => label.className.includes('min-h-11'))).toBe(true);
+    expect(labels.every((label) => label.className.split(' ').includes('size-11'))).toBe(true);
   });
 
   it('a My set and a built-in with the same id both list, and Create room hosts the picked one', async () => {
@@ -477,7 +478,8 @@ describe('Host a game', () => {
     const build = within(picker).getByRole('button', { name: 'Build a game' });
     expect(within(picker).getAllByRole('button')[0]).toBe(back);
     expect(back.className).toContain('min-h-11');
-    expect(build.className).toContain('border-ink');
+    // A set card, as the tiles: the well on a 2px rule edge (F181).
+    expect(build.className).toContain(SET_CARD);
     expect(build.className).not.toContain('dashed');
     // The last tile, after the last category row, not in the header.
     expect(build.parentElement!.lastElementChild).toBe(build);
@@ -518,7 +520,7 @@ describe('Host a game', () => {
     expect(within(summary).getAllByText('Animals')).toHaveLength(1);
     const chips = within(summary).getAllByRole('listitem');
     expect(chips.map((chip) => chip.textContent)).toEqual(['Easy', '15 questions']);
-    expect(chips[0]!.className).toContain('bg-accent');
+    expect(chips[0]!.className.split(' ')).toContain('bg-accent-2');
     // The phone's bar has the same in one line, under the title.
     expect(summary.textContent).toContain('Easy · 15 questions');
     fireEvent.change(screen.getByRole('searchbox', { name: 'Search sets' }), {
@@ -641,11 +643,13 @@ describe('Host a game', () => {
       ['This is the Screen', 'Show questions on this device'],
       ['Screen elsewhere', 'Open the Screen on a TV or laptop'],
     ]);
-    // The first option is the ink block, the others ink outlines (F149).
+    // The first option is the amber card, the others the well on a rule edge (F181).
     expect(screen.getByRole('button', { name: 'Host remote' }).className.split(' ')).toContain(
-      'bg-ink',
+      'bg-accent',
     );
-    expect(screen.getByRole('button', { name: 'Phone only' }).className).not.toContain('bg-ink');
+    expect(screen.getByRole('button', { name: 'Phone only' }).className.split(' ')).toEqual(
+      expect.arrayContaining(['bg-surface', 'border-edge']),
+    );
   });
 
   it('with a mouse, Room created offers This is the Screen first, as the ink block (LND-05)', async () => {
@@ -668,9 +672,11 @@ describe('Host a game', () => {
       ]);
       const region = screen.getByRole('region', { name: 'Room created' });
       expect(region.querySelector('.\\@xl\\/room\\:grid-cols-2')).toBeTruthy();
+      // Four to a row once the card is 56rem wide (F181).
+      expect(region.querySelector('.\\@4xl\\/room\\:grid-cols-4')).toBeTruthy();
       expect(
         screen.getByRole('button', { name: 'This is the Screen' }).className.split(' '),
-      ).toContain('bg-ink');
+      ).toContain('bg-accent');
     } finally {
       Reflect.deleteProperty(window, 'matchMedia');
     }

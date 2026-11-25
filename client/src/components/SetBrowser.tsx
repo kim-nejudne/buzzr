@@ -1,6 +1,5 @@
 import { useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
 import type { QuestionSet } from '../../../shared/types.js';
-import { HOVER } from '../lib/hover.js';
 import { DIFFICULTY_LABELS, questionCount } from '../lib/setLabels.js';
 import {
   DIFFICULTY_CHIPS,
@@ -127,9 +126,10 @@ export function SetBrowser(props: SelectProps | ActionProps | CatalogueProps) {
               meta={questionCount(total)}
               actions={
                 <>
-                  {/* The cells show only E, M, H here, so the chosen level's line goes with its
-                      actions, named, so it can't be read as the row's total (F152). */}
-                  <span className="min-w-0 flex-1 truncate font-sans text-sm font-semibold text-muted @2xl:hidden">
+                  {/* The pills draw the level alone, so the chosen level's line goes with its
+                      actions, named, so it can't be read as the row's total (F152, F181). On a
+                      phone it takes its own line over the buttons, so it is never cut. */}
+                  <span className="min-w-0 grow basis-full truncate font-sans text-sm font-semibold text-muted @2xl:basis-0">
                     {CHIP_LABELS[chipOf(pick)]} · {detail(pick)}
                   </span>
                   <div
@@ -143,7 +143,7 @@ export function SetBrowser(props: SelectProps | ActionProps | CatalogueProps) {
                 </>
               }
             >
-              <div className="flex gap-1.5 @2xl:grid @2xl:auto-cols-[minmax(0,8rem)] @2xl:grid-flow-col @2xl:gap-2">
+              <div className="ml-auto flex gap-1.5 @2xl:ml-0 @2xl:justify-end @2xl:gap-2">
                 {sets.map((set) => (
                   <LevelTile
                     key={keyOf(set)}
@@ -268,7 +268,8 @@ export function SetBrowser(props: SelectProps | ActionProps | CatalogueProps) {
               aria-pressed={filter.difficulties.includes(chip)}
               onClick={() => toggle(chip)}
               disabled={disabled}
-              className={`min-h-11 rounded-control border-2 border-ink px-3 font-display text-base font-semibold text-ink uppercase not-disabled:active:bg-bg-deep disabled:opacity-40 sm:px-4 aria-pressed:bg-accent aria-pressed:text-accent-ink ${HOVER}`}
+              // A round pill, as the level pills; on, the chosen blue (design.md Controls, Level pill).
+              className="min-h-11 rounded-pill border-2 border-edge bg-bg px-4 font-sans text-base font-bold text-ink not-disabled:hover:hover-tint not-disabled:active:bg-bg-deep disabled:opacity-40 aria-pressed:border-accent-2 aria-pressed:bg-accent-2 aria-pressed:text-accent-2-ink"
             >
               {CHIP_LABELS[chip]}
             </button>
