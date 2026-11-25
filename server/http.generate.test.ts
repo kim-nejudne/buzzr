@@ -1699,6 +1699,8 @@ describe('the generation history (F127)', () => {
 
     it('skips a corrupt line, counting it in a warning', async () => {
       const app = await threeJobs();
+      // History appends are queued after a job ends; a read waits for them, so the file holds all three.
+      await app.history();
       const text = await readFile(join(dir, HISTORY_FILE), 'utf8');
       await writeFile(join(dir, HISTORY_FILE), `garbage\n${text}{"endedAt":`);
       const body = (await (await app.history()).json()) as AdminHistoryResponse;
