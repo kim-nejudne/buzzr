@@ -12,6 +12,7 @@ import {
   BUTTON_SMALL,
   CARD,
   FIELD_LABEL,
+  HEADING,
   INPUT,
   LINK,
 } from '../lib/ui.js';
@@ -49,9 +50,9 @@ function SignInForm() {
     <form
       onSubmit={submit}
       aria-labelledby="admin-heading"
-      className={`flex flex-col gap-4 ${CARD} border-t-4 border-ink`}
+      className={`flex flex-col gap-4 ${CARD} border-2 border-edge`}
     >
-      <h1 id="admin-heading" className="text-3xl uppercase">
+      <h1 id="admin-heading" className={HEADING}>
         Admin
       </h1>
       <label htmlFor="admin-password" className={FIELD_LABEL}>
@@ -105,7 +106,7 @@ function AdminHeader({ expiresAt }: { expiresAt: number }) {
       <header className="flex items-center gap-x-6 gap-y-2">
         <Link
           to="/admin"
-          className="mr-auto font-display text-xl font-black whitespace-nowrap text-ink uppercase font-stretch-140% hover:underline lg:text-2xl"
+          className="mr-auto font-display text-xl whitespace-nowrap text-accent uppercase hover:underline lg:text-2xl"
         >
           Buzzr Admin
         </Link>
@@ -184,7 +185,7 @@ function AdminFrame({ expiresAt }: { expiresAt: number }) {
   if (desktop && history) {
     return (
       <div data-layout="full" className="flex h-dvh flex-col">
-        <div className="border-b-4 border-ink px-8 py-3">
+        <div className="border-b-2 border-edge bg-surface px-8 py-3">
           <AdminHeader expiresAt={expiresAt} />
         </div>
         <main className="relative min-w-0 flex-1 overflow-y-auto">
@@ -197,13 +198,13 @@ function AdminFrame({ expiresAt }: { expiresAt: number }) {
   if (desktop) {
     return (
       <div data-layout="panes" className="flex h-dvh flex-col">
-        <div className="border-b-4 border-ink px-8 py-3">
+        <div className="border-b-2 border-edge bg-surface px-8 py-3">
           <AdminHeader expiresAt={expiresAt} />
         </div>
         <div className="flex min-h-0 flex-1">
           <aside
             aria-label="Categories"
-            className="relative flex w-80 shrink-0 flex-col gap-4 overflow-y-auto border-r border-edge p-4 xl:w-90"
+            className="relative flex w-80 shrink-0 flex-col gap-4 overflow-y-auto border-r border-edge bg-surface p-4 xl:w-90"
           >
             <AdminCategories />
           </aside>
@@ -220,7 +221,7 @@ function AdminFrame({ expiresAt }: { expiresAt: number }) {
       data-layout="single"
       className="mx-auto flex min-h-dvh w-full max-w-3xl flex-col gap-6 px-4 py-6 short:py-3 md:px-8 md:py-10"
     >
-      <div className="border-b-4 border-ink pb-3">
+      <div className="border-b-2 border-edge pb-3">
         <AdminHeader expiresAt={expiresAt} />
       </div>
       <BackLink />
@@ -260,14 +261,14 @@ export function AdminLayout() {
     case 'disabled':
       return (
         <Gate>
-          <h1 className="text-3xl uppercase">Admin</h1>
+          <h1 className={HEADING}>Admin</h1>
           <p className="text-lg text-muted">Admin sign-in is not set up on this server.</p>
         </Gate>
       );
     case 'failed':
       return (
         <Gate>
-          <h1 className="text-3xl uppercase">Admin</h1>
+          <h1 className={HEADING}>Admin</h1>
           <p role="alert" className="text-lg text-stop">
             Could not reach the server.
           </p>

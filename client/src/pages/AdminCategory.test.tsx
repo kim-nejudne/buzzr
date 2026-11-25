@@ -94,7 +94,7 @@ afterEach(() => {
 });
 
 describe('Category page', () => {
-  it('names each level in Archivo 600 on a borderless row, its state on a square chip with no border (F141, F151)', async () => {
+  it('names each level in Sofia Sans 600 on a borderless row, its state on a square chip with no border (F141, F151)', async () => {
     await renderAt('/admin/categories/Rivers', { [CATEGORIES]: [catalog([UNREVIEWED])] });
     await screen.findByRole('heading', { level: 1, name: 'Rivers' });
     const easy = cards()[0]!;
@@ -121,8 +121,9 @@ describe('Category page', () => {
       // A live level has no review mark; without a difficulty it cannot be regenerated.
       'Bonus round15 questionsLive',
     ]);
+    // A warning is amber with ground type (F183), never light type on stop.
     expect(within(cards()[1]!).getByText('⚠ 2 short').className).toMatch(
-      /\bbg-warn\b.*\btext-ink\b/,
+      /\bbg-accent\b.*\btext-accent-ink\b/,
     );
     // Each draft links to its level review; the live level has nothing to review.
     expect(cards().map((c) => within(c).queryByRole('link')?.getAttribute('href') ?? null)).toEqual(

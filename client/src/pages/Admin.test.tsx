@@ -291,9 +291,11 @@ describe('Admin category list', () => {
       [...rowLinks()[i]!.querySelectorAll('[title]')].map((d) => d.getAttribute('title'));
     expect(dots(1)).toEqual(['Easy: live', 'Medium: needs review']);
     expect(dots(3)).toEqual(['Easy: live', 'Medium: draft', 'Hard: draft']);
-    // A state is a pass under ink type (F151): orange for review, the red for failed.
-    expect(screen.getByText('Needs review').className).toMatch(/\bbg-warn\b.*\btext-ink\b/);
-    expect(screen.getByText('Failed').className).toMatch(/\bbg-buzz\b.*\btext-buzz-ink\b/);
+    // A state takes ground type on its ink (F183): amber for review, stop for failed.
+    expect(screen.getByText('Needs review').className).toMatch(
+      /\bbg-accent\b.*\btext-accent-ink\b/,
+    );
+    expect(screen.getByText('Failed').className).toMatch(/\bbg-stop\b.*\btext-stop-ink\b/);
   });
 
   it('has no Review, Delete or Regenerate in the list', async () => {

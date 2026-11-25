@@ -33,23 +33,31 @@ import {
 } from '../lib/adminFilters.js';
 import { blockedBy } from '../lib/generationJob.js';
 import { useJobPolling } from '../lib/useJobPolling.js';
-import { HOVER } from '../lib/hover.js';
 import { BADGE, BUTTON_PRIMARY, BUTTON_SMALL, CARD, INPUT, LINK, RULED } from '../lib/ui.js';
 
 const message = (err: unknown) => (err instanceof Error ? err.message : String(err));
 
+/** The level dots (`12` § Surfaces F183): live blue, draft ink, needs review amber, generating muted, failed stop. */
 const DOT_CLASS: Record<DotState, string> = {
-  live: 'bg-win',
+  live: 'bg-accent-2',
   draft: 'bg-ink',
-  review: 'bg-warn',
-  generating: 'bg-transparent motion-safe:animate-pulse',
-  failed: 'bg-buzz',
+  review: 'bg-accent',
+  generating: 'bg-muted motion-safe:animate-pulse',
+  failed: 'bg-stop',
 };
 
+/** A round dot; on the open (blue) row a ground ring keeps a blue or amber dot visible. */
+const DOT =
+  'inline-block size-2.5 rounded-full group-aria-[current=page]:ring-2 group-aria-[current=page]:ring-accent-2-ink';
+
+/**
+ * Ground type on amber and on stop: light type on stop is 3.38:1 (design.md Tokens). Amber is
+ * `!`: Tailwind sorts `bg-accent` before `BADGE`'s `bg-bg-deep`, which would win.
+ */
 const BADGE_CLASS: Record<Badge, string> = {
-  'Needs review': 'bg-warn text-ink',
+  'Needs review': 'bg-accent! text-accent-ink',
   Generating: 'text-muted',
-  Failed: 'bg-buzz text-buzz-ink',
+  Failed: 'bg-stop text-stop-ink',
   Hidden: 'text-muted',
 };
 
@@ -61,7 +69,7 @@ function DotLegend() {
     <p aria-hidden className="flex flex-wrap gap-x-3 font-sans text-sm font-semibold text-muted">
       {LEGEND.map((state) => (
         <span key={state} className="flex items-center gap-1">
-          <span className={`inline-block size-2.5 border-2 border-ink ${DOT_CLASS[state]}`} />
+          <span className={`${DOT} ${DOT_CLASS[state]}`} />
           {DOT_TEXT[state]}
         </span>
       ))}
@@ -92,7 +100,7 @@ function CategoryRow({
         to={categoryRoute(category.name) + search}
         aria-current={open ? 'page' : undefined}
         className={`group flex min-h-11 items-center gap-3 px-3 py-2 ${
-          open ? 'bg-accent text-accent-ink' : 'hover:hover-tint active:bg-bg-deep'
+          open ? 'bg-accent-2 text-accent-2-ink' : 'hover:hover-tint active:bg-bg-deep'
         }`}
       >
         {/* A fixed slot, so names line up whether or not a category has an emoji yet (F130). */}
@@ -100,8 +108,8 @@ function CategoryRow({
           {category.emoji}
         </span>
         <span className="flex min-w-0 flex-1 flex-col">
-          <span className="truncate text-lg text-ink">{category.name}</span>
-          <span className="flex items-center gap-2 text-sm text-muted group-aria-[current=page]:text-ink">
+          <span className="truncate text-lg font-bold">{category.name}</span>
+          <span className="flex items-center gap-2 text-sm text-muted group-aria-[current=page]:text-accent-2-ink">
             {rows.length > 0 && (
               <span className="flex items-center gap-1" aria-hidden>
                 {rows.map((row) => {
@@ -110,7 +118,7 @@ function CategoryRow({
                     <span
                       key={row.kind === 'set' ? row.level.setId : `pending-${row.difficulty}`}
                       title={`${rowName(row)}: ${DOT_TEXT[state]}`}
-                      className={`inline-block size-2.5 border-2 border-ink ${DOT_CLASS[state]}`}
+                      className={`${DOT} ${DOT_CLASS[state]}`}
                     />
                   );
                 })}
@@ -129,7 +137,9 @@ function CategoryRow({
   );
 }
 
-const CHIP = `min-h-11 shrink-0 rounded-control border-2 border-ink px-3 font-display text-base font-semibold whitespace-nowrap text-ink uppercase active:bg-bg-deep aria-pressed:bg-accent aria-pressed:text-accent-ink ${HOVER}`;
+/** A filter chip: a round pill on the ground, blue when on, as /sets' chips (F181). */
+const CHIP =
+  'min-h-11 shrink-0 rounded-pill border-2 border-edge bg-bg px-4 font-sans text-base font-bold whitespace-nowrap text-ink not-disabled:hover:hover-tint active:bg-bg-deep aria-pressed:border-accent-2 aria-pressed:bg-accent-2 aria-pressed:text-accent-2-ink';
 
 /**
  * The search box and count chips above the list (F121). Both live in the URL (`?filter=&q=`), so
@@ -282,7 +292,7 @@ export function AdminCategories({ showCounts = false }: { showCounts?: boolean }
       </div>
       <div role="status" aria-live="polite" className="empty:hidden">
         {job && (
-          <p className={`${CARD} flex flex-col gap-1 border-t-4 border-ink p-4 text-lg`}>
+          <p className={`${CARD} flex flex-col gap-1 border-2 border-edge p-4 text-lg`}>
             <Link
               to={`/admin/generate?job=${encodeURIComponent(job.id)}`}
               className={`${LINK} font-semibold text-ink`}

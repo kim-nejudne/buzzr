@@ -297,7 +297,7 @@ describe('AdminLayout: panes', () => {
   });
 });
 
-describe('AdminLayout: the Overprint look (F141, F151)', () => {
+describe('AdminLayout: the Marquee look (F183)', () => {
   const OCEANS = { ...RIVERS, name: 'Oceans' };
   // A fresh draft no one has reviewed: the list badges it "Needs review" (ADM-03).
   const LAKES = {
@@ -306,7 +306,7 @@ describe('AdminLayout: the Overprint look (F141, F151)', () => {
     levels: [level({ setId: 'lak-e', title: 'Lakes – Easy', status: 'new', reviewed: false })],
   };
 
-  it('from lg: the ink bar under the header, a hairline beside the list; ruled borderless rows, the open one on the teal pass', async () => {
+  it('from lg: the header on the well over a 2px rule, the list on the well; ruled borderless rows, the open one the blue cursor row', async () => {
     stubMedia(DESKTOP_QUERY, HEADER_ROW_QUERY);
     serve(signedIn, { [CATEGORIES]: [catalog([RIVERS, OCEANS]), catalog([RIVERS, OCEANS])] });
     renderAt('/admin/categories/:name', '/admin/categories/Rivers', <AdminCategory />);
@@ -316,19 +316,20 @@ describe('AdminLayout: the Overprint look (F141, F151)', () => {
     const open = await within(list).findByRole('link', { name: /^Rivers/ });
     const other = within(list).getByRole('link', { name: /^Oceans/ });
     expect(open.getAttribute('aria-current')).toBe('page');
-    expect(open.className).toMatch(/\bbg-accent\b/);
-    expect(open.className).toMatch(/\btext-accent-ink\b/);
+    expect(open.className).toMatch(/\bbg-accent-2\b/);
+    expect(open.className).toMatch(/\btext-accent-2-ink\b/);
+    expect(list.className).toMatch(/\bbg-surface\b/);
     expect(open.className).not.toMatch(/mix-blend/);
     for (const row of [open, other]) expect(row.className).not.toMatch(/\bborder-|\bring-/);
     expect(other.className).not.toMatch(/bg-accent/);
     expect(open.closest('ul')!.className).toMatch(/divide-y/);
     expect(open.closest('ul')!.className).toBe(RULED);
     expect(document.querySelector('[data-layout="panes"]')!.firstElementChild!.className).toMatch(
-      /border-b-4 border-ink/,
+      /border-b-2 border-edge bg-surface/,
     );
   });
 
-  it('from lg: the overview figures are Anybody at 150% in tabular figures, each only its number', async () => {
+  it('from lg: the overview figures are DotGothic16 in tabular figures, each only its number', async () => {
     stubMedia(DESKTOP_QUERY, HEADER_ROW_QUERY);
     serve(signedIn, { [CATEGORIES]: [catalog([LAKES, RIVERS]), catalog([LAKES, RIVERS])] });
     renderAt('/admin', '/admin');
@@ -338,16 +339,16 @@ describe('AdminLayout: the Overprint look (F141, F151)', () => {
     const figure = (await within(main).findByText('Needs review', { selector: 'dt' }))
       .nextElementSibling!.firstElementChild!;
     expect(figure.textContent).toBe('1');
-    expect(figure.className).toMatch(/font-display/);
-    expect(figure.className).toMatch(/font-stretch-150%/);
+    expect(figure.className).toMatch(/font-outlier/);
+    expect(figure.className).toMatch(/text-accent/);
     expect(figure.className).toMatch(/tabular-nums/);
     // A figure holds its number and nothing else: the words around it are body type.
-    const figures = [...main.querySelectorAll('.font-display.tabular-nums')];
+    const figures = [...main.querySelectorAll('.font-outlier.tabular-nums')];
     expect(figures.length).toBeGreaterThan(2);
     for (const f of figures) expect(f.textContent).toMatch(/^\$?\d[\d.,]*$/);
   });
 
-  it('a dot is square in an ink ring and a badge has no border; a state is a pass under ink type', async () => {
+  it('a dot is round in its state colour and a badge has no border; a state takes ground type', async () => {
     serve(signedIn, { [CATEGORIES]: [catalog([LAKES, RIVERS])] });
     renderAt('/admin', '/admin');
     const row = await screen.findByRole('link', { name: /^Rivers/ });
@@ -355,11 +356,30 @@ describe('AdminLayout: the Overprint look (F141, F151)', () => {
     const dots = [...row.querySelectorAll('[title]')];
     expect(dots.length).toBeGreaterThan(0);
     for (const dot of dots) {
-      expect(dot.className).not.toMatch(/accent|rounded-full/);
-      expect(dot.className).toMatch(/border-ink/);
+      expect(dot.className).toMatch(/rounded-full/);
+      expect(dot.className).not.toMatch(/\bborder/);
     }
+    // `12` § Surfaces F183: live blue, draft ink, needs review amber.
+    const dotOf = (link: HTMLElement, title: string) =>
+      link.querySelector(`[title="${title}"]`)!.className;
+    expect(dotOf(row, 'Easy: live')).toMatch(/\bbg-accent-2\b/);
+    expect(dotOf(lakes, 'Easy: needs review')).toMatch(/\bbg-accent\b/);
     const badge = within(lakes).getByText('Needs review');
     expect(badge.className).not.toMatch(/\bborder/);
-    expect(badge.className).toMatch(/\bbg-warn\b.*\btext-ink\b/);
+    expect(badge.className).toMatch(/\bbg-accent\b.*\btext-accent-ink\b/);
+  });
+
+  it('the legend draws each state in its `12` colour: live blue, draft ink, review amber, generating muted, failed stop', async () => {
+    serve(signedIn, { [CATEGORIES]: [catalog([LAKES, RIVERS])] });
+    renderAt('/admin', '/admin');
+    await screen.findByRole('link', { name: /^Rivers/ });
+    const dotFor = (word: string) =>
+      [...document.querySelectorAll('p[aria-hidden] > span')].find((s) => s.textContent === word)!
+        .firstElementChild!.className;
+    expect(dotFor('live')).toMatch(/\bbg-accent-2\b/);
+    expect(dotFor('draft')).toMatch(/\bbg-ink\b/);
+    expect(dotFor('needs review')).toMatch(/\bbg-accent\b/);
+    expect(dotFor('generating')).toMatch(/\bbg-muted\b/);
+    expect(dotFor('failed')).toMatch(/\bbg-stop\b/);
   });
 });

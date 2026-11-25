@@ -841,9 +841,10 @@ describe('Review footer and card layout (F122)', () => {
     await screen.findByRole('heading', { level: 1, name: 'Medium' });
     const footerEl = screen.getByRole('contentinfo', { name: 'Review progress' });
     expect(footerEl.className).toMatch(/\bsticky\b/);
-    // On the stock under the 4px ink bar, as the remote's action bar (F151).
-    expect(footerEl.className).toMatch(/\bborder-t-4\b/);
-    expect(footerEl.className).toMatch(/\bborder-ink\b/);
+    // The well under a 2px rule, as the mock's footer (F183).
+    expect(footerEl.className).toMatch(/\bborder-t-2\b/);
+    expect(footerEl.className).toMatch(/\bborder-edge\b/);
+    expect(footerEl.className).toMatch(/\bbg-surface\b/);
     expect(footerEl.className).toMatch(/\bbottom-0\b/);
     expect(footerEl.className).toMatch(/short:flex-row/);
     expect(footerEl.parentElement!.lastElementChild).toBe(footerEl);
@@ -922,13 +923,13 @@ describe('Duplicate and long-text warnings (F123)', () => {
       'Same answer as Easy Q2',
       'Nearly the same question as Easy Q2',
     ]);
-    // Ink type; the warning mark sits on the orange pass (F151).
+    // Ink type; the warning mark is amber (F183).
     expect(lines[0]!.className).toMatch(/text-ink/);
-    expect(lines[0]!.querySelector('svg')!.getAttribute('class')).toMatch(/bg-warn/);
+    expect(lines[0]!.querySelector('svg')!.getAttribute('class')).toMatch(/bg-accent/);
     expect(warningsOf(1)).toBeNull();
     expect(warningsOf(3)).toBeNull();
     const footer = within(screen.getByRole('contentinfo', { name: 'Review progress' }));
-    expect(footer.getByText('2 warnings').className).toMatch(/\bbg-warn\b.*\btext-ink\b/);
+    expect(footer.getByText('2 warnings').className).toMatch(/\bbg-accent\b.*\btext-accent-ink\b/);
     expect(
       (footer.getByRole('button', { name: 'Mark Medium reviewed' }) as HTMLButtonElement).disabled,
     ).toBe(false);

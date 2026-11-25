@@ -469,13 +469,7 @@ Source: `docs/ux/10-live-review-fixes.md` (every finding from the 2026-11-17 UI/
 
 - [x] F182 Set editor and answer sheet
 
-- [ ] F183 Admin
-  - Spec: `12` § Surfaces F183; mock `admin.png`
-  - Depends: F174
-  - Done when:
-    - Every admin route is restyled.
-    - Figures are DotGothic16 and show only their own numbers. Status dots follow `12`.
-  - Tests: the admin suites green.
+- [x] F183 Admin
 
 - [ ] F184 Redesign sweep and handoff
   - Spec: `12` § Surfaces F184; `redesign.md` § After

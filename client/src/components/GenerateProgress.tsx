@@ -44,7 +44,11 @@ function StepBar({ job }: { job: GenerateJob }) {
                   data-step={state}
                   title={k === 0 ? 'Write' : 'Check'}
                   className={`relative h-3 flex-1 overflow-hidden ${
-                    state === 'done' ? 'bg-ink' : state === 'running' ? 'bg-accent' : 'bg-bg-deep'
+                    state === 'done'
+                      ? 'bg-accent-2'
+                      : state === 'running'
+                        ? 'bg-accent'
+                        : 'bg-bg-deep'
                   }`}
                 >
                   {state === 'running' && (
@@ -95,6 +99,16 @@ function levelStatusText(level: LevelProgress): string {
   }
 }
 
+/** Done is the answer blue, in progress the lead amber, each with its word (design.md Rules, F183). */
+const LEVEL_TONE: Record<LevelProgress['status'], string> = {
+  done: 'text-accent-2',
+  running: 'text-accent',
+  waiting: '',
+  failed: '',
+  cancelled: '',
+  skipped: '',
+};
+
 function Checklist({ job }: { job: GenerateJob }) {
   return (
     <ul aria-label="Levels" className="flex flex-col gap-2">
@@ -107,14 +121,14 @@ function Checklist({ job }: { job: GenerateJob }) {
         >
           <span
             aria-hidden="true"
-            className={`w-5 text-center ${level.status === 'done' ? 'text-ink' : ''} ${
-              level.status === 'running' ? 'text-ink motion-safe:animate-pulse' : ''
+            className={`w-5 text-center ${LEVEL_TONE[level.status]} ${
+              level.status === 'running' ? 'motion-safe:animate-pulse' : ''
             }`}
           >
             {MARK[level.status]}
           </span>
           <span className="font-semibold">{DIFFICULTY_LABELS[level.difficulty]}</span>
-          <span>{levelStatusText(level)}</span>
+          <span className={LEVEL_TONE[level.status]}>{levelStatusText(level)}</span>
         </li>
       ))}
     </ul>
@@ -151,7 +165,7 @@ export function GenerateProgress({ job, cancelling, actions }: GenerateProgressP
   return (
     <section
       aria-labelledby="generate-heading"
-      className={`flex flex-col gap-5 ${CARD} border-t-4 border-ink`}
+      className={`flex flex-col gap-5 ${CARD} border-2 border-accent`}
     >
       <h1 id="generate-heading" className="text-2xl break-words uppercase">
         {job.kind === 'generate' ? 'Generating' : 'Regenerating'} {jobTitle(job)}

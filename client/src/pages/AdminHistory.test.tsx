@@ -100,9 +100,10 @@ describe('AdminHistory (F128)', () => {
     expect(tile('Last 30 days')).toBe('$1.92');
     expect(tile('All time')).toBe('$12.50');
     expect(tile('Jobs')).toBe('2');
-    // Gabarito in tabular figures (F141).
+    // DotGothic16 in tabular figures, never under 40px (F183).
     const figure = main().getByText('$12.50');
-    expect(figure.className).toMatch(/font-display/);
+    expect(figure.className).toMatch(/font-outlier/);
+    expect(figure.className).toMatch(/text-\[40px\]/);
     expect(figure.className).toMatch(/tabular-nums/);
   });
 
@@ -140,6 +141,9 @@ describe('AdminHistory (F128)', () => {
       ],
       [whenText(T), 'Rivers', 'Generate', 'Easy 15, Medium 15', '28 of 30', '$0.04', 'Done'],
     ]);
+    // Each outcome with its word in its state colour (F183): Done blue, Failed stop.
+    expect(screen.getByText('Done').className).toMatch(/\btext-accent-2\b/);
+    expect(screen.getByText('Failed').className).toMatch(/\btext-stop\b/);
     // The header's History marks the open page.
     const link = within(screen.getByRole('banner')).getByRole('link', { name: 'History' });
     expect(link.getAttribute('aria-current')).toBe('page');

@@ -206,6 +206,9 @@ describe('/admin/generate', () => {
       'Replacing dropped questionsMedium, level 2 of 2',
     );
     expect(checklist()).toEqual(['✓EasyDone · 13 of 15', '●MediumIn progress']);
+    // Done is blue and in progress amber, each with its word (F183).
+    expect(screen.getByText('Done · 13 of 15').className).toMatch(/\btext-accent-2\b/);
+    expect(screen.getByText('In progress').className).toMatch(/\btext-accent\b/);
     expect(screen.getByText('under $0.01 so far')).toBeTruthy();
   });
 

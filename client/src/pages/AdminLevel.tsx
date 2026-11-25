@@ -67,6 +67,7 @@ import {
   CARD,
   FIELD,
   FIELD_LABEL,
+  HEADING,
   LABEL,
   LINK,
   RULED,
@@ -616,7 +617,7 @@ function QuestionCard({
           <ul aria-label={`Warnings for question ${number}`} className="flex flex-col gap-1">
             {warnings.map((line) => (
               <li key={line} className="flex items-start gap-1.5 font-semibold text-ink">
-                <Icon name="warning" className="mt-0.5 size-5 shrink-0 bg-warn" />
+                <Icon name="warning" className="mt-0.5 size-5 shrink-0 bg-accent" />
                 {line}
               </li>
             ))}
@@ -937,7 +938,7 @@ function LevelReview({ name, setId }: { name: string; setId: string }) {
     return (
       <div className="flex flex-col gap-3">
         {back}
-        <h1 className="text-3xl uppercase">Review</h1>
+        <h1 className={HEADING}>Review</h1>
         <p role="alert" className="text-lg text-stop">
           {loaded.error}
         </p>
@@ -951,7 +952,7 @@ function LevelReview({ name, setId }: { name: string; setId: string }) {
     return (
       <div className="flex flex-col gap-3">
         {back}
-        <h1 className="text-3xl break-words uppercase">
+        <h1 className={`break-words ${HEADING}`}>
           {loaded.kind === 'live' ? loaded.set.title : 'Review'}
         </h1>
         <p className="text-lg">
@@ -1025,7 +1026,7 @@ function LevelReview({ name, setId }: { name: string; setId: string }) {
     <>
       <div className="flex flex-col gap-1">
         {back}
-        <h1 className="text-3xl uppercase">{level}</h1>
+        <h1 className={HEADING}>{level}</h1>
         <p className="text-muted">
           {count} {count === 1 ? 'question' : 'questions'}
         </p>
@@ -1079,7 +1080,7 @@ function LevelReview({ name, setId }: { name: string; setId: string }) {
               Could not add a question: {job.error}
             </p>
           ) : job.kind === 'queued' || job.kind === 'running' ? (
-            <div key={job.jobId} className={`${CARD} border-t-4 border-ink p-4`}>
+            <div key={job.jobId} className={`${CARD} border-2 border-edge p-4`}>
               <JobLine
                 job={job}
                 doing="Writing a new question"
@@ -1094,7 +1095,7 @@ function LevelReview({ name, setId }: { name: string; setId: string }) {
           ) : null,
         )}
         {adding ? (
-          <div className={`${CARD} border-t-4 border-ink p-4`}>
+          <div className={`${CARD} border-2 border-edge p-4`}>
             <NoteForm
               id="add-note"
               label="Anything the new question should be? (optional)"
@@ -1145,7 +1146,7 @@ function LevelReview({ name, setId }: { name: string; setId: string }) {
           at the end of the page, sits after the content, so nothing can hide under it. */}
       <footer
         aria-label="Review progress"
-        className="sticky bottom-0 z-10 -mx-4 flex flex-col gap-2 border-t-4 border-ink bg-bg px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:flex-row sm:items-center sm:gap-4 short:flex-row short:items-center short:gap-4 short:pt-2 short:pb-2 md:-mx-8 md:px-8"
+        className="sticky bottom-0 z-10 -mx-4 flex flex-col gap-2 border-t-2 border-edge bg-surface px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:flex-row sm:items-center sm:gap-4 short:flex-row short:items-center short:gap-4 short:pt-2 short:pb-2 md:-mx-8 md:px-8"
       >
         {/* At `short:` the progress and what is left share one line, the latter in brief. */}
         <div className="flex min-w-0 flex-col sm:mr-auto short:mr-auto short:flex-row short:items-baseline short:gap-3">
@@ -1155,7 +1156,7 @@ function LevelReview({ name, setId }: { name: string; setId: string }) {
             </p>
           )}
           {warned > 0 && (
-            <p className="self-start bg-warn px-1.5 font-semibold text-ink">
+            <p className="self-start bg-accent px-1.5 font-semibold text-accent-ink">
               {warned} {warned === 1 ? 'warning' : 'warnings'}
             </p>
           )}

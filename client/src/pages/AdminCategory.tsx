@@ -37,6 +37,7 @@ import {
   BUTTON_PRIMARY,
   BUTTON_SMALL,
   CARD,
+  HEADING,
   LINK,
   RULED,
 } from '../lib/ui.js';
@@ -58,7 +59,7 @@ const STATUS_CLASS: Record<LevelStatus, string> = {
   draft: 'text-ink',
   new: 'text-ink',
   generating: 'text-muted',
-  failed: 'bg-buzz text-buzz-ink',
+  failed: 'bg-stop text-stop-ink',
 };
 
 const pill = (extra: string) => `${BADGE} ${extra}`;
@@ -97,7 +98,7 @@ function LevelRow({ category, row, regenerateOff, onRegenerate }: LevelRowProps)
         (short ? (
           <span>
             {countText(level)}{' '}
-            <span className="bg-warn px-1.5 font-semibold text-ink">
+            <span className="bg-accent px-1.5 font-semibold text-accent-ink">
               ⚠ {level.wanted! - level.questions} short
             </span>
           </span>
@@ -216,7 +217,7 @@ function CategoryPage({ category, generation, onChanged }: CategoryPageProps) {
           emoji={category.emoji}
           onSave={(emoji) => setCategoryEmoji(category.name, emoji).then(onChanged)}
         />
-        <h1 className="min-w-0 text-3xl break-words uppercase">{category.name}</h1>
+        <h1 className={`min-w-0 break-words ${HEADING}`}>{category.name}</h1>
       </div>
       {category.hidden && (
         <p className="text-lg text-muted">
@@ -225,7 +226,7 @@ function CategoryPage({ category, generation, onChanged }: CategoryPageProps) {
         </p>
       )}
       {running && shown && (
-        <p className={`${CARD} flex flex-col gap-1 border-t-4 border-ink p-4 text-lg`}>
+        <p className={`${CARD} flex flex-col gap-1 border-2 border-edge p-4 text-lg`}>
           <Link to={generateRoute(running.id)} className={`${LINK} font-semibold text-ink`}>
             Generating {category.name}
           </Link>
@@ -344,7 +345,7 @@ function CategoryLoader({ name }: { name: string }) {
   if (data === undefined) {
     return loadError ? (
       <div className="flex flex-col gap-3">
-        <h1 className="text-3xl break-words uppercase">{name}</h1>
+        <h1 className={`break-words ${HEADING}`}>{name}</h1>
         <p role="alert" className="text-lg text-stop">
           {loadError}
         </p>
@@ -359,7 +360,7 @@ function CategoryLoader({ name }: { name: string }) {
   if (data.category === null) {
     return (
       <>
-        <h1 className="text-3xl uppercase">Category</h1>
+        <h1 className={HEADING}>Category</h1>
         <p className="text-lg">There is no category with this name.</p>
         <Link to="/admin" className={`${LINK} text-lg`}>
           Back to Admin

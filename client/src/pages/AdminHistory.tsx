@@ -14,7 +14,7 @@ import {
 } from '../lib/adminHistory.js';
 import { cost } from '../lib/generationJob.js';
 import { useDesktopLayout } from '../lib/useMediaQuery.js';
-import { BUTTON_SMALL, FIGURE, LABEL, LINK } from '../lib/ui.js';
+import { BUTTON_SMALL, FIGURE, HEADING, LABEL, LINK } from '../lib/ui.js';
 
 const message = (err: unknown) => (err instanceof Error ? err.message : String(err));
 
@@ -34,13 +34,16 @@ function CategoryName({ entry, existing }: { entry: GenerationHistoryEntry; exis
   );
 }
 
+/** Done is the answer blue, Failed is stop, each with its word (design.md Rules). */
+const OUTCOME_CLASS: Record<GenerationHistoryEntry['outcome'], string> = {
+  done: 'text-accent-2',
+  failed: 'text-stop',
+  cancelled: 'text-muted',
+};
+
 function Outcome({ entry }: { entry: GenerationHistoryEntry }) {
   return (
-    <span
-      className={
-        entry.outcome === 'failed' ? 'bg-buzz px-1.5 font-semibold text-buzz-ink' : undefined
-      }
-    >
+    <span className={`font-semibold ${OUTCOME_CLASS[entry.outcome]}`}>
       {outcomeText(entry.outcome)}
     </span>
   );
@@ -62,7 +65,7 @@ function HistoryTable({
   existing: Existing;
 }) {
   return (
-    <table className="w-full border-collapse border-t-4 border-ink text-left text-lg">
+    <table className="w-full border-collapse border-t-2 border-edge text-left text-lg">
       <thead>
         <tr className="border-b border-edge">
           {['When', 'Category', 'Kind', 'Levels', 'Saved', 'Cost', 'Outcome'].map((h) => (
@@ -105,7 +108,7 @@ function HistoryRows({
   existing: Existing;
 }) {
   return (
-    <ul aria-label="Generations" className="flex flex-col border-t-4 border-ink">
+    <ul aria-label="Generations" className="flex flex-col border-t-2 border-edge">
       {entries.map((entry, i) => (
         <li
           key={`${entry.endedAt}-${i}`}
@@ -172,7 +175,7 @@ export function AdminHistory() {
   }, [refresh]);
 
   const heading = (
-    <h1 id="history-heading" className="text-3xl uppercase">
+    <h1 id="history-heading" className={HEADING}>
       History
     </h1>
   );
@@ -210,18 +213,18 @@ export function AdminHistory() {
   return (
     <section aria-labelledby="history-heading" className="flex flex-col gap-6">
       {heading}
-      <dl className="grid grid-cols-2 gap-x-6 border-t-4 border-ink lg:grid-cols-4">
+      <dl className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <AdminTile label="Today">
-          <span className={`${FIGURE} text-3xl`}>{cost(totals.todayUsd)}</span>
+          <span className={FIGURE}>{cost(totals.todayUsd)}</span>
         </AdminTile>
         <AdminTile label="Last 30 days">
-          <span className={`${FIGURE} text-3xl`}>{cost(totals.last30DaysUsd)}</span>
+          <span className={FIGURE}>{cost(totals.last30DaysUsd)}</span>
         </AdminTile>
         <AdminTile label="All time">
-          <span className={`${FIGURE} text-3xl`}>{cost(totals.allTimeUsd)}</span>
+          <span className={FIGURE}>{cost(totals.allTimeUsd)}</span>
         </AdminTile>
         <AdminTile label="Jobs">
-          <span className={`${FIGURE} text-3xl`}>{totals.jobs}</span>
+          <span className={FIGURE}>{totals.jobs}</span>
         </AdminTile>
       </dl>
       {entries.length === 0 ? (

@@ -15,7 +15,7 @@ import {
   startGeneration,
 } from '../lib/adminCategories.js';
 import { blockedBy, ended, unsavedLevels } from '../lib/generationJob.js';
-import { BUTTON_OUTLINE, BUTTON_PRIMARY, BUTTON_SMALL, CARD } from '../lib/ui.js';
+import { BUTTON_OUTLINE, BUTTON_PRIMARY, BUTTON_SMALL, CARD, HEADING } from '../lib/ui.js';
 
 /** How often a running job is asked for its progress, as on the dashboard before (F111). */
 export const JOB_POLL_MS = 2000;
@@ -143,8 +143,8 @@ function JobView({ jobId, onFollow }: FollowProps & { jobId: string }) {
 
   if (gone) {
     return (
-      <section className={`flex flex-col gap-4 ${CARD} border-t-4 border-ink`}>
-        <h1 className="text-2xl uppercase">Generation</h1>
+      <section className={`flex flex-col gap-4 ${CARD} border-2 border-edge`}>
+        <h1 className={HEADING}>Generation</h1>
         <p role="alert" className="text-lg text-stop">
           {gone}
         </p>

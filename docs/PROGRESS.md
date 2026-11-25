@@ -10,6 +10,36 @@ Handoff log, one entry per feature or bug. Newest first. Template:
 **How to try it:** exact commands / URLs / which devices
 ```
 
+## F183 — Admin (2026-11-26)
+**What changed:**
+- **Figures** (`lib/ui.ts`): `FIGURE` is DotGothic16 amber, tabular, 40px on a phone and 48px from `sm` (was Anybody at 150%). New `FIGURE_SMALL` (Sofia Sans 800) for the replacements line under 40px. `AdminTile` is a well box on a 2px rule edge with the figure over its label (was a ruled cell under a 4px ink bar). Overview and History lay them out in a gapped grid.
+- **Category list** (`AdminCategories.tsx`): round dots, with live blue, draft ink, review amber, generating muted and failed stop (were square in an ink ring, review on the orange pass, failed amber after F174). The open row is the blue cursor row, and its dots take a ground ring. Needs review is amber and Failed is stop, both with ground type. Filter chips are /sets' round pills.
+- **Shell** (`AdminLayout.tsx`): "Buzzr Admin" in amber Antonio. The header and list pane are the well, and the 4px ink bars are now 2px rule edges. The sign-in card has a rule edge with an amber `HEADING`.
+- **Pages:** every admin h1 is `HEADING`.
+  - Category: "⚠ N short" amber and Failed stop.
+  - Level review: warnings and the warning icon amber. The sticky footer is the well under a 2px rule. Job cards have a rule edge.
+  - History: Done blue, Failed stop type, and the table and rows under a 2px rule.
+  - Generate: the form on a rule edge with blue checkboxes. The progress card has an amber outline, with done steps blue and the running one amber. `EmojiPicker`'s chosen cell is blue, and its popover has a rule edge.
+- **Tests:** restyle assertions updated in `Admin`, `AdminLayout`, `AdminCategory`, `AdminHistory` and `AdminLevel`. New tests: the legend's five dot colours (`AdminLayout.test.tsx`), the history outcome colours, and the progress tones (`AdminGenerate.test.tsx`). 3492 tests. No new dependency.
+
+**Decisions:** two DECISIONS rows dated 2026-11-26 for F183 (figures; dots, badges and states).
+
+**Notes for next session:**
+- A dollar figure renders "$0. 00", because DotGothic's point is wide. The mock draws it the same way ("$0. 40"), so it was kept.
+- Left today keeps its replacements line, unlike the mock's single "4 of 6". The mock's "Left today: levels" caption was not used, because it would drop the replacements line.
+- The `bg-win`/`text-win-ink` aliases (the answer blue) are left in `Admin.tsx`, `AdminCategory.tsx` and `AdminLevel.tsx`. The level spinner stays ink. F184's sweep could rename them.
+- Review found no Must-fix. Should-fixes fixed: the outcome and progress tone tests, and the records. Not changed, and recorded: the ink h2s, and the `bg-win` aliases.
+- **sloplint `--kept`** (render tier, `/admin` sign-in; the 12 changed files plus `index.css`/`base.css`; `.playtest/F183/sloplint.txt`): 0 FAIL, 0 REFLEX, 1 WAIVED (the 56px field), 1 DISMISSED (text-wrap on heads). 2 WARN are "not compared", because this run rendered only `/admin`. Kept: links 16/16, fields 1/1, handlers 63/63, headings 1/1. Before: 23 FAIL.
+
+**Playtest:**
+- **Puppeteer** (`.playtest/F183/shots.mjs`, all shots viewed): the dev server ran with `ADMIN_PASSWORD_HASH` for "playtest", `GENERATE_FAKE=1` and `DATA_DIR=.playtest/F183/data` (a copy of `.playtest/F141data`).
+  - Sign-in, the overview, a category, a level review, history and generate with live progress, at 1440×900 and 375×667. No horizontal scroll anywhere.
+  - The overview figure computes to DotGothic16 48px amber.
+  - `check.mjs`: the open row's name is ground on blue, and the badge is amber. The first shot showed the badge dark, which led to the `bg-accent!` fix.
+  - The only console error is the signed-out 401 from the session check.
+
+**How to try it:** `ADMIN_PASSWORD_HASH="$(printf 'pw\n' | npm run -s admin:hash)" GENERATE_FAKE=1 npm run dev`, then `http://localhost:5173/admin` (password `pw`) on a laptop and at 375 wide. Open a category, a draft level and History, then **+ Add category** → **Generate** to watch the progress card.
+
 ## F182 — Set editor and answer sheet (2026-11-26)
 **What changed:**
 - **Editor** (`SetEditor.tsx`):

@@ -12,7 +12,7 @@ import { needsReview, overviewCounts } from '../lib/adminFilters.js';
 import { loadHistory } from '../lib/adminHistory.js';
 import { cost, GENERATION_OFF_TEXT } from '../lib/generationJob.js';
 import { useJobPolling } from '../lib/useJobPolling.js';
-import { BUTTON_SMALL, FIGURE, LINK, RULED } from '../lib/ui.js';
+import { BUTTON_SMALL, FIGURE, FIGURE_SMALL, HEADING, LINK, RULED } from '../lib/ui.js';
 
 const message = (err: unknown) => (err instanceof Error ? err.message : String(err));
 
@@ -29,7 +29,7 @@ function Spend({
 }) {
   if (totals === null) return <span className="text-lg text-muted">…</span>;
   if (totals === 'failed') return <span className="text-lg text-muted">Could not read</span>;
-  return <span className={`${FIGURE} text-4xl`}>{cost(pick(totals))}</span>;
+  return <span className={FIGURE}>{cost(pick(totals))}</span>;
 }
 
 /**
@@ -102,15 +102,15 @@ export function AdminOverview() {
 
   return (
     <section aria-labelledby="overview-heading" className="flex flex-col gap-4">
-      <h1 id="overview-heading" className="text-3xl uppercase">
+      <h1 id="overview-heading" className={HEADING}>
         Overview
       </h1>
-      <dl className="grid grid-cols-3 gap-x-6 border-t-4 border-ink">
+      <dl className="grid grid-cols-3 gap-3">
         <Tile label="Needs review">
-          <span className={`${FIGURE} text-4xl`}>{counts.review}</span>
+          <span className={FIGURE}>{counts.review}</span>
         </Tile>
         <Tile label="Generating">
-          <span className={`${FIGURE} text-4xl`}>{counts.generating}</span>
+          <span className={FIGURE}>{counts.generating}</span>
         </Tile>
         <Tile label="Left today">
           {generation.enabled ? (
@@ -119,9 +119,11 @@ export function AdminOverview() {
                 <span className={FIGURE}>{left(generation)}</span> of{' '}
                 <span className={FIGURE}>{generation.dailyLimit}</span> levels
               </span>
+              {/* Under 40px, so Sofia Sans figures (design.md Rules). */}
               <span className="text-lg">
-                <span className={FIGURE}>{left(generation.replacements)}</span> of{' '}
-                <span className={FIGURE}>{generation.replacements.dailyLimit}</span> replacements
+                <span className={FIGURE_SMALL}>{left(generation.replacements)}</span> of{' '}
+                <span className={FIGURE_SMALL}>{generation.replacements.dailyLimit}</span>{' '}
+                replacements
               </span>
             </>
           ) : (

@@ -44,8 +44,11 @@ export const FIELD_LABEL = 'font-sans font-semibold text-ink';
 export const BADGE =
   'shrink-0 rounded-pill bg-bg-deep px-2 font-sans text-sm font-semibold whitespace-nowrap';
 
-/** An admin figure (a count, a dollar sum): the display face in tabular figures, so columns of them line up (F141). F183 sets them in DotGothic16. */
-export const FIGURE = 'font-display font-black font-stretch-150% tabular-nums';
+/** An admin figure (a count, a dollar sum): DotGothic16 amber in tabular figures, 40px on a phone and 48px from `sm`, never under 40 (design.md Rules, F183). It holds its number alone. */
+export const FIGURE = 'font-outlier text-[40px] leading-none sm:text-5xl text-accent tabular-nums';
+
+/** A figure under 40px, where DotGothic smears: Sofia Sans 800 in tabular figures (design.md Rules, F183). */
+export const FIGURE_SMALL = 'font-sans font-extrabold tabular-nums';
 
 /** A chip: the well and a 2px rule border, round. */
 export const PILL = 'rounded-pill border-2 border-edge bg-surface';

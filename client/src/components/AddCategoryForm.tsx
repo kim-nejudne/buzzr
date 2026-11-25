@@ -10,7 +10,7 @@ import {
 } from '../../../shared/constants.js';
 import type { Difficulty } from '../../../shared/types.js';
 import { startGeneration } from '../lib/adminCategories.js';
-import { BUTTON_PRIMARY, CARD, FIELD, FIELD_LABEL } from '../lib/ui.js';
+import { BUTTON_PRIMARY, CARD, FIELD, FIELD_LABEL, HEADING } from '../lib/ui.js';
 
 const message = (err: unknown) => (err instanceof Error ? err.message : String(err));
 
@@ -103,9 +103,9 @@ export function AddCategoryForm({ names, blocked, onStarted }: AddCategoryFormPr
       onSubmit={submit}
       aria-labelledby="add-category-heading"
       noValidate
-      className={`flex flex-col gap-4 ${CARD} border-t-4 border-ink`}
+      className={`flex flex-col gap-4 ${CARD} border-2 border-edge`}
     >
-      <h1 id="add-category-heading" className="text-2xl uppercase">
+      <h1 id="add-category-heading" className={HEADING}>
         Add category
       </h1>
       {blocked && <p className="text-lg text-muted">{blocked}</p>}
@@ -146,7 +146,7 @@ export function AddCategoryForm({ names, blocked, onStarted }: AddCategoryFormPr
                   type="checkbox"
                   checked={levels[d].on}
                   onChange={(event) => setLevel(d, { on: event.target.checked })}
-                  className="size-5"
+                  className="size-5 accent-accent-2"
                 />
                 {DIFFICULTY_LABELS[d]}
               </label>
