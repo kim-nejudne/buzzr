@@ -459,14 +459,7 @@ Source: `docs/ux/10-live-review-fixes.md` (every finding from the 2026-11-17 UI/
 
 - [x] F177 Screen lobby and chrome
 
-- [ ] F178 Screen game
-  - Spec: `12` § Surfaces F178; mocks `screen-title-card-1080.png`, `screen-board-1080.png`, `screen-question-open-*.png`, `screen-buzz-banner-*.png`, `screen-buzz-wrong-1080.png`, `screen-choice-1080.png`, `screen-reveal-1080.png`
-  - Depends: F177
-  - Done when:
-    - The title card, board, question, buzz banner, flash, choice and typed questions, reveal, standings rail and host bar are restyled per `design.md`, each game state with its word.
-    - M33's full names hold on the banner and rail.
-    - `/playtest` runs a full game on the Screen at 1920×1080 and 1280×720.
-  - Tests: existing suites green.
+- [x] F178 Screen game
 
 - [ ] F179 Scoreboard and final results
   - Spec: `12` § Surfaces F179; mocks `screen-scoreboard-1080.png`, `screen-final-*.png`

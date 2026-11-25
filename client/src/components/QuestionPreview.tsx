@@ -79,7 +79,7 @@ export function QuestionPreview({ set, index, onIndex, onClose }: QuestionPrevie
         <div
           data-testid="preview-stage"
           // No text floors: the stage is a scaled-down TV, not a small Screen (F100).
-          className={`flex flex-col overflow-hidden bg-bg [container-type:size] [--screen-min-body:0px] [--screen-min-label:0px] [--screen-min-name:0px] ${STAGE_SIZE}`}
+          className={`flex flex-col overflow-hidden bg-bg [container-type:size] [--screen-min-body:0px] [--screen-min-label:0px] [--screen-min-name:0px] [--screen-min-figure:0px] ${STAGE_SIZE}`}
         >
           <ScreenHeader
             code={view.code}

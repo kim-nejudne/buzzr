@@ -10,6 +10,69 @@ Handoff log, one entry per feature or bug. Newest first. Template:
 **How to try it:** exact commands / URLs / which devices
 ```
 
+## F178 — Screen game (2026-11-26)
+**What changed:**
+- **Title card** (`Screen.tsx`): a bulb-bordered well board, "Get ready" in muted Antonio, the set's title in amber Antonio (three length steps), the details in Sofia Sans.
+- **Board** (`ScreenBoard.tsx`): Antonio heads on a 4px amber rule. Open tiles are the well with amber DotGothic points, and played tiles are shade with no number. The host's cursor tile is amber on its key edge inside a double blue ring.
+- **Question** (`ScreenQuestion.tsx`), rebuilt on the `screen-*` frames:
+  - The question is Sofia Sans 700 with no ink bar.
+  - "Buzzers OPEN" is an amber Antonio block with DotGothic seconds, and a bar under it drains across the column. "Buzzers locked" sinks to well-2. The `buzz-pulse` loop is deleted (design.md Motion).
+  - **Buzz banner:** full width under the question and the rail. It is amber with a ground-coloured bulb border, a round swatch, the name in Antonio over "First to buzz", and the countdown in DotGothic. The "also buzzed" chips sit under it. Judged wrong, the banner turns stop red with the name struck through and "Wrong".
+  - **Choices:** a 2×2 grid of well tiles, each letter on its colour square. At reveal the correct tile turns blue.
+  - **Reveal:** the answer card under a 4px amber bar, and a blue scorer chip with "+N" in DotGothic. Typed questions get the same card and blue chips.
+  - Locked out reads in stop red. A false start's tag is stop with ground type.
+- **Standings rail** (`StandingsRail.tsx`): the well on a rule edge at the mock's width, with round swatches and DotGothic amber points. The buzzing player is the blue cursor row. When squeezed, the rail shows whole rows only.
+- **Flash** (`ScreenFlash.tsx`): blue for correct, stop red for wrong and time-ups.
+- **Host bar** (`ScreenHostControls.tsx`, `ui.ts`): Correct is blue (`SCREEN_BAR_CORRECT`) and Wrong is the stop outline (`SCREEN_BAR_WRONG`). Show controls is the amber secondary.
+- **CSS** (`index.css`):
+  - `bulbs` takes `--bulb-lit` and `--bulb-dim`.
+  - New `--screen-min-figure: 40px`. The preview sets it to 0.
+  - The `buzz-pulse` stamp line is now a "dropped" line.
+- **Tests** (`Screen.test.tsx`):
+  - 21 tests moved from the Overprint look to Marquee: the status block, the banner (amber, bulbs, wrong), the countdown, the flash colours, the answer card, the choice tiles, the board, the rail, the judge tones, the floors and the portrait "also buzzed".
+  - 4 new tests: the rail's cursor row; the rail showing whole rows only; the title card's look; a long title stepping down. Several tests gained assertions: the board cursor's amber tile in its blue ring, the draining bar, the banner's bulb colour and the 40px figure floor.
+  - 3481 tests in total. No new dependency.
+
+**Decisions:** six DECISIONS rows dated 2026-11-26 for F178:
+- the banner, its bulbs and the missing "seconds"
+- the DotGothic floor and the dropped pulse
+- the rail (no visible rank, the cursor row, whole rows, team names)
+- the board cursor
+- the title card under the header
+- the question, choice, reveal, judge tones and flash
+
+**Notes for next session:**
+- **Copy:** no string changed. The mock's "seconds" under the countdown and its "6 SEC" pill are left out, because there is no string for them.
+- **Before/after:**
+  - The rail's visible rank number is gone.
+  - The banner now spans the full width. "also buzzed" sits under it, not inside it.
+  - Status blocks are left-aligned, not centred.
+  - Wrong is stop red, not sunk grey.
+  - The time-up flash is stop red, not amber.
+- **At 1280×720 with a banner**, the rail shows 2 to 4 whole rows. The mock lets the banner cover the rail; here the rows that do not fit are hidden instead. The banner names the buzzer, so their cursor row may be out of sight then.
+- A 16-letter all-"M" name wraps to two lines on the banner, at 138px (1080) and 92px (720), per F153. Real 16-character names ("Bartholomew Cruz") fit on one line.
+- The More menu's items and the help dialog are untouched (shared with the remote; F180).
+- **sloplint `--kept`** on `/screen/<code>` (`.playtest/F178/kept.txt`): 0 FAIL, 0 REFLEX, 1 WAIVED (23, the start gate), 1 DISMISSED. The 2 WARNs are "not compared". kept: links 1/1, fields 2/2, handlers 33/33.
+- **Review** (`review-feature`): PASS WITH FIXES, with no Must-fix. Its Should-fixes:
+  - Done: the DECISIONS rows and this entry, the tests for whole rows, bulbs and the bar, and a DECISIONS line on team names.
+  - The "rail artifact" in `reveal-1280x720.png` is the scorer's row sliding up after the flash (F154). `reveal-settled-*.png`, 2.5 s later, is clean.
+- Main `index` chunk 519.43 → 520.30 kB.
+
+**Playtest** (puppeteer, `.playtest/F178/game.mjs`, log in `game.log`):
+- **Setup:** two host Screens on one room at once, 1920×1080 and 1280×720, with 6 players including "Bartholomew Cruz", "Marisol Delacruz" and "MMMMMMMMMMMMMMMM".
+- **Full game:**
+  - title card; locked; open with buzz time; a banner with 2 also-buzzed; Wrong; reopen; the widest name's banner; reveal and settled reveal
+  - a choice question answering and its reveal
+  - a typed question answering and its reveal
+- **Board set** (`game.mjs board`): its title card, the board with the cursor, a picked question, and the board after a played tile.
+- **Every shot:** no page overflow, no console errors, no text under 14px, and no DotGothic under 40px. No text sits under another element, except the reveal shot taken mid-slide.
+- The banner names are whole: "Bartholomew Cruz" on one line at 138px (1080) and 92px (720).
+- Fixed during the playtest:
+  - The rail ran under the banner at 720. It now shows whole rows.
+  - A revealed choice broke "Cristiano" mid-word at 720. The tile's padding and letter square are smaller now.
+
+**How to try it:** `npm run dev`. Host a game from `http://localhost:5173/` and open the Screen at `/screen/<code>` on a laptop; join 2+ phones at `http://<LAN-IP>:5173/play/<code>`. Play a buzz question (Space opens, phones buzz, C/V/X judge), a choice and a typed question, and a board set from `/sets`. Or run `node .playtest/F178/game.mjs` (and `… board`) with the dev server up; this uses 1 of the 10 rooms an hour. `npm test -- client/src/pages/Screen.test.tsx`.
+
 ## F177 — Screen lobby and chrome (2026-11-26)
 **What changed:**
 - **Lobby** (`Screen.tsx`, `.lobby-*` in `index.css`), rebuilt on `screen-lobby-*.png`:

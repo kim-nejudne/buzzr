@@ -24,15 +24,19 @@ export const RAIL_HIDDEN_QUERY = '(max-width: 63.99rem), (orientation: portrait)
 const FULL_ONLY = 'hidden [@media(min-width:1280px)_and_(min-height:720px)]:flex';
 
 /**
- * A ruled row: a hairline under it (design.md Rules). Its fill is the ground's own paper, so while
- * rows slide past each other the riser covers the row it passes instead of their text overlapping (F154).
+ * A standings row (design.md Controls): swatch, full name and points. Its fill is the panel's own
+ * well, so while rows slide past each other the riser covers the row it passes instead of their
+ * text overlapping (F154). The cursor row swaps it for blue.
  */
-const ROW = 'items-baseline gap-[0.5em] border-b border-edge bg-bg py-[0.35em]';
-/** Rank and score: the display face in tabular figures. */
-const FIGURE = 'shrink-0 font-display font-black tabular-nums font-stretch-150%';
+const ROW = 'items-center gap-x-[0.6em] px-[min(1.6vw,2.85vh)] py-[0.45em]';
+/** Points: DotGothic in amber, never under 40px (design.md Rules). */
+const FIGURE =
+  'shrink-0 font-outlier text-[max(var(--screen-min-figure),min(2.6vw,4.6vh))] leading-none tabular-nums';
+/** A swatch the size of the name, in its ink ring. */
+const DOT = 'size-[1em] border-[0.1em] border-paper ring-2 ring-ink';
 /** The rail's heads: Sofia Sans 600 (design.md Rules). */
 const HEAD =
-  'shrink-0 font-sans text-[max(var(--screen-min-label),min(1.2vw,2.1vh))] font-semibold text-muted';
+  'shrink-0 px-[min(1.6vw,2.85vh)] font-sans text-[max(var(--screen-min-label),min(1.4vw,2.5vh))] font-semibold text-muted';
 
 /** The question phases that show the rail; the lobby, the scoreboard and the Final screen rank everyone. */
 const STANDINGS_PHASES: readonly Phase[] = ['QUESTION', 'OPEN', 'COLLECTING', 'BUZZED', 'REVEAL'];
@@ -45,6 +49,8 @@ interface StandingsRailProps {
   show: boolean;
   /** With teams on, every team in index order: listed by rank above the players (F82). */
   teams?: TeamView[] | null;
+  /** The player buzzing in: the blue cursor row (design.md Controls). */
+  cursorId?: string;
 }
 
 /**
@@ -53,10 +59,16 @@ interface StandingsRailProps {
  * takes its own column beside the question, so it never covers the card. From 1280×720 it is full;
  * on a smaller landscape display (a 1366×768 laptop under its browser bar, a 1024×768 tablet) a
  * slim rail shows the top 3 players without avatars, narrower; in portrait or under 1024px wide
- * there is no room beside the card and it hides (SCR-15). Rows slide when the order changes. A
- * ruled table under the 4px ink bar (M32).
+ * there is no room beside the card and it hides (SCR-15). Rows slide when the order changes. The
+ * well on a 2px rule edge, points in DotGothic amber; the rank is the order (`screen-*.png`, F178).
  */
-export function StandingsRail({ phase, players, show, teams = null }: StandingsRailProps) {
+export function StandingsRail({
+  phase,
+  players,
+  show,
+  teams = null,
+  cursorId,
+}: StandingsRailProps) {
   const list = useRef<HTMLOListElement>(null);
   const teamList = useRef<HTMLOListElement>(null);
   const top = players.slice(0, teams ? STANDINGS_TOP_WITH_TEAMS : STANDINGS_TOP);
@@ -70,52 +82,75 @@ export function StandingsRail({ phase, players, show, teams = null }: StandingsR
   return (
     <aside
       aria-label="Standings"
-      // Capped by height too, so an ultrawide display does not stretch it (F100).
-      className="hidden w-[min(15vw,26.7vh)] shrink-0 flex-col gap-[1vh] border-t-4 border-ink pt-[0.6vh] [@media(min-width:1024px)_and_(orientation:landscape)]:flex [@media(min-width:1280px)_and_(min-height:720px)]:w-[min(17vw,30.3vh)]"
+      // Capped by height too, so an ultrawide display does not stretch it (F100). It takes the
+      // column's height; the panel inside hugs its rows and shrinks when the banner squeezes it.
+      className="hidden w-[min(22vw,39vh)] shrink-0 flex-col [@media(min-width:1024px)_and_(orientation:landscape)]:flex [@media(min-width:1280px)_and_(min-height:720px)]:w-[min(26vw,46vh)]"
     >
-      <p className={HEAD}>{t('standings')}</p>
-      {teams && (
-        <>
-          <ol
-            ref={teamList}
-            aria-label="Teams"
-            className="flex shrink-0 flex-col text-[max(var(--screen-min-body),min(1.6vw,2.8vh))]"
-          >
-            {ranked.map((team) => (
-              <li key={team.index} data-flip-key={team.index} className={`flex ${ROW}`}>
-                <span className={`w-[1.6em] text-right text-muted ${FIGURE}`}>{team.rank}</span>
-                <ColourDot square data-team-color color={team.color} />
-                <span className="min-w-0 flex-1 truncate font-semibold">{team.name}</span>
-                <span className={FIGURE}>{team.score}</span>
-              </li>
-            ))}
-          </ol>
-          <p className={`mt-[0.6vh] ${HEAD}`}>{t('players')}</p>
-        </>
-      )}
-      <ol
-        ref={list}
-        aria-label={teams ? 'Players' : undefined}
-        className="flex min-h-0 flex-col text-[max(var(--screen-min-body),min(1.6vw,2.8vh))]"
+      <div
+        data-rail-panel
+        className="flex min-h-0 flex-col gap-[1vh] overflow-hidden border-2 border-edge bg-surface py-[1.6vh]"
       >
-        {top.map((player, i) => (
-          <li
-            key={player.id}
-            data-flip-key={player.id}
-            // A name never truncates (F153): when it and the score do not share a line, the score
-            // drops under it, on the right, and a name wider than the rail wraps.
-            className={`${i < STANDINGS_TOP_SLIM ? 'flex' : FULL_ONLY} flex-wrap ${ROW} ${player.connected ? '' : 'opacity-40'}`}
-          >
-            <span className="flex min-w-0 flex-auto items-baseline gap-[0.5em]">
-              <span className={`w-[1.6em] text-right text-muted ${FIGURE}`}>{player.rank}</span>
-              <ColourDot square data-player-color color={player.color} />
-              <PlayerAvatar avatar={player.avatar} className={FULL_ONLY} />
-              <span className="min-w-0 font-semibold [overflow-wrap:anywhere]">{player.name}</span>
-            </span>
-            <span className={`ml-auto ${FIGURE}`}>{player.score}</span>
-          </li>
-        ))}
-      </ol>
+        <p className={HEAD}>{t('standings')}</p>
+        {teams && (
+          <>
+            <ol
+              ref={teamList}
+              aria-label="Teams"
+              className="flex shrink-0 flex-col text-[max(var(--screen-min-name),min(1.6vw,2.8vh))]"
+            >
+              {ranked.map((team) => (
+                <li
+                  key={team.index}
+                  data-flip-key={team.index}
+                  className={`flex bg-surface ${ROW}`}
+                >
+                  <span className="sr-only">{team.rank}</span>
+                  <ColourDot data-team-color color={team.color} className={DOT} />
+                  <span className="min-w-0 flex-1 truncate font-semibold">{team.name}</span>
+                  <span className={`text-accent ${FIGURE}`}>{team.score}</span>
+                </li>
+              ))}
+            </ol>
+            <p className={`mt-[0.6vh] ${HEAD}`}>{t('players')}</p>
+          </>
+        )}
+        <ol
+          ref={list}
+          aria-label={teams ? 'Players' : undefined}
+          // Rows that do not fit wrap into a second column, out of sight: a squeezed rail shows
+          // whole rows only, never half of one under the banner (F178).
+          className="flex min-h-0 flex-col flex-wrap overflow-hidden text-[max(var(--screen-min-name),min(1.6vw,2.8vh))]"
+        >
+          {top.map((player, i) => {
+            const cursor = player.id === cursorId;
+            return (
+              <li
+                key={player.id}
+                data-flip-key={player.id}
+                aria-current={cursor || undefined}
+                // A name never truncates (F153): when it and the score do not share a line, the score
+                // drops under it, on the right, and a name wider than the rail wraps.
+                className={`${i < STANDINGS_TOP_SLIM ? 'flex' : FULL_ONLY} w-full flex-wrap ${ROW} ${
+                  cursor ? 'bg-accent-2 text-accent-2-ink' : 'bg-surface'
+                } ${player.connected ? '' : 'opacity-40'}`}
+              >
+                <span className="flex min-w-0 flex-auto items-center gap-[0.6em]">
+                  {/* The order is the rank; a screen reader still hears it. */}
+                  <span className="sr-only">{player.rank}</span>
+                  <ColourDot data-player-color color={player.color} className={DOT} />
+                  <PlayerAvatar avatar={player.avatar} className={FULL_ONLY} />
+                  <span className="min-w-0 font-semibold [overflow-wrap:anywhere]">
+                    {player.name}
+                  </span>
+                </span>
+                <span className={`ml-auto ${cursor ? '' : 'text-accent'} ${FIGURE}`}>
+                  {player.score}
+                </span>
+              </li>
+            );
+          })}
+        </ol>
+      </div>
     </aside>
   );
 }

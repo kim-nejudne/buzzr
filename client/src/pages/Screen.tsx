@@ -369,28 +369,42 @@ function useTileZoom(phase: Phase, questionIndex: number, board: BoardView | nul
   return zoom?.questionIndex === questionIndex ? zoom.origin : null;
 }
 
-/** The set's title, category and difficulty before question 1 (UI spec, Screen view: Title card). */
+/**
+ * The set's title, category and difficulty before question 1 (UI spec, Screen view: Title card), on
+ * a bulb-bordered board: "Get ready" in muted Antonio, the title in amber Antonio, and the details
+ * in Sofia Sans (`screen-title-card-1080.png`). A long title takes a smaller step.
+ */
 function TitleCard({ view }: { view: ScreenView }) {
   const t = useCopy();
   // The difficulty in the room's language; its keys are the difficulty ids (F91).
   const details = [view.category, view.difficulty && t(view.difficulty)].filter(Boolean);
+  const size =
+    view.title.length <= 24
+      ? 'text-[max(var(--screen-min-name),min(12vw,21vh))]'
+      : view.title.length <= 48
+        ? 'text-[max(var(--screen-min-name),min(7vw,12.5vh))]'
+        : 'text-[max(var(--screen-min-name),min(4.5vw,8vh))]';
   return (
     <section
       aria-label="Title card"
-      className="flex flex-1 flex-col items-center justify-center gap-[4vh] px-[min(6vw,10.67vh)] text-center"
+      className="flex min-h-0 flex-1 px-[min(3.75vw,6.67vh)] pt-[1vh] pb-[max(3vh,var(--hint-reserve,0px))]"
     >
-      <p className="font-sans text-[max(var(--screen-min-label),min(1.8vw,3.2vh))] font-semibold text-muted">
-        {t('titleCardReady')}
-      </p>
-      {/* Wide capitals under the 4px ink bar (design.md Rules). */}
-      <h1 className="border-t-4 border-ink pt-[2vh] font-display text-[max(var(--screen-min-name),min(5vw,10vh))] leading-tight text-balance break-words text-ink uppercase">
-        {view.title}
-      </h1>
-      {details.length > 0 && (
-        <p className="text-[max(var(--screen-min-body),min(3vw,5.5vh))] font-semibold text-ink">
-          {details.join(' · ')}
+      {/* Its padding clears the bulbs' 28px band, so no letter sits under a bulb. */}
+      <div className="bulbs flex min-w-0 flex-1 flex-col items-center justify-center gap-[3vh] overflow-hidden border-2 border-edge bg-surface px-[max(2.5rem,min(6vw,10.67vh))] py-[max(2.25rem,4vh)] text-center">
+        <p className="font-display text-[max(var(--screen-min-label),min(2.4vw,4.3vh))] leading-none text-muted uppercase">
+          {t('titleCardReady')}
         </p>
-      )}
+        <h1
+          className={`max-w-full font-display leading-none text-balance break-words text-accent uppercase ${size}`}
+        >
+          {view.title}
+        </h1>
+        {details.length > 0 && (
+          <p className="text-[max(var(--screen-min-body),min(1.9vw,3.4vh))] font-semibold text-ink">
+            {details.join(' · ')}
+          </p>
+        )}
+      </div>
     </section>
   );
 }

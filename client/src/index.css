@@ -9,7 +9,7 @@
 /* Hallmark · dropped x · the phone's locked-out status loses its X icon: the buzzer draws the 6px ink X over its face (12 § The buzzer, out), and the status reads muted (F176) */
 /* Hallmark · dropped arrow-right · the lobby's Start game reads "Start game Space" as the approved mock's Screen lobby, with no icon (F146) */
 /* Hallmark · dropped onClick={() => change({ copy })} · F156 keeps the chosen language pressable but has a re-press send nothing, so the handler reads onClick={() => !active && change({ copy })} */
-/* Hallmark · kept motion · buzz-pulse (F137) · the open buzzer's pulse on the Screen's Buzzers open pill is a state loop: it runs only while the buzzers take a press, ends when they lock, and never plays under reduced motion. The phone's open buzzer breathes its bulb instead (F145) */
+/* Hallmark · dropped buzz-pulse · the Screen's Buzzers open block no longer pulses: design.md Motion keeps one loop, the phone's bulb ring; the block's draining bar carries the time instead (F178) */
 /* Hallmark · kept motion · bulb-flare (F145, F176) · answers one lobby test press: the buzzer's whole ring lights and fades once, and never under reduced motion */
 /* Hallmark · kept motion · tile-zoom (F137) · a picked board tile grows into its question, so the room sees which tile was played; it plays once per pick and never under reduced motion */
 /* Hallmark · kept motion · generation (F141) · design.md waives the generation shimmer as a state loop; the admin's other in-progress marks for a running generation (the list's generating dot, the progress checklist's running mark, a replacement's spinner) are the same state and end with the job, never under reduced motion */
@@ -65,9 +65,6 @@
   /* Player chips popping in on the Screen lobby. */
   --animate-pop-in: pop-in 350ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
 
-  /* The open buzzer, inviting a press. */
-  --animate-buzz-pulse: buzz-pulse 900ms ease-in-out infinite;
-
   /* One flare of the buzzer's bulb ring per lobby test buzz (F145, F176). */
   --animate-bulb-flare: bulb-flare 500ms var(--ease-out) both;
 
@@ -112,17 +109,6 @@
     100% {
       opacity: 0;
       transform: translateY(-5vh);
-    }
-  }
-
-  /* Scale alone: the Screen's Buzzers open block. Marquee has no glow (F147). */
-  @keyframes buzz-pulse {
-    0%,
-    100% {
-      transform: scale(1);
-    }
-    50% {
-      transform: scale(1.04);
     }
   }
 
@@ -185,6 +171,8 @@
   --screen-min-label: 14px;
   --screen-min-body: 18px;
   --screen-min-name: 24px;
+  /* DotGothic smears under 40px (design.md Rules): a figure in it never renders smaller (F178). */
+  --screen-min-figure: 40px;
 }
 
 @layer base {
@@ -227,8 +215,9 @@
  * A bulb border (design.md Rules, Bulbs): 10px bulbs at a 24px pitch round the box, two of every
  * three lit amber and the third `bulb-off`. `::before` draws the top and bottom rows and `::after`
  * the side columns; `round` fits a whole number of bulbs to each edge. Static; the content pads
- * clear of the band, so no bulb sits under text. The marquee sign (F175); the room board and the
- * banner can take it too.
+ * clear of the band, so no bulb sits under text. The marquee sign (F175), the room board (F177), the
+ * title card and the buzz banner (F178). `--bulb-lit` and `--bulb-dim` recolour them: the banner's
+ * are dark on its amber or stop fill.
  */
 @utility bulbs {
   position: relative;
@@ -244,17 +233,17 @@
     background-image:
       radial-gradient(
         circle calc(var(--bulb) / 2) at 16.667% 50%,
-        var(--color-accent) 80%,
+        var(--bulb-lit, var(--color-accent)) 80%,
         transparent
       ),
       radial-gradient(
         circle calc(var(--bulb) / 2) at 50% 50%,
-        var(--color-accent) 80%,
+        var(--bulb-lit, var(--color-accent)) 80%,
         transparent
       ),
       radial-gradient(
         circle calc(var(--bulb) / 2) at 83.333% 50%,
-        var(--color-bulb-off) 80%,
+        var(--bulb-dim, var(--color-bulb-off)) 80%,
         transparent
       );
     background-size: calc(var(--bulb-pitch) * 3) var(--bulb-pitch);
@@ -266,17 +255,17 @@
     background-image:
       radial-gradient(
         circle calc(var(--bulb) / 2) at 50% 16.667%,
-        var(--color-accent) 80%,
+        var(--bulb-lit, var(--color-accent)) 80%,
         transparent
       ),
       radial-gradient(
         circle calc(var(--bulb) / 2) at 50% 50%,
-        var(--color-accent) 80%,
+        var(--bulb-lit, var(--color-accent)) 80%,
         transparent
       ),
       radial-gradient(
         circle calc(var(--bulb) / 2) at 50% 83.333%,
-        var(--color-bulb-off) 80%,
+        var(--bulb-dim, var(--color-bulb-off)) 80%,
         transparent
       );
     background-size: var(--bulb-pitch) calc(var(--bulb-pitch) * 3);

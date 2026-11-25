@@ -30,7 +30,12 @@ import { cycleSoundLevel, getSoundLevel, SOUND_LEVEL_LABEL } from '../lib/sounds
 import type { HostCommand } from '../lib/useHostCommand.js';
 import { usePointerCoarse } from '../lib/usePointerFine.js';
 import { useSoundLevel } from '../lib/useSoundLevel.js';
-import { SCREEN_BAR_OUTLINE, SCREEN_BAR_PRIMARY } from '../lib/ui.js';
+import {
+  SCREEN_BAR_CORRECT,
+  SCREEN_BAR_OUTLINE,
+  SCREEN_BAR_PRIMARY,
+  SCREEN_BAR_WRONG,
+} from '../lib/ui.js';
 import { OverflowMenu, type MenuItem } from './OverflowMenu.js';
 import { ShareResults } from './ShareResults.js';
 
@@ -229,7 +234,7 @@ export function ScreenHostControls({
             <button
               type="button"
               onClick={() => setCollapsed(false)}
-              className={`absolute right-[min(2vw,3.56vh)] bottom-[1.2vh] border-2 border-ink bg-bg px-[min(1.2vw,2.14vh)] py-[0.6vh] ${CONTROL_TYPE} ${BAR_TEXT} ${HOVER}`}
+              className={`absolute right-[min(2vw,3.56vh)] bottom-[1.2vh] px-[min(1.2vw,2.14vh)] py-[0.6vh] ${CONTROL_TYPE} ${BAR_TEXT} ${OUTLINE_TONE}`}
             >
               {coarse ? (
                 'Controls'
@@ -308,7 +313,7 @@ function MainButtons({
               keyHint="C"
               onClick={act({ event: 'host:judge', payload: { result: 'correct' } })}
               disabled={busy}
-              tone={`bg-win text-win-ink border-win disabled:opacity-40 ${JUDGE_HOVER}`}
+              tone={CORRECT_TONE}
             >
               Correct
             </BarButton>
@@ -323,7 +328,7 @@ function MainButtons({
               keyHint="X"
               onClick={act({ event: 'host:judge', payload: { result: 'wrong' } })}
               disabled={busy}
-              tone={`bg-buzz text-buzz-ink border-buzz disabled:opacity-40 ${JUDGE_HOVER}`}
+              tone={WRONG_TONE}
             >
               Wrong
             </BarButton>
@@ -496,8 +501,10 @@ const BAR_BUTTON_SHAPE = `border-2 px-[min(1vw,1.78vh)] py-[0.6vh] ${CONTROL_TYP
 const PRIMARY_TONE = SCREEN_BAR_PRIMARY;
 /** Every other bar button: the secondary, an amber outline on the well (design.md Controls, F177). */
 const OUTLINE_TONE = SCREEN_BAR_OUTLINE;
-/** The judge buttons keep the F44 hover until F178 recomposes them. */
-const JUDGE_HOVER = HOVER;
+/** Correct: blue with ground type, the win state (design.md Rules; `screen-buzz-banner-*.png`). */
+const CORRECT_TONE = SCREEN_BAR_CORRECT;
+/** Wrong: the danger outline, stop type on the well (design.md Controls). */
+const WRONG_TONE = SCREEN_BAR_WRONG;
 /** A bar button's size and type; the lobby's host row uses it too, so it lines up with the bar (F177). */
 export const BAR_BUTTON = BAR_BUTTON_SHAPE;
 const barButton = BAR_BUTTON;

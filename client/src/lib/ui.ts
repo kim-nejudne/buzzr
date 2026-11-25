@@ -98,6 +98,10 @@ export const SCREEN_BUTTON_OUTLINE = SECONDARY;
  */
 export const SCREEN_BAR_PRIMARY = `border-2 border-accent ${PRIMARY_TONE}`;
 export const SCREEN_BAR_OUTLINE = SECONDARY_TONE;
+/** The host bar's Correct: blue with ground type on the rule edge, the win state (F178). */
+export const SCREEN_BAR_CORRECT = `border-2 border-accent-2 bg-accent-2 text-accent-2-ink ${SECONDARY_EDGE} ${PRESS}`;
+/** The host bar's Wrong: the danger outline, stop type on the well (design.md Controls, F178). */
+export const SCREEN_BAR_WRONG = `border-2 border-stop bg-surface text-stop ${SECONDARY_EDGE} ${PRESS}`;
 
 /** The set pages' row buttons, the secondary at Size s: Edit, Duplicate, Preview, Export JSON. */
 export const BUTTON_SMALL = `${SECONDARY} ${SIZE_S} py-2`;

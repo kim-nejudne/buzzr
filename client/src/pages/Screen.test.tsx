@@ -8,6 +8,7 @@ import { resetBuiltInSets } from '../lib/builtInSets.js';
 import { serveSeededBuiltIns } from '../test/builtIns.js';
 import {
   CHOICE_COLORS,
+  CHOICE_LETTERS,
   AVATARS,
   DEFAULT_SETTINGS,
   GAME_ENDED_ERROR,
@@ -637,7 +638,7 @@ describe('Screen', () => {
       expect(within(banner).queryByText('Game 2')).toBeNull();
     });
 
-    it('shows "Buzzers locked" sunk to paper-3 until the buzzers open, then "Buzzers OPEN" in peach', () => {
+    it('shows "Buzzers locked" sunk to well-2 until the buzzers open, then "Buzzers OPEN" on amber, still (F178)', () => {
       const socket = show(questionView());
       const locked = screen.getByRole('status');
       expect(locked.textContent).toBe('Buzzers locked');
@@ -647,7 +648,9 @@ describe('Screen', () => {
       const open = screen.getByRole('status');
       expect(open.textContent).toBe('Buzzers OPEN');
       expect(open.className).toContain('bg-accent');
-      expect(open.className).toContain('motion-safe:animate-buzz-pulse');
+      expect(open.className).toContain('font-display');
+      // design.md Motion keeps one loop, the phone's bulb ring.
+      expect(open.className).not.toContain('animate-');
       expect(lockedClass).toContain('bg-bg-deep');
       expect(lockedClass).not.toContain('bg-accent');
     });
@@ -715,15 +718,20 @@ describe('Screen', () => {
       expect(row.className).toContain('overflow-hidden');
     });
 
-    it('shows the winner on the red first-to-buzz panel with their colour dot, in place of the status', () => {
+    it('shows the winner on the amber bulb-bordered first-to-buzz banner with their round swatch, in place of the status', () => {
       show(questionView({ phase: 'BUZZED', openingCounter: 1, winnerId: 'p2' }));
       const panel = screen.getByRole('region', { name: 'Buzz result' });
       expect(panel.className).toContain('bg-buzz');
+      expect(panel.className.split(/\s+/)).toContain('bulbs');
+      // Its bulbs are the ground's colour on the amber (`screen-buzz-banner-1080.png`).
+      expect(panel.className).toContain('[--bulb-lit:var(--color-paper)]');
       expect(within(panel).getByText('First to buzz')).toBeTruthy();
       const banner = within(panel).getByRole('heading', { level: 2, name: 'Ben' });
+      expect(banner.className).toContain('font-display');
       const probe = document.createElement('div');
       probe.style.backgroundColor = ben.color;
-      expect(colourDot(banner).style.backgroundColor).toBe(probe.style.backgroundColor);
+      expect(colourDot(panel).style.backgroundColor).toBe(probe.style.backgroundColor);
+      expect(colourDot(panel).className).toContain('rounded-full');
       expect(screen.queryByRole('status')).toBeNull();
     });
 
@@ -1094,11 +1102,12 @@ describe('Screen', () => {
       expect(sent(socket)).toEqual([['host:judge', { result: 'half' }]]);
     });
 
-    it('the bar’s judge buttons wear their game state; the rest are amber outlines (F137, F177)', () => {
+    it('the bar’s judge buttons wear their game state: Correct blue, Wrong the stop outline; the rest are amber outlines (F178)', () => {
       hostScreen(inPhase('BUZZED', { winnerId: 'p1', canJudge: true }));
       const button = (name: string) => within(bar()!).getByRole('button', { name });
-      expect(button('Correct').className).toContain('bg-win');
-      expect(button('Wrong').className).toContain('bg-buzz');
+      expect(button('Correct').className).toContain('bg-accent-2 text-accent-2-ink');
+      expect(button('Wrong').className).toContain('border-stop bg-surface text-stop');
+      expect(button('Wrong').className).not.toContain('bg-buzz');
       expect(button('Half').className).toContain('border-accent bg-surface text-accent');
       expect(button('Half').className).not.toContain(' bg-accent ');
       expect(button('Skip question').className).toContain('border-accent bg-surface text-accent');
@@ -1118,7 +1127,8 @@ describe('Screen', () => {
       hostScreen(inPhase('QUESTION'));
       expect(screen.getByRole('main').style.getPropertyValue('--hint-reserve')).toContain('2.2vh');
       expect(
-        screen.getByRole('region', { name: 'Question' }).parentElement!.parentElement!.className,
+        screen.getByRole('region', { name: 'Question' }).parentElement!.parentElement!
+          .parentElement!.className,
       ).toContain('pb-[max(3cqh,var(--hint-reserve,0px))]');
     });
 
@@ -1807,15 +1817,48 @@ describe('Screen result states', () => {
         const probe = document.createElement('span');
         probe.style.backgroundColor = six[0]!.color;
         expect(colourDot(first).style.backgroundColor).toBe(probe.style.backgroundColor);
-        // A ruled row: a hairline under it and no fill; the colour a square in an ink ring (F147).
+        // A round swatch in an ink ring; points in DotGothic (F178).
         expect(colourDot(first).className).toContain('ring-ink');
-        expect(colourDot(first).className).not.toContain('rounded-full');
-        expect(first.className.split(/\s+/)).toEqual(
-          expect.arrayContaining(['border-b', 'border-edge']),
+        expect(colourDot(first).className).toContain('rounded-full');
+        expect(within(first).getByText('500').className).toContain('font-outlier');
+        expect(rail()!.querySelector('[data-rail-panel]')!.className).toContain(
+          'border-2 border-edge bg-surface',
         );
-        expect(first.className).not.toContain('bg-surface');
+        // An opaque row, so a sliding row covers the one it passes (F154). Ana is buzzing in BUZZED.
+        expect(first.className).toContain(phase === 'BUZZED' ? 'bg-accent-2' : 'bg-surface');
       },
     );
+
+    it('shows whole rows only when squeezed: rows that do not fit wrap out of sight (F178)', () => {
+      show(questionView({ players: six }));
+      const list = within(rail()!).getAllByRole('listitem')[0]!.parentElement!;
+      expect(list.className).toContain('flex-col flex-wrap overflow-hidden');
+      expect(list.className).toContain('min-h-0');
+      for (const row of within(rail()!).getAllByRole('listitem')) {
+        expect(row.className.split(/\s+/)).toContain('w-full');
+      }
+      expect(rail()!.querySelector('[data-rail-panel]')!.className).toContain('min-h-0 flex-col');
+    });
+
+    it('marks the player buzzing in as the blue cursor row, and drops it once they are judged wrong (F178)', () => {
+      const socket = show(questionView({ phase: 'BUZZED', players: six, winnerId: 'p2' }));
+      const rows = () => within(rail()!).getAllByRole('listitem');
+      expect(rows().map((row) => row.getAttribute('aria-current'))).toEqual([
+        null,
+        'true',
+        null,
+        null,
+        null,
+      ]);
+      expect(rows()[1]!.className).toContain('bg-accent-2 text-accent-2-ink');
+      expect(within(rows()[1]!).getByText('400').className).not.toContain('text-accent');
+      expect(within(rows()[0]!).getByText('500').className).toContain('text-accent');
+      socket.fire(
+        'state',
+        questionView({ phase: 'BUZZED', players: six, winnerId: 'p2', lockedOut: ['p2'] }),
+      );
+      expect(rows().some((row) => row.hasAttribute('aria-current'))).toBe(false);
+    });
 
     it('sits beside the question card, not over it, from 1024px wide in landscape (F101)', () => {
       show(questionView({ players: six }));
@@ -1834,9 +1877,9 @@ describe('Screen result states', () => {
           players: six.map((p, i) => ({ ...p, avatar: i === 0 ? AVATARS[0] : undefined })),
         }),
       );
-      expect(rail()!.className).toContain('w-[min(15vw,26.7vh)]');
+      expect(rail()!.className).toContain('w-[min(22vw,39vh)]');
       expect(rail()!.className).toContain(
-        '[@media(min-width:1280px)_and_(min-height:720px)]:w-[min(17vw,30.3vh)]',
+        '[@media(min-width:1280px)_and_(min-height:720px)]:w-[min(26vw,46vh)]',
       );
       const rows = within(rail()!).getAllByRole('listitem');
       const full = '[@media(min-width:1280px)_and_(min-height:720px)]:flex';
@@ -1926,6 +1969,10 @@ describe('Screen result states', () => {
       act(() => vi.advanceTimersByTime(4000));
       expect(buzzTime()?.textContent).toBe('6');
       expect(ring()?.style.getPropertyValue('--left')).toBe('0.6');
+      // The seconds in DotGothic, and an amber bar across the column drains by `--left` (F178).
+      expect(buzzTime()?.className).toContain('font-outlier');
+      const bar = ring()!.querySelector('[aria-hidden] > span')!;
+      expect(bar.className).toContain('w-[calc(var(--left)*100%)] bg-accent');
     });
 
     it('goes on the first buzz, and restarts in full when the buzzers reopen', () => {
@@ -1952,7 +1999,7 @@ describe('Screen result states', () => {
       socket.fire('fx', { kind: 'buzzTimeUp' });
       expect(vi.mocked(playSound).mock.calls.map(([name]) => name)).toEqual(['timeUp']);
       expect(flash()?.dataset.flash).toBe('buzzTimeUp');
-      expect(flash()?.className).toContain('bg-buzz');
+      expect(flash()?.className).toContain('bg-warn');
       expect(ring()).toBeNull();
       expect(within(screen.getByRole('region', { name: 'Answer' })).getByText(ANSWER)).toBeTruthy();
     });
@@ -1978,18 +2025,17 @@ describe('Screen result states', () => {
       expect(screen.queryByText('+100')).toBeNull();
     });
 
-    it('a wrong answer flashes red and greys out the winner’s banner until the reopen', () => {
+    it('a wrong answer flashes stop red and turns the winner’s banner stop red, the name struck through, until the reopen', () => {
       vi.useFakeTimers();
       const socket = show(questionView({ phase: 'BUZZED', openingCounter: 1, winnerId: 'p2' }));
       const panel = () => screen.getByRole('region', { name: 'Buzz result' });
       expect(panel().className).toContain('bg-buzz');
       expect(within(panel()).getByText('First to buzz')).toBeTruthy();
-      // The buzz panel: buzz-ink text (F137), and the player's dot in an ink ring with a paper gap,
-      // so a red player's square shows on the red banner (F154).
-      const name = screen.getByRole('heading', { level: 2, name: 'Ben' });
-      expect(name.className).toContain('text-buzz-ink');
-      expect(colourDot(name).className).toContain('ring-ink');
-      expect(colourDot(name).className).toContain('border-paper');
+      // The buzz panel: ground type on amber, and the player's swatch in an ink ring with a paper
+      // gap, so a red player's swatch shows on the stop banner (F154).
+      expect(panel().className).toContain('text-buzz-ink');
+      expect(colourDot(panel()).className).toContain('ring-ink');
+      expect(colourDot(panel()).className).toContain('border-paper');
 
       socket.fire(
         'state',
@@ -1997,16 +2043,16 @@ describe('Screen result states', () => {
       );
       socket.fire('fx', { kind: 'wrong', playerId: 'p2' });
       expect(flash()?.dataset.flash).toBe('wrong');
-      expect(flash()?.className).toContain('bg-buzz');
+      expect(flash()?.className).toContain('bg-warn');
       expect(panel().dataset.judged).toBe('wrong');
       // The state's word: "First to buzz" turns to "Wrong" (F147).
       expect(within(panel()).getByText('Wrong')).toBeTruthy();
       expect(within(panel()).queryByText('First to buzz')).toBeNull();
       expect(panel().className).not.toContain('bg-buzz');
-      expect(panel().className).toContain('bg-bg-deep');
-      const greyed = screen.getByRole('heading', { level: 2, name: 'Ben' });
-      expect(greyed.className).toContain('text-muted');
-      expect(greyed.className).toContain('line-through');
+      // Ground type on stop: never light type on red (design.md Contrast).
+      expect(panel().className).toContain('bg-warn text-stop-ink');
+      const struck = screen.getByRole('heading', { level: 2, name: 'Ben' });
+      expect(struck.className).toContain('line-through');
 
       act(() => vi.advanceTimersByTime(FX_MS));
       expect(flash()).toBeNull();
@@ -2093,7 +2139,9 @@ describe('Screen result states', () => {
       show(buzzed({ answerTimer: { seconds: 5, up: false } }));
       const panel = screen.getByRole('region', { name: 'Buzz result' });
       expect(within(panel).getByRole('timer', { name: 'Answer time' })).toBe(timer());
-      expect(timer()?.className).toContain('font-display');
+      // DotGothic, never under 40px (design.md Rules).
+      expect(timer()?.className).toContain('font-outlier');
+      expect(timer()?.className).toContain('max(var(--screen-min-figure)');
       expect(timer()?.textContent).toBe('5');
       act(() => vi.advanceTimersByTime(2000));
       expect(timer()?.textContent).toBe('3');
@@ -2110,7 +2158,7 @@ describe('Screen result states', () => {
       expect(timer()?.textContent).toBe('Time’s up!');
       expect(timer()?.className).toContain('bg-buzz-ink');
       expect(flash()?.dataset.flash).toBe('timeUp');
-      expect(flash()?.className).toContain('bg-buzz');
+      expect(flash()?.className).toContain('bg-warn');
       expect(screen.getByRole('heading', { level: 2, name: 'Ben' })).toBeTruthy();
 
       act(() => vi.advanceTimersByTime(FX_MS));
@@ -2144,10 +2192,11 @@ describe('Screen result states', () => {
       const question = screen.getByRole('heading', { level: 1 });
       const answer = within(screen.getByRole('region', { name: 'Answer' })).getByText(ANSWER);
       expect(answer.className).toContain('font-display');
-      // On the warm-white card, the screen's one raised surface (F137).
+      // On the well under a 4px amber bar, across the column (`screen-reveal-1080.png`).
       const card = answer.closest('[data-answer-card]')!.className;
       expect(card).toContain('bg-card');
-      expect(card).toContain('shadow-card');
+      expect(card).toContain('border-t-4 border-accent');
+      expect(card).toContain('w-full');
       // DOCUMENT_POSITION_FOLLOWING: the answer comes after the question.
       expect(question.compareDocumentPosition(answer) & Node.DOCUMENT_POSITION_FOLLOWING).toBe(4);
     });
@@ -2191,11 +2240,19 @@ describe('Screen result states', () => {
         'CMelbourne',
         'DPerth',
       ]);
+      // The well on a rule edge, the letter on a square in its colour (F178).
       const probe = document.createElement('span');
       CHOICE_COLORS.forEach((color, index) => {
         probe.style.backgroundColor = color;
-        expect(tiles()[index]!.style.backgroundColor).toBe(probe.style.backgroundColor);
+        const tile = tiles()[index]!;
+        expect(tile.className).toContain('border-edge bg-surface');
+        expect(within(tile).getByText(CHOICE_LETTERS[index]!).style.backgroundColor).toBe(
+          probe.style.backgroundColor,
+        );
       });
+      expect(
+        screen.getByRole('region', { name: 'Choices' }).querySelector('ol')!.className,
+      ).toContain('grid-cols-2');
       const question = screen.getByRole('heading', { level: 1 });
       expect(question.compareDocumentPosition(tiles()[0]!) & Node.DOCUMENT_POSITION_FOLLOWING).toBe(
         4,
@@ -2268,7 +2325,7 @@ describe('Screen result states', () => {
       const [a, b, c] = tiles();
       expect(b!.dataset.correct).toBe('true');
       expect(b!.textContent).toBe('BCanberra, correct2 picked');
-      expect(b!.className).toContain('ring-ink');
+      expect(b!.className).toContain('bg-accent-2 text-accent-2-ink');
       expect(a!.dataset.correct).toBeUndefined();
       expect(a!.className).toContain('opacity-35');
       expect(a!.querySelector('[data-count]')?.textContent).toBe('1 picked');
@@ -2544,6 +2601,26 @@ describe('title card', () => {
     act(() => vi.advanceTimersByTime(1));
     expect(card()).toBeNull();
     expect(screen.getByText(q1.text)).toBeTruthy();
+  });
+
+  it('sets the title card on a bulb-bordered board: muted "Get ready", the title in amber Antonio (F178)', () => {
+    const { socket } = renderScreen();
+    socket.fire('state', lobby());
+    socket.fire('state', first());
+    const board = card()!.querySelector('.bulbs')!;
+    expect(board.className).toContain('border-2 border-edge bg-surface');
+    const title = within(card()!).getByRole('heading');
+    expect(title.className).toContain('font-display');
+    expect(title.className).toContain('text-accent');
+    expect(within(card()!).getByText('Get ready').className).toContain('text-muted');
+  });
+
+  it('steps a long title down so it fits the title card', () => {
+    const { socket } = renderScreen();
+    const long = 'The Very Long Pub Quiz of Everything That Ever Was';
+    socket.fire('state', lobbyView([player(1)], { title: long }));
+    socket.fire('state', first('QUESTION', { title: long }));
+    expect(within(card()!).getByRole('heading').className).toContain('min(4.5vw,8vh)');
   });
 
   it('leaves out a category or difficulty the set does not have', () => {
@@ -2971,11 +3048,15 @@ describe('category board (F90)', () => {
       .map((h) => h.textContent);
     expect(headings).toEqual(['Animals', 'Science', 'History']);
     const tile = (name: string) => within(grid()).getByText((_, el) => el?.textContent === name);
-    expect(tile('Animals, 100').className).toContain('bg-surface');
-    expect(tile('Animals, 100').className).not.toContain('bg-accent-2');
-    // A played tile floods the orange pass (F147).
+    // Open: the well with an amber DotGothic figure; heads on a 4px amber rule (F178).
+    expect(tile('Animals, 100').className).toContain('bg-surface text-accent');
+    expect(tile('Animals, 100').className).toContain('font-outlier');
+    expect(within(grid()).getByRole('heading', { name: 'Animals' }).className).toContain(
+      'border-t-4 border-accent',
+    );
+    // A played tile sinks to shade (design.md Controls, Board tile).
     const played = tile('Animals, 200, played');
-    expect(played.className).toContain('bg-accent-2');
+    expect(played.className).toContain('bg-shade');
     expect(played.className).not.toContain('bg-surface');
     // Its points are for a screen reader only: nothing visible is left on the tile.
     const seen = played.cloneNode(true) as HTMLElement;
@@ -2993,6 +3074,14 @@ describe('category board (F90)', () => {
     press('ArrowRight');
     press('ArrowDown');
     expect(current()).toBe('Science, 200');
+    // The cursor tile is amber on its key edge in a double blue ring (design.md Controls, Board tile).
+    const cursorTile = within(grid()).getByRole('button', { current: true }).className;
+    expect(cursorTile).toContain('bg-accent text-accent-ink');
+    expect(cursorTile).toContain('0_var(--edge-key)_0_var(--color-lead-deep)');
+    expect(cursorTile).toContain('var(--color-accent-2)]');
+    expect(within(grid()).getByRole('button', { name: 'Animals, 100' }).className).not.toContain(
+      'bg-accent ',
+    );
     expect(screen.getByRole('button', { name: /Pick Science 200/ })).toBeTruthy();
     press('Enter');
     expect(picks(socket)).toEqual([{ questionIndex: 4 }]);
@@ -3159,7 +3248,8 @@ describe('Screen in Taglish (F91)', () => {
     );
     const result = screen.getByRole('region', { name: 'Buzz result' });
     expect(within(result).getByText('Unang nag-buzz')).toBeTruthy();
-    expect(within(result).getByText('nag-buzz din')).toBeTruthy();
+    // Under the banner, outside it (`screen-buzz-banner-1080.png`).
+    expect(screen.getByText('nag-buzz din')).toBeTruthy();
     expect(within(result).getByRole('timer', { name: 'Answer time' }).textContent).toBe(
       'Ubos na ang oras!',
     );
@@ -3348,7 +3438,7 @@ describe('legibility on any display (F100)', () => {
     const { socket } = renderScreen();
     socket.fire('state', states[3]![1]);
     expect(screen.getByText('First to buzz').className).toContain(
-      'max(var(--screen-min-label),min(1.2cqw,2.1cqh))',
+      'max(var(--screen-min-label),min(1.6cqw,2.85cqh))',
     );
     const name = screen.getByRole('heading', { level: 2, name: /Ana/ });
     expect(name.style.fontSize).toContain('max(var(--screen-min-name),');
@@ -3356,6 +3446,7 @@ describe('legibility on any display (F100)', () => {
     expect(css).toContain('--screen-min-label: 14px;');
     expect(css).toContain('--screen-min-body: 18px;');
     expect(css).toContain('--screen-min-name: 24px;');
+    expect(css).toContain('--screen-min-figure: 40px;');
   });
 
   it('makes the stage a size container, so the portrait variants follow the Screen', () => {
@@ -3500,13 +3591,15 @@ describe('legibility on any display (F100)', () => {
       expect(text.className).not.toContain('stage-portrait:flex-none');
     });
 
-    it('put "also buzzed" under the winner’s banner', () => {
+    it('put "also buzzed" under the winner’s banner, which stacks', () => {
       const { socket } = renderScreen();
       socket.fire('state', states[3]![1]);
       const banner = screen.getByRole('region', { name: 'Buzz result' });
       expect(banner.className).toContain('stage-portrait:flex-col');
-      const also = screen.getByRole('list', { name: 'Also buzzed' }).parentElement!;
-      expect(also.className).toContain('stage-portrait:max-w-full');
+      const also = screen.getByRole('list', { name: 'Also buzzed' });
+      expect(banner.contains(also)).toBe(false);
+      expect(banner.compareDocumentPosition(also) & Node.DOCUMENT_POSITION_FOLLOWING).toBe(4);
+      expect(also.className).toContain('flex-wrap');
     });
   });
 
@@ -3613,7 +3706,7 @@ describe('legibility on any display (F100)', () => {
     const board = screen.getByRole('region', { name: 'Category board' });
     expect(board.style.getPropertyValue('--tile-text')).toBe('min(4.5vw, 4.50vw, 8vh)');
     expect(within(board).getAllByText('1000')[0]!.className).toContain(
-      'max(var(--screen-min-body),var(--tile-text))',
+      'max(var(--screen-min-figure),var(--tile-text))',
     );
   });
 
@@ -3621,7 +3714,7 @@ describe('legibility on any display (F100)', () => {
     const { socket } = renderScreen();
     socket.fire('state', states[1]![1]);
     const rail = screen.getByRole('complementary', { name: 'Standings' });
-    expect(rail.className).toContain('w-[min(17vw,30.3vh)]');
+    expect(rail.className).toContain('w-[min(26vw,46vh)]');
   });
 
   it('caps the Reconnecting banner by the height and floors it', () => {

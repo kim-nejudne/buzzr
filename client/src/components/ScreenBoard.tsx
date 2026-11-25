@@ -17,9 +17,10 @@ interface ScreenBoardProps {
 
 /**
  * The category board between questions (UI spec, Screen view: Board; F90): a column per category
- * under its title, a paper-2 tile per question showing only its points as a figure. A played tile
- * floods the orange pass and drops its points, which stay for a screen reader (M32). No question text reaches a tile:
- * the view has none to give.
+ * under its Antonio title on a 4px amber rule, a well tile per question showing only its points in
+ * DotGothic amber. A played tile sinks to shade and drops its points, which stay for a screen reader.
+ * The host's cursor is amber on its key edge in a double blue ring (design.md Controls, Board tile;
+ * `screen-board-1080.png`). No question text reaches a tile: the view has none to give.
  */
 export function ScreenBoard({ board, cursor, onCursor, onPick, busy = false }: ScreenBoardProps) {
   const rows = Math.max(0, ...board.columns.map((column) => column.tiles.length));
@@ -55,8 +56,8 @@ export function ScreenBoard({ board, cursor, onCursor, onPick, busy = false }: S
     >
       {board.columns.map((column, c) => (
         <Fragment key={c}>
-          {/* A table head: Sofia Sans 600 under the 4px ink bar (design.md Rules). */}
-          <h2 className="flex min-h-[12vh] min-w-0 items-center justify-center border-t-4 border-ink px-[min(0.8vw,1.43vh)] py-[1vh] text-center font-sans leading-tight font-semibold tracking-normal text-balance hyphens-auto break-words text-ink font-stretch-normal">
+          {/* A board head: Antonio capitals under the 4px amber rule (design.md Rules). */}
+          <h2 className="flex min-h-[12vh] min-w-0 items-center justify-center border-t-4 border-accent px-[min(0.8vw,1.43vh)] py-[1vh] text-center font-display leading-tight text-balance hyphens-auto break-words text-ink uppercase">
             {column.title}
           </h2>
           {column.tiles.map((tile, r) => {
@@ -68,9 +69,19 @@ export function ScreenBoard({ board, cursor, onCursor, onPick, busy = false }: S
                 {tile.used ? <span className="sr-only">{tile.points}, played</span> : tile.points}
               </>
             );
-            const look = `flex min-h-0 min-w-0 items-center justify-center font-display text-[max(var(--screen-min-body),var(--tile-text))] font-black tabular-nums font-stretch-150% ${
-              tile.used ? 'bg-accent-2' : 'bg-surface text-ink'
-            } ${selected ? 'shadow-[0_0_0_min(0.3vw,0.54vh)_var(--color-bg),0_0_0_min(0.6vw,1.07vh)_var(--color-ink)]' : ''}`;
+            const fill = tile.used
+              ? 'border-edge bg-shade'
+              : selected
+                ? 'border-accent bg-accent text-accent-ink'
+                : 'border-edge bg-surface text-accent';
+            // The double blue ring; on an open tile the key edge comes first, so it draws over the
+            // ring's ground gap under the tile.
+            const ring = !selected
+              ? ''
+              : tile.used
+                ? 'shadow-[0_0_0_min(0.3vw,0.54vh)_var(--color-bg),0_0_0_min(0.6vw,1.07vh)_var(--color-accent-2)]'
+                : 'shadow-[0_var(--edge-key)_0_var(--color-lead-deep),0_0_0_min(0.3vw,0.54vh)_var(--color-bg),0_0_0_min(0.6vw,1.07vh)_var(--color-accent-2)]';
+            const look = `flex min-h-0 min-w-0 items-center justify-center border-2 font-outlier text-[max(var(--screen-min-figure),var(--tile-text))] leading-none tabular-nums ${fill} ${ring}`;
             return onPick ? (
               <button
                 key={r}
