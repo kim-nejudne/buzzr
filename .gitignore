@@ -11,6 +11,8 @@ coverage/
 .playwright-mcp/
 *.log
 graphify-out/
+# Chillax (ITF FFL: no redistribution from a public repo); scripts/fetch-fonts.sh fetches it
+client/public/fonts/*.woff2
 
 # Carried over from the portfolio monorepo's root .gitignore on the 2026-11-25 split.
 # Secrets never enter git.
