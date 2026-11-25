@@ -32,7 +32,7 @@ MAX_GIVEUPS_IN_A_ROW=3
 SESSION_TIMEOUT=${AUTOPILOT_SESSION_TIMEOUT:-3h}
 LIVE_URL=${AUTOPILOT_LIVE_URL:-'https://buzzr.kimnejudne.dev'}
 WAIT_DIVISOR=${AUTOPILOT_WAIT_DIVISOR:-1}
-WORKFLOW='deploy-buzzer.yml'
+WORKFLOW='deploy.yml'
 # The option loop shifts them away; the systemd-inhibit re-exec below needs them all.
 ORIG_ARGS=("$@")
 

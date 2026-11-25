@@ -1,5 +1,7 @@
 # Buzzr
 
+Live at [buzzr.kimnejudne.dev](https://buzzr.kimnejudne.dev/). The case study is at [kimnejudne.dev/work/buzzr](https://kimnejudne.dev/work/buzzr/).
+
 A browser game-show buzzer. A laptop on the TV is the **Screen** and shows the questions. **Players** buzz from their phones. The **Host** judges from a paired phone or from the Screen's keyboard.
 
 One Node process runs Express and Socket.IO and serves the built React client. Rooms live in memory, and there are no accounts and no database. Question sets live in the host's browser (IndexedDB).
@@ -80,11 +82,11 @@ Buzzr runs on Kim's DigitalOcean droplet at **https://buzzr.kimnejudne.dev**. It
 | Data    | `/opt/buzzr/data`, owned by `1000:1000`, mounted at `/app/data`. Holds `built-in-sets.json`, the only copy of the built-in sets, and `generation-history.jsonl`                                       |
 | Memory  | `mem_limit: 384m`, `IMAGES_MAX_MB=200`. The box has about 700 MB free next to its other apps                                                                                                          |
 
-Two placeholders run through these steps, and neither is recorded in this repository. `$DEPLOY_HOST` is the droplet as `user@host`, for ssh and scp. `$DROPLET_IP` is its IPv4 address, for DNS. Run every command from `buzzer/`.
+Two placeholders run through these steps, and neither is recorded in this repository. `$DEPLOY_HOST` is the droplet as `user@host`, for ssh and scp. `$DROPLET_IP` is its IPv4 address, for DNS. Run every command from the repository root.
 
 > **A deploy ends every live game.** Rooms live in memory, so a restart drops them, and every connected device shows "This game has ended". Deploy when no game is running. The push-to-deploy workflow waits for this (below).
 
-**A push to `main` that touches `buzzer/` deploys it.** Markdown, `docs/` and `.claude/` changes don't count. The workflow is `.github/workflows/deploy-buzzer.yml` in the portfolio:
+**A push to `main` deploys it.** Markdown, `docs/` and `.claude/` changes don't count. The workflow is `.github/workflows/deploy.yml`:
 
 1. typecheck, lint, format check and tests run on the runner.
 2. `scripts/docker-smoke.sh buzzr:<tag>` builds the image and smoke-tests it there.
@@ -96,7 +98,7 @@ Two placeholders run through these steps, and neither is recorded in this reposi
 A Screen left open on a TV keeps its socket, so the wait can fail with no game running. In that case:
 
 ```sh
-gh workflow run deploy-buzzer.yml -f force=true   # ends any live games
+gh workflow run deploy.yml -f force=true   # ends any live games
 ```
 
 The steps below are the same release done by hand, the break-glass path for when Actions is what's broken.
@@ -151,7 +153,7 @@ ssh $DEPLOY_HOST 'certbot certonly --webroot -w /var/www/certbot -d buzzr.kimnej
 
 certbot's timer renews it against the same webroot. The port-80 block of `buzzr.conf` keeps that path reachable.
 
-**5. Ship the image.** Build from a clean, committed tree. The tag is the last commit that touched `buzzer/`, not the repository HEAD, because the monorepo's other projects move HEAD too.
+**5. Ship the image.** Build from a clean, committed tree. The tag is the last commit that touched shipped code, not the repository HEAD, so a docs-only commit does not change it.
 
 ```sh
 TAG=$(git log -1 --format=%h -- .)
@@ -207,7 +209,7 @@ Earlier images stay on the box. The push-button way re-points `IMAGE_TAG` throug
 
 ```sh
 ssh $DEPLOY_HOST 'docker images buzzr'                       # known tags
-gh workflow run deploy-buzzer.yml -f tag=<good-tag>
+gh workflow run deploy.yml -f tag=<good-tag>
 ```
 
 Or by hand:

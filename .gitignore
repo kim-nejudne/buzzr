@@ -11,3 +11,13 @@ coverage/
 .playwright-mcp/
 *.log
 graphify-out/
+
+# Carried over from the portfolio monorepo's root .gitignore on the 2026-11-25 split.
+# Secrets never enter git.
+!.env.example
+*.pem
+*.key
+# Claude Code setup stays on this machine only.
+.claude/
+CLAUDE.md
+claude-code-setup-prompt.md

@@ -1,6 +1,6 @@
 # Push-to-deploy for buzzr.kimnejudne.dev.
 #
-# This is the routine deploy in `buzzer/README.md` run by a machine instead of a
+# This is the routine deploy in `README.md` run by a machine instead of a
 # person, in the shape of deploy-poketrack.yml: the image is built and
 # smoke-tested on the runner (`scripts/docker-smoke.sh`), shipped with
 # `docker save | ssh docker load`, and one script on the box re-points
@@ -31,11 +31,12 @@ on:
     branches: [main]
     # Docs, the roadmap and the Claude Code setup do not ship in the image.
     paths:
-      - "buzzer/**"
-      - "!buzzer/**/*.md"
-      - "!buzzer/docs/**"
-      - "!buzzer/.claude/**"
-      - ".github/workflows/deploy-buzzer.yml"
+      - '**'
+      - '!**/*.md'
+      - '!docs/**'
+      - '!.claude/**'
+      - '!.github/**'
+      - '.github/workflows/deploy.yml'
   workflow_dispatch:
     inputs:
       tag:
@@ -43,7 +44,7 @@ on:
           Existing buzzr:<tag> on the box to re-point IMAGE_TAG to (a
           rollback). Leave empty to build and deploy HEAD.
         required: false
-        default: ""
+        default: ''
       force:
         description: Restart even if games are live (ends them).
         type: boolean
@@ -54,7 +55,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: deploy-buzzer
+  group: deploy-buzzr
   cancel-in-progress: false
 
 defaults:
@@ -71,14 +72,12 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: buzzer
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 24
           cache: npm
-          cache-dependency-path: buzzer/package-lock.json
       - name: install
         run: npm ci
       - name: typecheck
@@ -102,9 +101,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # the tag is a `git log -- buzzer`, which needs history
+          fetch-depth: 0 # the tag is a `git log`, which needs history
 
-      # The tag names the last commit that changed shipped code under buzzer/,
+      # The tag names the last commit that changed shipped code,
       # not the repository HEAD, as the README's routine deploy does. The
       # exclusions match the paths filter above, so a tag always points at a
       # commit the image was really built from. (`*` crosses `/` in a pathspec.)
@@ -117,7 +116,7 @@ jobs:
             [[ "$TAG_INPUT" =~ ^[0-9a-f]{7,12}$ ]] || { echo "tag must be a short sha, got '$TAG_INPUT'"; exit 1; }
             tag="$TAG_INPUT"; mode=repoint
           else
-            tag="$(git log -1 --format=%h -- buzzer ':!buzzer/*.md' ':!buzzer/docs' ':!buzzer/.claude')"; mode=build
+            tag="$(git log -1 --format=%h -- . ':!*.md' ':!docs' ':!.claude' ':!.github')"; mode=build
           fi
           echo "tag=$tag  mode=$mode"
           { echo "tag=$tag"; echo "mode=$mode"; } >> "$GITHUB_OUTPUT"
@@ -153,10 +152,8 @@ jobs:
         with:
           node-version: 24
           cache: npm
-          cache-dependency-path: buzzer/package-lock.json
       - name: install
         if: steps.tag.outputs.mode == 'build'
-        working-directory: buzzer
         run: npm ci
 
       # Builds buzzr:<tag> and runs it with the droplet's own settings, read
@@ -165,7 +162,6 @@ jobs:
       # the image that ships.
       - name: build and smoke-test the image
         if: steps.tag.outputs.mode == 'build'
-        working-directory: buzzer
         env:
           TAG: ${{ steps.tag.outputs.tag }}
         run: scripts/docker-smoke.sh "buzzr:$TAG"
@@ -177,7 +173,7 @@ jobs:
         run: |
           docker save "buzzr:$TAG" | gzip -1 | ssh droplet 'gunzip | docker load'
           ssh droplet "docker image inspect buzzr:$TAG --format 'on the box: {{.RepoTags}} {{.Size}} bytes'"
-          scp -q buzzer/deploy/compose.deploy.yaml droplet:/opt/buzzr/compose.yaml
+          scp -q deploy/compose.deploy.yaml droplet:/opt/buzzr/compose.yaml
 
       # Everything that mutates the box happens in this one script: wait for
       # the room to empty, re-point, restart, gate, roll back if needed.
