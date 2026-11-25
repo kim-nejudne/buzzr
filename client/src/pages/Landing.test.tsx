@@ -126,15 +126,17 @@ describe('Landing', () => {
     );
   });
 
-  it('Join and Host are two passes of the same weight, crossing from 60rem up (LND-01, F144)', () => {
+  it('Join is a well card and Host a game sits beside it, in one slot from lg (F175)', () => {
     const { join } = renderLanding();
     const joinCard = screen.getByRole('form', { name: 'Join a game' });
     const hostCard = screen.getByRole('region', { name: 'Host a game' });
     expect(joinCard.parentElement).toBe(hostCard.parentElement);
-    // index.css `.passes` prints the first child on teal and the last on orange.
-    expect(joinCard.parentElement!.className).toBe('passes');
     expect(joinCard.nextElementSibling).toBe(hostCard);
-    expect(hostCard.className).toBe(joinCard.className);
+    expect(joinCard.parentElement!.className.split(' ')).toContain('lg:grid-cols-[13fr_7fr]');
+    expect(joinCard.className.split(' ')).toEqual(
+      expect.arrayContaining(['bg-surface', 'border', 'border-edge']),
+    );
+    expect(hostCard.className.split(' ')).not.toContain('bg-surface');
     expect(
       within(hostCard).getByText('Questions on the TV, buzzers on everyone’s phone'),
     ).toBeTruthy();
@@ -142,15 +144,53 @@ describe('Landing', () => {
     expect(join.closest('[data-width]')!.getAttribute('data-width')).toBe('wide');
   });
 
-  it('on a landscape phone the hero yields height, so Host a game is at the fold (F158)', () => {
+  it('BUZZR is amber on the bulb-bordered sign, with the sentence on it from lg (F175)', () => {
     renderLanding();
+    const logo = screen.getByRole('heading', { level: 1 });
+    const sign = logo.parentElement!;
+    expect(logo.className.split(' ')).toEqual(
+      expect.arrayContaining(['text-accent', 'bulbs', 'lg:bulbs-none']),
+    );
+    expect(sign.className.split(' ')).toEqual(expect.arrayContaining(['lg:bulbs', 'lg:flex-row']));
+    expect(sign.lastElementChild!.textContent).toBe(
+      'A game-show buzzer: questions on the TV, buzzers on your phones',
+    );
+    expect(css).toContain('@utility bulbs {');
+  });
+
+  it('the code tiles are shade with DotGothic amber letters, the tile still to fill blue (F175)', () => {
+    const { input } = renderLanding();
+    const tiles = () => [...input.parentElement!.querySelectorAll('[aria-hidden="true"]')];
+    const blue = () => tiles().map((t) => t.className.split(' ').includes('inset-ring-accent-2'));
+    for (const tile of tiles()) {
+      expect(tile.className.split(' ')).toEqual(
+        expect.arrayContaining(['bg-shade', 'font-outlier', 'text-accent']),
+      );
+    }
+    expect(blue()).toEqual([true, false, false, false]);
+    fireEvent.change(input, { target: { value: 'abc' } });
+    expect(blue()).toEqual([false, false, false, true]);
+    fireEvent.change(input, { target: { value: 'abcd' } });
+    expect(blue()).toEqual([false, false, false, false]);
+  });
+
+  it('on a phone Join and Host a game go full width (F175)', () => {
+    const { join } = renderLanding();
+    const host = screen.getByRole('button', { name: 'Host a game' });
+    for (const button of [join, host]) {
+      expect(button.className.split(' ')).toEqual(expect.arrayContaining(['w-full', 'sm:w-auto']));
+    }
+  });
+
+  it('on a landscape phone the hero yields height, so Host a game is at the fold (F158)', () => {
+    const { join } = renderLanding();
     expect(screen.getByRole('heading', { level: 1 }).className.split(' ')).toContain(
       'short:text-[min(15vw,18dvh)]',
     );
     expect(screen.getByRole('main').className.split(' ')).toContain('short:gap-4');
-    // And the passes stand side by side there, as from 60rem.
-    expect(css).toContain(
-      '@media (width > 60rem), (orientation: landscape) and (max-height: 500px) {\n    .passes {',
+    // And Join and Host stand side by side there, as from lg.
+    expect(join.closest('form')!.parentElement!.className.split(' ')).toContain(
+      '[@media(orientation:landscape)_and_(max-height:500px)]:grid-cols-[13fr_7fr]',
     );
   });
 

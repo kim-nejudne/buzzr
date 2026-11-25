@@ -453,15 +453,7 @@ Source: `docs/ux/10-live-review-fixes.md` (every finding from the 2026-11-17 UI/
 
 - [x] F174 Marquee foundations and fonts
 
-- [ ] F175 Landing and join
-  - Spec: `12` § Surfaces F175; mock `landing.png`
-  - Depends: F174
-  - Done when:
-    - Landing matches the mock at 1440×900, 1280×800 and 375.
-    - The marquee sign, the sentence and the join card are on the first screen at 1280×800.
-    - The host picker and created room keep their slot.
-    - `sloplint --kept` is clean on /.
-  - Tests: `Landing.test.tsx` green, with no test hook renamed.
+- [x] F175 Landing and join
 
 - [ ] F176 Player phone and the bulb-ring buzzer
   - Spec: `12` § The buzzer, § Surfaces F176; mocks `player.png`, `components-player.png`
@@ -556,7 +548,7 @@ Source: `docs/ux/10-live-review-fixes.md` (every finding from the 2026-11-17 UI/
 - (F152 finish review) The disabled primaries (Join on the phone, Pair on the remote, Join on Landing) empty to a 2px ink-2 outline as `design.md` Controls says, which the review read as another field under the name or PIN box. Kim to judge: a dimmed ink block would read as the action still.
 - (F153) Team names still truncate on the Screen (the standings rail's team rows, the scoreboard's team tiles). F153 covered player names only; teams could take the same wrap rule.
 - (F153) The Screen name fit estimates width from the character count. A name of wide letters (W, M) wraps to a second line instead of stepping down further; a measured fit would keep it on one line.
-- (F152 finish review) Landing at 1440: the orange pass holds Host a game and Question sets at its foot with ~180px of empty orange above them, as the approved mock. Composition.
+- (F175) Landing at 1440 keeps `PageShell wide` (72rem), so the marquee sign is 1088px wide against the mock's 1246. Kim to judge: a wider Landing-only shell (it would need `data-width` beyond `wide`).
 - (F152 finish review) The two phone forms (`/play` join, `/host` pairing) are bare stock with outlines and no pass or ink bar, so they carry the least Overprint of any screen. Composition.
 - (F152 finish review) The remote's pairing PIN placeholder "000000" is at display size in `text-muted`, so it can read as a typed PIN. A lighter tone would fall under 4.5:1; a shorter or different placeholder is a copy change for Kim.
 - (F142 finish review) The room code as Gabarito tiles beyond Landing: the phone's "Join room" head, the remote's "Room DBPA." line and the Screen board's corner still set it as plain text. Composition, not a defect.

@@ -145,21 +145,21 @@ export function HostGame({
         <p id="host-card-pitch" className="sr-only">
           Questions on the TV, buzzers on everyone&rsquo;s phone
         </p>
-        <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+        {/* Landing's Host column (F175): the secondary, full width on a phone, with its link under it. */}
+        <div className="flex flex-col items-start gap-3">
           <button
             type="button"
             onClick={() => void openPicker()}
             disabled={status.kind === 'loading'}
             aria-describedby="host-card-pitch"
-            className={LANDING_BUTTON_LINE}
+            className={`${LANDING_BUTTON_LINE} w-full sm:w-auto`}
           >
             Host a game
           </button>
           {children}
         </div>
-        {/* Ink, not red: red type on the orange pass is under 2:1. */}
         {error && (
-          <p role="alert" className="text-lg font-semibold text-ink">
+          <p role="alert" className="text-lg font-semibold text-stop">
             {error}
           </p>
         )}

@@ -4,7 +4,7 @@ import { APP_NAME, ROOM_CODE_LENGTH } from '../../../shared/constants.js';
 import { HostGame } from '../components/HostGame.js';
 import { PageShell } from '../components/PageShell.js';
 import { isCompleteRoomCode, normalizeRoomCode } from '../lib/roomCode.js';
-import { LANDING_ACTION, LANDING_BUTTON, LINK } from '../lib/ui.js';
+import { LABEL, LANDING_ACTION, LANDING_BUTTON, LINK } from '../lib/ui.js';
 
 const TILES = Array.from({ length: ROOM_CODE_LENGTH }, (_, index) => index);
 
@@ -14,8 +14,6 @@ export function Landing() {
   // While Host a game's picker (or its created room) shows, it takes the Join form's place.
   const [hosting, setHosting] = useState(false);
   const ready = isCompleteRoomCode(code);
-  // The tile the next letter lands in; the last one once the code is full.
-  const next = Math.min(code.length, ROOM_CODE_LENGTH - 1);
 
   function join(event: FormEvent) {
     event.preventDefault();
@@ -25,38 +23,61 @@ export function Landing() {
   return (
     <PageShell
       width="wide"
-      // The hero and the passes sit mid-window, as the mock (LND-01). The open picker stays
-      // top-aligned, so filtering its list never moves its search box.
-      className={hosting ? '' : 'flex-1 justify-center gap-10 short:gap-4'}
+      // From the top, as the mock (F175): the open picker never moves its search box either.
+      className={hosting ? '' : 'gap-10 short:gap-4 lg:pt-6'}
     >
-      <div className="flex flex-col gap-6 short:gap-2">
+      {/* The marquee sign (design.md Variants, Landing): BUZZR in amber on a bulb border, with the
+          sentence beside it from lg. Under lg the bulbs frame the wordmark alone and the sentence
+          sits under the sign. While hosting, the wordmark shrinks and the sign goes. */}
+      <div
+        className={
+          hosting
+            ? ''
+            : 'flex flex-col gap-4 short:gap-2 lg:bulbs lg:flex-row lg:items-center lg:gap-12 lg:border lg:border-edge lg:px-12 lg:py-12'
+        }
+      >
         <h1
-          className={`leading-none text-ink uppercase ${hosting ? 'text-4xl' : 'text-[clamp(4rem,15vw,13.5rem)] short:text-[min(15vw,18dvh)]'}`}
+          className={`leading-none text-accent uppercase ${
+            hosting
+              ? 'text-4xl'
+              : 'bulbs w-fit border border-edge px-7 py-8 text-[min(34vw,17.5rem)] lg:text-[min(22vw,17.5rem)] short:py-7 short:text-[min(15vw,18dvh)] lg:bulbs-none lg:border-0 lg:p-0'
+          }`}
         >
           {APP_NAME}
         </h1>
         {!hosting && (
-          <p className="max-w-[36ch] text-xl text-ink md:text-2xl">
+          <p className="max-w-[36ch] text-lg font-semibold text-ink lg:max-w-[23ch] lg:text-3xl">
             A game-show buzzer: questions on the TV, buzzers on your phones
           </p>
         )}
       </div>
 
-      {/* Join on the teal pass and Host on the orange, crossing in moss (index.css `.passes`). The
-          picker and the created room take this slot, across both columns. */}
-      <div className={hosting ? 'grid gap-8 md:grid-cols-2' : 'passes'}>
+      {/* The Join card, with Host a game and Question sets beside it from lg, under the sentence's
+          column (F175). A landscape phone takes the same two columns, so Host a game sits at the
+          fold (F158). The picker and the created room take this slot, across both columns. */}
+      <div
+        className={
+          hosting
+            ? 'grid gap-8 md:grid-cols-2'
+            : 'grid items-start gap-6 lg:grid-cols-[13fr_7fr] [@media(orientation:landscape)_and_(max-height:500px)]:grid-cols-[13fr_7fr]'
+        }
+      >
         {!hosting && (
-          <form onSubmit={join} aria-labelledby="join-heading" className={LANDING_ACTION}>
+          <form
+            onSubmit={join}
+            aria-labelledby="join-heading"
+            className={`${LANDING_ACTION} rounded-card border border-edge bg-surface p-4 sm:w-fit md:p-6`}
+          >
             <h2 id="join-heading" className="sr-only">
               Join a game
             </h2>
-            <label htmlFor="room-code" className="font-sans text-sm font-semibold">
+            <label htmlFor="room-code" className={LABEL}>
               Room code
             </label>
-            <div className="flex flex-wrap items-center gap-4">
-              {/* The signature: one input, drawn as four display-face tiles (design.md). They fill
-                  the pass's clear column, up to the mock's 5rem each, so none reaches the moss. */}
-              <div className="relative grid w-full max-w-86 grid-cols-4 gap-2 has-focus-visible:outline-3 has-focus-visible:outline-offset-4 has-focus-visible:outline-ink">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+              {/* The signature: one input, drawn as four code tiles (design.md Controls, Room code):
+                  shade with a rule edge and DotGothic amber letters, the tile still to fill in blue. */}
+              <div className="relative grid w-full max-w-[22.25rem] grid-cols-4 sm:w-[22.25rem] gap-3 has-focus-visible:outline-3 has-focus-visible:outline-offset-4 has-focus-visible:outline-focus">
                 <input
                   id="room-code"
                   value={code}
@@ -76,17 +97,21 @@ export function Landing() {
                   <span
                     key={index}
                     aria-hidden="true"
-                    className={`flex aspect-square items-center justify-center bg-paper font-display text-3xl leading-none font-black text-ink font-stretch-150% sm:text-4xl ${
-                      index === next
-                        ? 'inset-ring-2 inset-ring-ink peer-focus:inset-ring-4'
-                        : 'inset-ring-2 inset-ring-ink'
+                    className={`flex aspect-square items-center justify-center rounded-control bg-shade font-outlier text-5xl leading-none text-accent sm:text-6xl ${
+                      index === code.length
+                        ? 'inset-ring-3 inset-ring-accent-2'
+                        : 'inset-ring-2 inset-ring-edge'
                     }`}
                   >
                     {code[index]}
                   </span>
                 ))}
               </div>
-              <button type="submit" disabled={!ready} className={LANDING_BUTTON}>
+              <button
+                type="submit"
+                disabled={!ready}
+                className={`${LANDING_BUTTON} w-full sm:w-auto sm:shrink-0`}
+              >
                 Join
               </button>
             </div>
@@ -94,11 +119,7 @@ export function Landing() {
         )}
 
         <HostGame onOpenChange={setHosting}>
-          {/* Ground type on the blue block until F175 moves the link off it. */}
-          <Link
-            to="/sets"
-            className={`${LINK} text-accent-2-ink! decoration-accent-2-ink/60! not-disabled:hover:decoration-accent-2-ink!`}
-          >
+          <Link to="/sets" className={LINK}>
             Question sets
           </Link>
         </HostGame>

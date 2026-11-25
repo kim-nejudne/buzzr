@@ -10,6 +10,38 @@ Handoff log, one entry per feature or bug. Newest first. Template:
 **How to try it:** exact commands / URLs / which devices
 ```
 
+## F175 — Landing and join (2026-11-26)
+**What changed:**
+- **Marquee sign** (`Landing.tsx`): BUZZR in amber Antonio at hero size (`min(34vw,17.5rem)`, then `min(22vw,17.5rem)` from `lg`) on a bulb border.
+  - From `lg` the sign is a row: BUZZR, then the sentence in Sofia Sans 600 at 30px, three lines.
+  - Under `lg` the bulbs frame the wordmark alone and the sentence sits under it at 18px.
+  - While hosting, the sign goes and the wordmark is `text-4xl` amber, as before.
+- **Bulbs** (`index.css`): a new `bulbs` Tailwind `@utility` and its `bulbs-none` partner, CSS only, with no component.
+  - 10px bulbs at a 24px pitch, two of every three lit amber and one `bulb-off`.
+  - `::before` draws the rows and `::after` the columns, each masked to its edge band, with `round` repeat.
+  - The content pads clear of the band, so no bulb sits under the text. On a landscape phone the `h1` keeps `py-7` for that reason.
+- **Join card:** the well with a 1px rule border, the "Room code" `LABEL`, and four shade tiles (2px rule edge, DotGothic amber, 48px on a phone and 60px from `sm`). The tile still to fill has a 3px blue edge, and the group's focus ring is blue. JOIN is the amber primary, full width at 375 and beside the tiles from `sm`. The card fits its contents from `sm`.
+- **Host column** (`HostGame.tsx`): Host a game (secondary, full width on a phone) with Question sets under it as a plain `LINK`. The ground-on-blue override from F174 is gone. From `lg` it sits in the second column of `grid-cols-[13fr_7fr]`, under the sentence, as the mock has it. The error is now `text-stop`.
+- **Removed:** the `.passes` rule (Join and Host blocks) from `index.css`. The waiver 23 stamp now names only the Screen lobby (until F177), plus Landing's BUZZR wordmark (17.6% of 1280×800). The comment on `tokens.css` `--blend` is updated.
+- **Tests** (`Landing.test.tsx`): the passes test is rewritten as "Join is a well card and Host a game sits beside it", with the same structure checks (shared parent, order, pitch, link, `data-width`). The F158 landscape test now reads the grid's landscape variant, not the `.passes` media query. Three new tests: the sign and bulbs, the tiles (shade, DotGothic, amber, and the blue tile moving and clearing), and full-width buttons on a phone. No test hook was renamed. 3471 tests in total. No new dependency.
+
+**Decisions:** five DECISIONS rows dated 2026-11-26 for F175: the shell width and sign sizing; the bulbs utility and where it sits; the tiles; the Host column; top alignment and the hosting slot.
+
+**Notes for next session:**
+- **`bulbs` is reusable.** F177's room board, F178's title card and buzz banner, and F179's first podium step can take `class="bulbs"`. Pad the content at least 28px (4px inset plus the 24px band). The box needs no `position` of its own (the utility sets `relative`).
+- **Width:** at 1440 the sign is 1088px wide, against the mock's 1246, because Landing keeps `PageShell wide`. Backlog item for Kim: a wider Landing shell.
+- **Not tested automatically:** the layout checks are class-string assertions plus screenshots. Nothing in CI catches a visual regression of the sign or fold.
+- **sloplint `--kept`** on / (`.playtest/F175/kept.txt`): 0 FAIL, 0 REFLEX, 2 WAIVED (23, 39b), 1 DISMISSED (F3). The 3 WARNs: `.lit-buzzer` 1.04:1 (F176's, as F174 noted), and two "not compared" warnings because the run rendered only /. kept: links 2/2, fields 1/1, handlers 13/13, headings 3/3.
+- The review (`review-feature`) found no Must-fix. Fixed from its Should-fixes: these DECISIONS rows and a comment for the landscape variant. Its "the Join card is wider than the mock" applied to an earlier screenshot. Measured now, the card is about 535px at 1280 against the mock's 556, and the Host column is at 66% of the sign, as in the mock.
+
+**Playtest** (puppeteer, `.playtest/F175/shots.mjs`; screenshots in `.playtest/F175/`, all viewed):
+- 1440×900, 1280×800, 1024×768, 820×1180, 375×812, 375×667 and 667×375. No horizontal scroll and no console errors at any size.
+- At 1280×800 the sign ends at y=442, the sentence at 307 and the Join card at 648, all on the first screen. At 375×812 the Join card ends at 538 and Host a game at 672.
+- On a landscape phone (667×375), Join and Host a game stand side by side with Host a game at the fold (it ends at y=328).
+- Typing FJR at 1280 shows the letters in amber DotGothic, with the fourth tile blue. **Host a game** opens the picker in the old slot under the small wordmark (`landing-host-1280x800.png`).
+
+**How to try it:** `npm run dev`, then open `http://localhost:5173/` on a laptop at 1280 or 1440 and on a phone at `http://<LAN-IP>:5173/`. Type a code, press **Host a game**, then **Back**. `npm test -- client/src/pages/Landing.test.tsx`.
+
 ## F174 — Marquee foundations and fonts (2026-11-26)
 **What changed:**
 - **Before record:** `sloplint client/src --genre playful --scope app --render --before` on /, /sets, /play/WJTZ, /screen/WJTZ, /host/WJTZ and /admin. That is `.hallmark/before.json` and 30 shots in `.hallmark/before/` (gitignored, local). It recorded 23 FAIL, all rule 30a: emoji in test files.

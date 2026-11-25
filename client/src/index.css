@@ -5,7 +5,7 @@
 /* Hallmark · exception (Kim, 2026-11-25) · buttons and display lines are Antonio 700 capitals, untracked, the material of a marquee sign (design.md System, Exceptions): the label gate is waived for buttons only. Labels, captions and table heads stay sentence case in Sofia Sans */
 /* Hallmark · exception (Kim, 2026-11-25) · the buzzer's bulb ring is the one looping animation (design.md Motion): alternate bulbs chase at 0.5s steps(1) only while the phone takes a buzz, and hold still under reduced motion. F176 draws it; the breathing bulb below stands in until then */
 /* Hallmark · waive 39b · design.md Controls sets every button at 54px and every field at 56px, and the Screen's controls in cqw for the sofa · the tall ones are the Join field and button, the room code and the answer tiles on a phone, and the remote's PIN field and Pair button, which are the host's join on a phone as the Join field is the player's (F157) */
-/* Hallmark · waive 23 · Landing's two blocks and the Screen lobby's code and players blocks are Overprint's passes, now flat amber and blue fields until F175 and F177 recompose them · nowhere else does a lead fill a third of the window */
+/* Hallmark · waive 23 · the Screen lobby's code and players blocks are Overprint's passes, now flat amber and blue fields until F177 recomposes them · Landing's amber is the BUZZR wordmark on its sign (F175), and nowhere else does a lead fill a third of the window */
 /* Hallmark · dropped arrow-right · the lobby's Start game reads "Start game Space" as the approved mock's Screen lobby, with no icon (F146) */
 /* Hallmark · dropped onClick={() => change({ copy })} · F156 keeps the chosen language pressable but has a re-press send nothing, so the handler reads onClick={() => !active && change({ copy })} */
 /* Hallmark · kept motion · buzz-pulse (F137) · the open buzzer's pulse on the Screen's Buzzers open pill is a state loop: it runs only while the buzzers take a press, ends when they lock, and never plays under reduced motion. The phone's open buzzer breathes its bulb instead (F145) */
@@ -223,57 +223,79 @@
 }
 
 /*
- * Landing's two blocks (F144, the mock's `.passes`): the Join form on amber, the Host section on
- * blue, unblended (Marquee prints no passes; F175 recomposes Landing). Above 60rem they share one row of 12
- * columns and overlap by two; each pads two sevenths of its width away from the overlap, so no
- * letter sits in the overlap. Narrower, they stack and cross in a 24px strip, padded the same way.
+ * A bulb border (design.md Rules, Bulbs): 10px bulbs at a 24px pitch round the box, two of every
+ * three lit amber and the third `bulb-off`. `::before` draws the top and bottom rows and `::after`
+ * the side columns; `round` fits a whole number of bulbs to each edge. Static; the content pads
+ * clear of the band, so no bulb sits under text. The marquee sign (F175); the room board and the
+ * banner can take it too.
  */
-@layer components {
-  .passes {
-    display: grid;
+@utility bulbs {
+  position: relative;
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    inset: var(--space-2xs);
+    pointer-events: none;
+    background-repeat: round;
   }
-  .passes > * {
-    padding: var(--space-lg);
-    mix-blend-mode: var(--blend);
+  &::before {
+    background-image:
+      radial-gradient(
+        circle calc(var(--bulb) / 2) at 16.667% 50%,
+        var(--color-accent) 80%,
+        transparent
+      ),
+      radial-gradient(
+        circle calc(var(--bulb) / 2) at 50% 50%,
+        var(--color-accent) 80%,
+        transparent
+      ),
+      radial-gradient(
+        circle calc(var(--bulb) / 2) at 83.333% 50%,
+        var(--color-bulb-off) 80%,
+        transparent
+      );
+    background-size: calc(var(--bulb-pitch) * 3) var(--bulb-pitch);
+    mask:
+      linear-gradient(#000 0 0) top / 100% var(--bulb-pitch) no-repeat,
+      linear-gradient(#000 0 0) bottom / 100% var(--bulb-pitch) no-repeat;
   }
-  .passes > :first-child {
-    background: var(--color-accent);
-    color: var(--color-accent-ink);
-    padding-bottom: calc(var(--space-lg) * 2);
+  &::after {
+    background-image:
+      radial-gradient(
+        circle calc(var(--bulb) / 2) at 50% 16.667%,
+        var(--color-accent) 80%,
+        transparent
+      ),
+      radial-gradient(
+        circle calc(var(--bulb) / 2) at 50% 50%,
+        var(--color-accent) 80%,
+        transparent
+      ),
+      radial-gradient(
+        circle calc(var(--bulb) / 2) at 50% 83.333%,
+        var(--color-bulb-off) 80%,
+        transparent
+      );
+    background-size: var(--bulb-pitch) calc(var(--bulb-pitch) * 3);
+    mask:
+      linear-gradient(#000 0 0) left / var(--bulb-pitch) calc(100% - var(--bulb-pitch) * 2)
+        no-repeat,
+      linear-gradient(#000 0 0) right / var(--bulb-pitch) calc(100% - var(--bulb-pitch) * 2)
+        no-repeat;
   }
-  /* The focus blue is under 3:1 on either block; the ground is far past it. */
-  .passes :focus-visible {
-    outline-color: var(--color-accent-ink);
-  }
-  .passes > :last-child {
-    background: var(--color-accent-2);
-    color: var(--color-accent-2-ink);
-    margin-top: calc(-1 * var(--space-lg));
-    padding-top: calc(var(--space-lg) * 2);
-  }
-  /* A landscape phone too, so Host a game sits beside Join at the fold (F158). */
-  @media (width > 60rem), (orientation: landscape) and (max-height: 500px) {
-    .passes {
-      grid-template-columns: repeat(12, minmax(0, 1fr));
-    }
-    .passes > * {
-      grid-row: 1;
-      padding: var(--space-xl);
-    }
-    .passes > :first-child {
-      grid-column: 1 / 8;
-      padding-right: calc(100% * 2 / 7 + var(--space-lg));
-      /* The stacked strip's extra bottom pad would set Join 8px above Host a game (F152). */
-      padding-bottom: var(--space-xl);
-    }
-    .passes > :last-child {
-      grid-column: 6 / 13;
-      margin-top: 0;
-      padding-left: calc(100% * 2 / 7 + var(--space-lg));
-      justify-content: flex-end;
-    }
-  }
+}
 
+/* Takes a bulb border off again at a breakpoint (the sign's h1 hands its bulbs to the sign at lg). */
+@utility bulbs-none {
+  &::before,
+  &::after {
+    content: none;
+  }
+}
+
+@layer components {
   /*
    * The Screen lobby (F146, the mock's `.tv-in`): 12 columns in the lobby's `@container`. The set's
    * title and the join QR sit under the ink bar; the code is a figure on the amber block; the players'

@@ -67,7 +67,7 @@
 
 :root {
   color-scheme: dark;
-  /* Marquee prints no passes: the lobby and Landing blocks paint flat. */
+  /* Marquee prints no passes: the Screen lobby's blocks paint flat until F177. */
   --blend: normal;
   /* The buzzer's glow and drop until F176. Never a glow anywhere else. */
   --buzz-glow: oklch(92% 0.09 85 / 0.9);
