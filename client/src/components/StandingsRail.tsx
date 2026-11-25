@@ -28,11 +28,11 @@ const FULL_ONLY = 'hidden [@media(min-width:1280px)_and_(min-height:720px)]:flex
  * rows slide past each other the riser covers the row it passes instead of their text overlapping (F154).
  */
 const ROW = 'items-baseline gap-[0.5em] border-b border-edge bg-bg py-[0.35em]';
-/** Rank and score: Anybody 900 at 150% in tabular figures. */
+/** Rank and score: the display face in tabular figures. */
 const FIGURE = 'shrink-0 font-display font-black tabular-nums font-stretch-150%';
-/** The rail's heads: Archivo Narrow 600 (design.md Rules). */
+/** The rail's heads: Sofia Sans 600 (design.md Rules). */
 const HEAD =
-  'shrink-0 font-outlier text-[max(var(--screen-min-label),min(1.2vw,2.1vh))] font-semibold text-muted';
+  'shrink-0 font-sans text-[max(var(--screen-min-label),min(1.2vw,2.1vh))] font-semibold text-muted';
 
 /** The question phases that show the rail; the lobby, the scoreboard and the Final screen rank everyone. */
 const STANDINGS_PHASES: readonly Phase[] = ['QUESTION', 'OPEN', 'COLLECTING', 'BUZZED', 'REVEAL'];

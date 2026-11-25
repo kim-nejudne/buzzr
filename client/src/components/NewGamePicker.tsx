@@ -280,7 +280,7 @@ export function NewGamePicker({
               <>
                 {status.kind === 'loading' && <p className="text-muted">Loading your sets…</p>}
                 {status.kind === 'failed' && (
-                  <p role="alert" className="text-buzz">
+                  <p role="alert" className="text-stop">
                     Could not load the saved sets in this browser.
                   </p>
                 )}
@@ -314,7 +314,7 @@ export function NewGamePicker({
             extra={keepScoresBox}
             message={
               error && (
-                <p role="alert" className="text-center text-buzz">
+                <p role="alert" className="text-center text-stop">
                   {error}
                 </p>
               )

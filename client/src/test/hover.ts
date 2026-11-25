@@ -18,8 +18,8 @@ export function buttonsWithNoHover(root: ParentNode = document.body): string[] {
 
 /**
  * The labels of buttons under `root` without the F44 hover style. Text-link buttons keep their own
- * `hover:text-ink` (a set card's title, `hover:underline`), `LINK` its orange underline (F143), destructive ones the red `DANGER` hover (F92), and the primary and outline
- * buttons their own. Throws when there is no button at all, so a test cannot pass on an empty page.
+ * `hover:text-ink` (a set card's title, `hover:underline`), `LINK` its blue underline, destructive ones the stop `DANGER` hover (F92), and the primary and
+ * secondary buttons their key-edge lift (F174). Throws when there is no button at all, so a test cannot pass on an empty page.
  */
 export function buttonsWithoutHover(root: ParentNode = document.body): string[] {
   const buttons = [...root.querySelectorAll<HTMLElement>('button, a[href]')].filter(
@@ -34,7 +34,9 @@ export function buttonsWithoutHover(root: ParentNode = document.body): string[] 
         !el.className.includes('hover:text-ink') &&
         !el.className.includes('hover:underline') &&
         !el.className.includes('hover:decoration-accent-2') &&
-        // The gold primary and outline buttons have their own hover (F94).
+        // The primary and secondary buttons lift off their key edge (design.md Rules, F174).
+        !el.className.includes('not-disabled:hover:-translate-y-0.5') &&
+        // Surfaces not yet recomposed keep the gold primary's hover (F94).
         !/not-disabled:hover:(bg|border)-accent-hover/.test(el.className),
     )
     .map((el) => el.getAttribute('aria-label') ?? el.textContent ?? '');

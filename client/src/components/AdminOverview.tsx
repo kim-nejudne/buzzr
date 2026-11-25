@@ -84,7 +84,7 @@ export function AdminOverview() {
   if (data === null) {
     return loadError ? (
       <div className="flex flex-col items-start gap-3">
-        <p role="alert" className="text-lg text-buzz">
+        <p role="alert" className="text-lg text-stop">
           {loadError}
         </p>
         <button type="button" onClick={refresh} className={BUTTON_SMALL}>
@@ -149,7 +149,7 @@ export function AdminOverview() {
         )}
       </div>
       {loadError && (
-        <p role="alert" className="text-lg text-buzz">
+        <p role="alert" className="text-lg text-stop">
           {loadError}
         </p>
       )}

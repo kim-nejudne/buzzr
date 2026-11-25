@@ -152,7 +152,7 @@ function PreviewQuestion({
         <p className="break-words whitespace-pre-line">{question.text}</p>
       )}
       {picture === 'missing' ? (
-        <p className="text-buzz">The picture is missing from this browser.</p>
+        <p className="text-stop">The picture is missing from this browser.</p>
       ) : (
         picture !== undefined && (
           <img

@@ -20,11 +20,11 @@ interface PrimaryActionProps {
   bigWinner?: boolean;
 }
 
-// The phone's game control (design.md Controls): 56px, Archivo Narrow 600 in capitals, square.
+// The phone's game control (design.md Controls): 56px, Antonio 700 in capitals, square.
 const CONTROL = 'flex min-h-14 w-full items-center justify-center gap-3 text-xl';
 
 // Icon above the label: three side by side leave ~93px each at 375px, too narrow for both in a row.
-const JUDGE = `flex h-14 flex-col items-center justify-center gap-1 rounded-control font-outlier text-[17px] leading-none font-semibold uppercase transition not-disabled:active:bg-ink-2 not-disabled:active:text-paper disabled:opacity-40 ${HOVER}`;
+const JUDGE = `flex h-14 flex-col items-center justify-center gap-1 rounded-control font-display text-[17px] leading-none font-semibold uppercase transition not-disabled:active:bg-ink-2 not-disabled:active:text-paper disabled:opacity-40 ${HOVER}`;
 
 /** The icon beside each primary label. */
 const PRIMARY_ICON: Record<PrimaryEvent, IconName> = {
@@ -55,7 +55,7 @@ export function PrimaryAction({ view, command, bigWinner = false }: PrimaryActio
         <button
           type="button"
           disabled
-          className={`${CONTROL} bg-bg-deep font-outlier font-semibold text-ink-2 uppercase`}
+          className={`${CONTROL} bg-bg-deep font-display font-semibold text-ink-2 uppercase`}
         >
           Reopening buzzers…
         </button>
@@ -70,7 +70,7 @@ export function PrimaryAction({ view, command, bigWinner = false }: PrimaryActio
         <p className={`${LABEL} text-buzz-ink!`}>Buzzed first</p>
         {winner && (
           <p
-            // Anybody 900 in capitals at its normal width: set wide, a name would truncate at four letters.
+            // Antonio capitals at its normal width: set wide, a name would truncate at four letters.
             // Over 10 characters it steps down, so an 11-letter word ("Bartholomew") fits 375px whole (F157).
             className={`flex min-w-0 items-center gap-3 font-display font-black uppercase ${bigWinner ? 'text-[56px]' : winner.name.length > 10 ? 'text-[30px]' : 'text-[44px]'} leading-none`}
           >
@@ -153,7 +153,7 @@ function SideCountdown({ countdown, label }: { countdown: AnswerCountdown; label
       <span className="font-display text-3xl leading-none font-black font-stretch-150% tabular-nums">
         {countdown.secondsLeft}
       </span>
-      <span className="font-outlier text-sm font-semibold">sec</span>
+      <span className="font-sans text-sm font-semibold">sec</span>
     </div>
   );
 }
@@ -198,7 +198,7 @@ function JudgeCountdown({ countdown }: { countdown: AnswerCountdown }) {
       aria-label="Answer time"
       className="flex items-center justify-between border-t-2 border-buzz-ink px-1 pt-1.5"
     >
-      <span className="font-outlier font-semibold text-buzz-ink">Answer time</span>
+      <span className="font-sans font-semibold text-buzz-ink">Answer time</span>
       {countdown.up ? (
         <span className="bg-buzz-ink px-3 py-1 font-display text-xl font-black text-ink uppercase">
           Time’s up

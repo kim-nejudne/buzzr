@@ -16,7 +16,7 @@ type Load =
  * **Print answer sheet** `/sets/:setId/print`: number, question, answer and notes for every
  * question, for a host running the game from the Screen without a phone. Card-ink on white, with
  * no pass (design.md Variants), so it prints the same with or without background graphics: the
- * title under the 4px ink bar, heads and labels in Archivo Narrow, numbers as Anybody figures. The
+ * title under the 4px ink bar, heads and labels in Sofia Sans, numbers as display figures. The
  * buttons are left off the paper.
  */
 export function AnswerSheet() {
@@ -78,7 +78,7 @@ function Sheet({ set }: { set: QuestionSet }) {
     <>
       <header className="flex flex-col gap-1 border-t-4 border-card-ink pt-3">
         <h1 className="text-3xl break-words">{set.title}</h1>
-        <p className="font-outlier font-semibold">
+        <p className="font-sans font-semibold">
           {count} {count === 1 ? 'question' : 'questions'}
         </p>
       </header>
@@ -89,7 +89,7 @@ function Sheet({ set }: { set: QuestionSet }) {
           {/* A table from `sm`, and always on paper, so the printout is unchanged (LIB-07). */}
           <table className="hidden w-full border-collapse text-left align-top sm:table print:table">
             <thead>
-              <tr className="border-b-2 border-card-ink font-outlier font-semibold">
+              <tr className="border-b-2 border-card-ink font-sans font-semibold">
                 <th scope="col" className="w-12 py-2 pr-3">
                   #
                 </th>
@@ -140,12 +140,12 @@ function Sheet({ set }: { set: QuestionSet }) {
                     <QuestionText question={question} />
                   </p>
                   <p className="break-words">
-                    <span className="font-outlier text-sm font-semibold">Answer</span>{' '}
+                    <span className="font-sans text-sm font-semibold">Answer</span>{' '}
                     <strong className="font-semibold">{question.answer}</strong>
                   </p>
                   {notes !== '' && (
                     <p className="break-words whitespace-pre-line">
-                      <span className="font-outlier text-sm font-semibold">Notes</span> {notes}
+                      <span className="font-sans text-sm font-semibold">Notes</span> {notes}
                     </p>
                   )}
                 </li>

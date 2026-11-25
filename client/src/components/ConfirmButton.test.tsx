@@ -24,7 +24,7 @@ describe('ConfirmButton', () => {
         cancelClassName={BUTTON_SMALL}
       />,
     );
-    expect(classes('Delete')).toContain('text-buzz');
+    expect(classes('Delete')).toContain('text-stop');
   });
 
   it('still takes two presses to act, and its Cancel wears the neutral style', () => {
@@ -40,8 +40,8 @@ describe('ConfirmButton', () => {
     );
     fireEvent.click(screen.getByRole('button', { name: 'Delete' }));
     expect(onConfirm).not.toHaveBeenCalled();
-    expect(classes('Cancel')).not.toContain('text-buzz');
-    expect(classes('Confirm delete')).toContain('border-buzz');
+    expect(classes('Cancel')).not.toContain('text-stop');
+    expect(classes('Confirm delete')).toContain('border-stop');
     fireEvent.click(screen.getByRole('button', { name: 'Confirm delete' }));
     expect(onConfirm).toHaveBeenCalledOnce();
   });

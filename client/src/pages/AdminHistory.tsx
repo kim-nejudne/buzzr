@@ -48,7 +48,7 @@ function Outcome({ entry }: { entry: GenerationHistoryEntry }) {
 
 function ErrorText({ entry }: { entry: GenerationHistoryEntry }) {
   if (entry.outcome !== 'failed' || !entry.error) return null;
-  return <span className="text-base text-buzz">{entry.error}</span>;
+  return <span className="text-base text-stop">{entry.error}</span>;
 }
 
 const CELL = 'px-3 py-2 align-top';
@@ -183,7 +183,7 @@ export function AdminHistory() {
         {heading}
         {loadError ? (
           <div className="flex flex-col items-start gap-3">
-            <p role="alert" className="text-lg text-buzz">
+            <p role="alert" className="text-lg text-stop">
               {loadError}
             </p>
             <button

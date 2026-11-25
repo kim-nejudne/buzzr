@@ -65,7 +65,7 @@ function StartView({ onFollow }: FollowProps) {
   if (data === null) {
     return loadError ? (
       <div className="flex flex-col gap-3">
-        <p role="alert" className="text-lg text-buzz">
+        <p role="alert" className="text-lg text-stop">
           {loadError}
         </p>
         <button
@@ -145,7 +145,7 @@ function JobView({ jobId, onFollow }: FollowProps & { jobId: string }) {
     return (
       <section className={`flex flex-col gap-4 ${CARD} border-t-4 border-ink`}>
         <h1 className="text-2xl uppercase">Generation</h1>
-        <p role="alert" className="text-lg text-buzz">
+        <p role="alert" className="text-lg text-stop">
           {gone}
         </p>
         <Link to="/admin/generate" className={`${BUTTON_PRIMARY} text-center text-xl`}>
@@ -155,7 +155,7 @@ function JobView({ jobId, onFollow }: FollowProps & { jobId: string }) {
     );
   }
   const unreachable = missed >= MISSES_SHOWN && (
-    <p role="alert" className="text-lg text-buzz">
+    <p role="alert" className="text-lg text-stop">
       {UNREACHABLE_TEXT}
     </p>
   );
@@ -242,7 +242,7 @@ function JobView({ jobId, onFollow }: FollowProps & { jobId: string }) {
       <GenerateProgress job={job} cancelling={cancelling} actions={actions} />
       {unreachable}
       {error && (
-        <p role="alert" className="text-lg text-buzz">
+        <p role="alert" className="text-lg text-stop">
           {error}
         </p>
       )}

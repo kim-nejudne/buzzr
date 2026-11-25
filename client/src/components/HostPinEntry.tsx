@@ -66,11 +66,11 @@ export function HostPinEntry({ code, onPaired }: HostPinEntryProps) {
           maxLength={PAIRING_PIN_LENGTH}
           aria-invalid={error !== null}
           aria-describedby={error ? 'pin-error' : undefined}
-          // INPUT's 2px ink edge with the PIN as an Anybody figure (design.md); the placeholder stays Archivo.
+          // INPUT's 2px ink edge with the PIN as a display figure (design.md); the placeholder stays Sofia Sans.
           className="w-full rounded-control border-2 border-ink bg-bg px-4 py-3 text-center font-display text-4xl font-black tracking-[0.1em] font-stretch-150% tabular-nums placeholder:font-sans placeholder:font-normal placeholder:text-muted"
         />
         {error && (
-          <p id="pin-error" role="alert" className="text-lg text-buzz">
+          <p id="pin-error" role="alert" className="text-lg text-stop">
             {error}
           </p>
         )}

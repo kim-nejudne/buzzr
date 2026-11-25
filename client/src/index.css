@@ -1,14 +1,15 @@
-/* Hallmark · shape: app screen · genre: playful · theme: Overprint (deal 1/3, seed quiz-night-game-show-buzzer-7620·5b3b31b5·2026-11-16·r0) · stock: newsprint · redesign: full (M32)
- * nav: kept (PageShell, AdminLayout, ScreenChrome) · signature: the room code on the teal pass, crossed by the players' orange pass in moss; the red Lit buzzer · states: lobby, open, buzzed, locked, reveal, final, loading, empty, error
- * axes: light/grotesk-heavy/cool · posture: full-palette · contrast: pass · v2.0.0 */
-/* Hallmark · pre-emit critique: P4 H3 E3 S4 R4 V4 · weakest: E, F143 only swaps the system, so every screen keeps Squeeze's layouts until F144 to F151 recompose them one surface at a time */
-/* Hallmark · exception (Kim, 2026-11-16) · the phone buzzer is a red, round, shaded 3D dome with a bulb under it (design.md Controls): the only third ink, the only gradient and the only round control. Its buzz-red set lives in tokens.css */
-/* Hallmark · waive 39b · design.md Controls sets phone game controls at 56px, and the Screen's controls in cqw for the sofa; the room-code field is the signature · the tall ones are the Join field and button, the room code and the answer tiles on a phone, and the remote's PIN field and Pair button, which are the host's join on a phone as the Join field is the player's (F157) */
-/* Hallmark · waive 23 · Landing's two passes and the Screen lobby's are the signature (design.md Variants, Landing and Screen): a flat teal field and an orange one crossing in moss, posture full-palette, as the approved mock · nowhere else does a pass fill a third of the window */
+/* Hallmark · shape: app screen · genre: playful · theme: Marquee (custom, a sibling of Arcade; not a catalog theme) · redesign: full (M35, docs/ux/12-marquee-redesign.md; source: Figma aTbiy97Iu6rpuTcveQ7Vpr, direction B, Kim 2026-11-25)
+ * nav: kept (PageShell, AdminLayout, ScreenChrome) · signature: the bulb-bordered marquee sign, the room board with DotGothic code tiles, the amber buzzer in its bulb ring, the full-width buzz banner · states: lobby, open, buzzed, locked, reveal, final, loading, empty, error
+ * axes: dark/display-condensed/chromatic-amber · posture: committed (two inks: amber leads, blue answers) · contrast: pass · v2.0.0 */
+/* Hallmark · pre-emit critique · weakest: E, F174 only swaps the system (tokens, faces, controls), so every screen keeps Overprint's layouts until F175 to F183 recompose them one surface at a time */
+/* Hallmark · exception (Kim, 2026-11-25) · buttons and display lines are Antonio 700 capitals, untracked, the material of a marquee sign (design.md System, Exceptions): the label gate is waived for buttons only. Labels, captions and table heads stay sentence case in Sofia Sans */
+/* Hallmark · exception (Kim, 2026-11-25) · the buzzer's bulb ring is the one looping animation (design.md Motion): alternate bulbs chase at 0.5s steps(1) only while the phone takes a buzz, and hold still under reduced motion. F176 draws it; the breathing bulb below stands in until then */
+/* Hallmark · waive 39b · design.md Controls sets every button at 54px and every field at 56px, and the Screen's controls in cqw for the sofa · the tall ones are the Join field and button, the room code and the answer tiles on a phone, and the remote's PIN field and Pair button, which are the host's join on a phone as the Join field is the player's (F157) */
+/* Hallmark · waive 23 · Landing's two blocks and the Screen lobby's code and players blocks are Overprint's passes, now flat amber and blue fields until F175 and F177 recompose them · nowhere else does a lead fill a third of the window */
 /* Hallmark · dropped arrow-right · the lobby's Start game reads "Start game Space" as the approved mock's Screen lobby, with no icon (F146) */
 /* Hallmark · dropped onClick={() => change({ copy })} · F156 keeps the chosen language pressable but has a re-press send nothing, so the handler reads onClick={() => !active && change({ copy })} */
 /* Hallmark · kept motion · buzz-pulse (F137) · the open buzzer's pulse on the Screen's Buzzers open pill is a state loop: it runs only while the buzzers take a press, ends when they lock, and never plays under reduced motion. The phone's open buzzer breathes its bulb instead (F145) */
-/* Hallmark · kept motion · bulb-breathe (F145) · design.md Motion waives the Lit buzzer's bulb as a state loop: it breathes only while the phone takes a buzz, and holds at 0.6 under reduced motion. bulb-flare answers one lobby test press and ends */
+/* Hallmark · kept motion · bulb-breathe (F145) · the buzzer's state loop (see the motion-loop waiver): it breathes only while the phone takes a buzz, and holds at 0.6 under reduced motion, until F176's chase replaces it. bulb-flare answers one lobby test press and ends */
 /* Hallmark · kept motion · tile-zoom (F137) · a picked board tile grows into its question, so the room sees which tile was played; it plays once per pick and never under reduced motion */
 /* Hallmark · kept motion · generation (F141) · design.md waives the generation shimmer as a state loop; the admin's other in-progress marks for a running generation (the list's generating dot, the progress checklist's running mark, a replacement's spinner) are the same state and end with the job, never under reduced motion */
 /* Hallmark · state, not decoration · F137 · the judgement flash (win, buzz; none under reduced motion), float-up ("+100" on the scorer) and chip-bump (a lobby test buzz) each answer one game event and end */
@@ -43,14 +44,14 @@
 }
 
 /*
- * The Tailwind colour names the code already uses, re-pointed at the Overprint roles in tokens.css
- * (DECISIONS M31, M32). Player colours are separate and come from PLAYER_PALETTE in shared/constants.
+ * The Tailwind colour names the code already uses, re-pointed at the Marquee roles in tokens.css
+ * (DECISIONS M31, M32, F174). Player colours are separate and come from PLAYER_PALETTE in shared/constants.
  */
 @theme static {
   --color-bg: var(--color-paper);
   --color-bg-deep: var(--color-paper-3);
   --color-surface: var(--color-paper-2);
-  /* Hairlines on paper: never a field edge or text, which take ink. */
+  /* Hairlines on the ground: never a field edge or text. */
   --color-edge: var(--color-rule);
   --color-accent-hover: var(--color-accent-2);
   --color-buzz-pressed: var(--color-buzz-deep);
@@ -113,7 +114,7 @@
     }
   }
 
-  /* Scale alone: the Screen's Buzzers open block. Overprint has no glow (F147). */
+  /* Scale alone: the Screen's Buzzers open block. Marquee has no glow (F147). */
   @keyframes buzz-pulse {
     0%,
     100% {
@@ -222,10 +223,10 @@
 }
 
 /*
- * Landing's two passes (F144, the mock's `.passes`): the Join form on teal, the Host section on
- * orange, multiplied so they print moss where they cross. Above 60rem they share one row of 12
+ * Landing's two blocks (F144, the mock's `.passes`): the Join form on amber, the Host section on
+ * blue, unblended (Marquee prints no passes; F175 recomposes Landing). Above 60rem they share one row of 12
  * columns and overlap by two; each pads two sevenths of its width away from the overlap, so no
- * letter sits in the moss. Narrower, they stack and cross in a 24px strip, padded the same way.
+ * letter sits in the overlap. Narrower, they stack and cross in a 24px strip, padded the same way.
  */
 @layer components {
   .passes {
@@ -240,9 +241,9 @@
     color: var(--color-accent-ink);
     padding-bottom: calc(var(--space-lg) * 2);
   }
-  /* The focus blue is under 3:1 on either pass; ink is far past it (the mock). */
+  /* The focus blue is under 3:1 on either block; the ground is far past it. */
   .passes :focus-visible {
-    outline-color: var(--color-ink);
+    outline-color: var(--color-accent-ink);
   }
   .passes > :last-child {
     background: var(--color-accent-2);
@@ -275,9 +276,9 @@
 
   /*
    * The Screen lobby (F146, the mock's `.tv-in`): 12 columns in the lobby's `@container`. The set's
-   * title and the join QR sit under the ink bar; the code is a figure on the teal pass; the players'
-   * orange pass crosses the code's lower edge, so the moss prints in columns 6 to 8, under the QR
-   * column. No letter sits in the moss: the code's padding clears it, and so does the count. Every cqw
+   * title and the join QR sit under the ink bar; the code is a figure on the amber block; the players'
+   * blue block crosses the code's lower edge, so the overlap falls in columns 6 to 8, under the QR
+   * column. No letter sits in the overlap: the code's padding clears it, and so does the count. Every cqw
    * is capped by the height (about 1.8vh per cqw at 16:9) for ultrawide displays.
    */
   .lobby-stage {
@@ -341,7 +342,7 @@
     mix-blend-mode: var(--blend);
   }
   /* The count pads past the overlap's three sevenths of the pass. The rows start under it, below the
-     moss, so they take the pass's full width. */
+     overlap, so they take the pass's full width. */
   .lobby-players > :first-child {
     padding-left: calc((100% + 2 * var(--lobby-pad)) * 3 / 7);
   }
@@ -354,10 +355,10 @@
     align-items: center;
     gap: min(1.2cqw, 2.2vh);
   }
-  /* The focus blue is under 3:1 on either pass; ink is far past it. */
+  /* The focus blue is under 3:1 on either block; the ground is far past it. */
   .lobby-code :focus-visible,
   .lobby-players :focus-visible {
-    outline-color: var(--color-ink);
+    outline-color: var(--color-accent-ink);
   }
   /* A column under 600px (a phone, a narrow window beside Game setup): one column, no crossing. */
   @container (width < 37.5rem) {
@@ -381,9 +382,10 @@
   }
 
   /*
-   * The Lit buzzer (design.md Controls, docs/ux/09 § The buzzer): a round ink base that never moves,
-   * a red wall, and a red dome cap with a bulb under it. Play.tsx sets the state from BUZZER_LOOK as
-   * data attributes. Only the cap's translate and the bulb's opacity animate.
+   * The buzzer (docs/ux/09 § The buzzer, in Marquee's colours until F176 draws the bulb ring): a
+   * round shade base that never moves, a lead-deep wall, and an amber dome cap with a bulb under it.
+   * Play.tsx sets the state from BUZZER_LOOK as data attributes. Only the cap's translate and the
+   * bulb's opacity animate.
    */
   .lit-buzzer {
     position: relative;
@@ -391,14 +393,13 @@
     aspect-ratio: 1;
     border-radius: 50%;
     padding: var(--space-md);
-    background: var(--color-ink);
+    background: var(--color-shade);
     box-shadow:
-      0 14px 0 var(--color-ink-2),
+      0 14px 0 var(--color-rule),
       0 26px 30px -10px var(--buzz-drop);
     color: var(--color-paper);
     font-family: var(--font-display);
-    font-weight: 900;
-    font-stretch: 150%;
+    font-weight: 700;
     line-height: 1;
     text-transform: uppercase;
   }
@@ -411,7 +412,7 @@
     background: var(--color-buzz-wall);
   }
   .lit-buzzer:focus-visible {
-    outline: 4px solid var(--color-ink);
+    outline: 4px solid var(--color-focus);
     outline-offset: 6px;
   }
   .lit-buzzer-cap {
@@ -451,11 +452,11 @@
   .lit-buzzer[data-tone='dim'] .lit-buzzer-cap {
     filter: brightness(0.8);
   }
-  /* Too early: the orange pass rings the base. */
+  /* Too early: a 6px stop ring round the base. */
   .lit-buzzer[data-mark='warn'] {
     box-shadow:
       0 0 0 6px var(--color-warn),
-      0 14px 0 var(--color-ink-2),
+      0 14px 0 var(--color-rule),
       0 26px 30px -10px var(--buzz-drop);
   }
   /* Locked out: a 6px ink X over the cap's face. */

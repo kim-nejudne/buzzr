@@ -913,21 +913,21 @@ describe('Host remote', () => {
         expect(judge('Half')).not.toContain('bg-accent');
         expect(judge('Wrong')).toContain('bg-buzz-ink');
         for (const name of ['Correct', 'Half', 'Wrong']) {
-          expect(judge(name)).toContain('font-outlier');
+          expect(judge(name)).toContain('font-display');
           expect(judge(name)).toContain('uppercase');
         }
       });
 
-      it('the primary action is the ink block, 56px, Archivo Narrow capitals (M32)', () => {
+      it('the primary action is the amber primary on its key edge, 56px, Antonio capitals (F174)', () => {
         remote(inPhase('QUESTION'));
         const open = screen.getByRole('button', { name: 'Open buzzers' }).className;
-        expect(open).toContain('bg-ink');
-        expect(open).toContain('text-paper');
+        expect(open).toMatch(/(^| )bg-accent( |$)/);
+        expect(open).toContain('text-accent-ink');
+        expect(open).toContain('shadow-[0_var(--edge-key)_0_var(--color-lead-deep)]');
         expect(open).toContain('min-h-14');
-        expect(open).toContain('font-outlier');
+        expect(open).toContain('font-display');
         expect(open).toContain('uppercase');
-        expect(open).not.toContain('font-display');
-        expect(open).not.toMatch(/(^| )bg-accent( |$)/);
+        expect(open).not.toContain('bg-ink');
       });
 
       it('every button on the Game, Players and Settings tabs has a hover style (FND-06)', () => {
@@ -1830,7 +1830,7 @@ describe('Host remote: phone layout (F98)', () => {
     expect(open).toContain('bg-accent');
     expect(closed).not.toContain('bg-accent');
     for (const tab of [open, closed]) {
-      expect(tab).toContain('font-outlier');
+      expect(tab).toContain('font-display');
       expect(tab).toContain('uppercase');
       expect(tab).not.toContain('rounded');
     }

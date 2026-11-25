@@ -59,7 +59,7 @@ export function Toast({
     <p
       key={toast.id}
       role={done ? 'status' : 'alert'}
-      className={`z-40 mx-auto border-2 bg-surface text-center shadow-lg ${VARIANTS[variant]} ${done ? 'border-win' : 'border-buzz'}`}
+      className={`z-40 mx-auto border-2 bg-surface text-center shadow-lg ${VARIANTS[variant]} ${done ? 'border-win' : 'border-stop'}`}
     >
       {toast.text}
     </p>

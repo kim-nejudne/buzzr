@@ -272,7 +272,7 @@ function HostRemote({ view, hostToken, send }: HostRemoteProps) {
           <span className="max-[359px]:sr-only">Host</span>
           <span className={desktop ? '' : 'sr-only'}> controls</span>
         </h1>
-        <p className="flex min-w-0 items-center gap-1.5 font-outlier text-sm font-semibold text-muted">
+        <p className="flex min-w-0 items-center gap-1.5 font-sans text-sm font-semibold text-muted">
           <ConnectionDot />
           <span className="shrink-0 text-ink">{view.code}</span>
           <span className="hidden truncate min-[400px]:inline">
@@ -287,7 +287,7 @@ function HostRemote({ view, hostToken, send }: HostRemoteProps) {
             aria-describedby="read-aloud-hint"
             onClick={toggleReadAloud}
             // A 2px ink outline; on, it floods the teal pass, a chosen control (design.md).
-            className={`min-h-11 border-2 border-ink px-3 font-outlier text-sm font-semibold whitespace-nowrap uppercase ${HOVER} ${readAloud ? 'bg-accent text-accent-ink' : 'text-ink'}`}
+            className={`min-h-11 border-2 border-ink px-3 font-display text-sm font-semibold whitespace-nowrap uppercase ${HOVER} ${readAloud ? 'bg-accent text-accent-ink' : 'text-ink'}`}
           >
             Read aloud
           </button>
@@ -297,7 +297,7 @@ function HostRemote({ view, hostToken, send }: HostRemoteProps) {
       <p
         id="read-aloud-hint"
         className={
-          hintSeen ? 'sr-only' : 'pb-2 text-right font-outlier text-sm font-semibold text-muted'
+          hintSeen ? 'sr-only' : 'pb-2 text-right font-sans text-sm font-semibold text-muted'
         }
       >
         Read aloud: big question text, answer covered.
@@ -354,7 +354,7 @@ function HostRemote({ view, hostToken, send }: HostRemoteProps) {
                   tabIndex={tab === name ? 0 : -1}
                   aria-controls={`panel-${name}`}
                   onClick={() => setTab(name)}
-                  className={`min-h-11 border-2 border-transparent px-1 py-2 font-outlier text-base font-semibold whitespace-nowrap uppercase max-[359px]:text-sm ${HOVER} ${tab === name ? 'bg-accent text-accent-ink' : 'text-ink-2'}`}
+                  className={`min-h-11 border-2 border-transparent px-1 py-2 font-display text-base font-semibold whitespace-nowrap uppercase max-[359px]:text-sm ${HOVER} ${tab === name ? 'bg-accent text-accent-ink' : 'text-ink-2'}`}
                 >
                   {name === 'Players' ? `Players (${view.players.length})` : name}
                 </button>
@@ -416,7 +416,7 @@ function SettingsDisclosure({ view, command }: { view: HostView; command: HostCo
           aria-expanded={open}
           aria-controls="settings-panel"
           onClick={() => setChosen(!open)}
-          className={`flex min-h-11 w-full items-center justify-between gap-2 border-2 border-transparent border-t-4 border-t-ink px-1 text-left font-outlier font-semibold tracking-normal ${HOVER}`}
+          className={`flex min-h-11 w-full items-center justify-between gap-2 border-2 border-transparent border-t-4 border-t-ink px-1 text-left font-sans font-semibold tracking-normal ${HOVER}`}
         >
           Settings
           <span
@@ -557,7 +557,7 @@ function GameOverCard({ view }: { view: HostView }) {
           Game over
         </h2>
         {view.session && (
-          <p className="shrink-0 px-2 py-1 font-outlier text-sm font-semibold inset-ring-2 inset-ring-ink">
+          <p className="shrink-0 px-2 py-1 font-sans text-sm font-semibold inset-ring-2 inset-ring-ink">
             Game {view.session.gameNumber}
           </p>
         )}

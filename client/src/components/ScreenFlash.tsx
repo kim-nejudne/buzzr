@@ -16,7 +16,7 @@ export function ScreenFlash() {
     return null;
   }
   // The teal multiplies, so ink stays ink under it and "+100" reads through the flash (F154).
-  const color = kind === 'correct' ? 'bg-win mix-blend-multiply' : 'bg-buzz';
+  const color = kind === 'correct' ? 'bg-win' : 'bg-buzz';
   return (
     <div
       key={recent.seq}

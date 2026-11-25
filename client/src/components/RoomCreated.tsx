@@ -73,7 +73,7 @@ export function RoomCreated({ code }: { code: string }) {
               <span className="flex min-w-0 flex-col">
                 <span
                   id={`room-${option}`}
-                  className="font-outlier text-lg leading-tight font-semibold uppercase"
+                  className="font-display text-lg leading-tight font-semibold uppercase"
                 >
                   {title}
                 </span>

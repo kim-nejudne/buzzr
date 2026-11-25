@@ -10,6 +10,64 @@ Handoff log, one entry per feature or bug. Newest first. Template:
 **How to try it:** exact commands / URLs / which devices
 ```
 
+## F174 — Marquee foundations and fonts (2026-11-26)
+**What changed:**
+- **Before record:** `sloplint client/src --genre playful --scope app --render --before` on /, /sets, /play/WJTZ, /screen/WJTZ, /host/WJTZ and /admin. That is `.hallmark/before.json` and 30 shots in `.hallmark/before/` (gitignored, local). It recorded 23 FAIL, all rule 30a: emoji in test files.
+- **Tokens** (`tokens.css`): the Marquee values from `design.md` on the existing names, plus `lead-deep`, `bulb-off`, `shade`, `stop` and `stop-ink`. Also `color-scheme: dark`, 2px radii with a 999px pill, `--rule-bar` at 2px, `--edge-key`/`--edge-press`, `--bulb`/`--bulb-pitch` and `--blend: normal`. The moss token is gone.
+- **Controls** (`lib/ui.ts`):
+  - Primary: amber on a lead-deep key edge.
+  - Secondary: the well, a 2px amber outline and amber type on the rule edge. `aria-pressed` turns it blue (chosen).
+  - Disabled: well-2 with muted type and no edge.
+  - Danger: a stop outline. An armed `ConfirmButton` fills stop with ground type.
+  - Shared: Antonio capitals, 54px tall, Size s (Size m from `md` on the big buttons). Hover lifts 2px, and a press slams to 1px.
+  - Link: Sofia Sans 700 with a 60% blue underline. Fields and inputs are 56px, well-2 with a 1px muted border, and an `aria-invalid` stop border.
+  - `CHOICE_TILE`: blue when chosen. `LABEL`, `FIELD_LABEL` and `BADGE` are Sofia Sans. `base.css` focus ring: 3px, offset 4px.
+- **Fonts** (`main.tsx`): `@fontsource/antonio/700.css`, `@fontsource-variable/sofia-sans/wght.css` and `@fontsource/dotgothic16/400.css`. The Anybody and Archivo imports are gone, but the packages stay in `package.json` (`12` § Open 1).
+- **Sweep across surfaces** (DECISIONS F174):
+  - `text-buzz`/`border-buzz` → `stop` (errors, danger).
+  - `font-outlier` → `font-display` on capitals controls, and → `font-sans` on labels.
+  - `mix-blend-multiply` removed everywhere.
+  - Stale face names fixed in the comments of the touched files.
+- **nameFit** (Chromium, `.playtest/F174/measure.mjs`):
+  - Banner: Anybody 1.05 → Antonio 700 capitals 0.47em a letter. Real names measure 0.40–0.47.
+  - Podium: Archivo 0.62 → Sofia Sans 600 at 0.5.
+  - Join address: 0.6 → 0.48.
+  - `nameFit.test.ts` changes only those two constants (banner and podium), and `Screen.test.tsx`'s join-address check changes 0.6 → 0.48, for that reason.
+- **resultsCard:** Marquee sRGB copies (ground `#0f0703`, well `#1b110a`, rule `#493a2d`, ink `#f5eee0`, muted `#b6a996`, amber `#feb41f`), an amber wordmark, Antonio 700 heads, and Sofia Sans for text and the points (all under 40px). `resultsCard.test.ts` is unchanged, because no test reads a colour.
+- **Chrome:** `theme-color` `#0f0703` and `color-scheme` dark. The favicon is an amber B in 12 bulbs (8 lit, 4 `bulb-off`) on the ground.
+- **Stamp** (`index.css`):
+  - Names Marquee, M35, the custom theme (Figma direction B) and posture committed (two inks).
+  - Two exceptions on the record: Antonio button capitals (the label gate, buttons only) and the buzzer's chase loop.
+  - The waivers for 39b (54/56px controls) and 23 (Landing's and the lobby's amber and blue blocks until F175 and F177) are rewritten.
+- **Interim buzzer:** `.lit-buzzer` keeps its structure (F176 draws the bulb ring). It is now a shade base with a rule drop, an amber dome, Antonio 700 and a blue focus ring.
+- **Tests:**
+  - `tokens.test.ts` is rewritten for Marquee: the contrast pairs, hex values, role mapping, new names, dark/2px/pill/no blend, and the faces. `favicon.test.ts` is updated.
+  - 17 look assertions moved from Overprint classes to their Marquee equivalents: ink block → amber primary, teal multiply → blue chosen, Archivo Narrow → Sofia Sans or Antonio, `text-buzz` → `text-stop`, and the `.lit-buzzer` drop colour.
+  - `test/hover.ts` accepts the key-edge lift as a hover style.
+  - 3468 tests in total. No new dependency (all three faces were already installed).
+
+**Decisions:** six DECISIONS rows dated 2026-11-26 for F174 (the sweep; what stays Overprint until its surface; button sizes and the edge; nameFit; resultsCard; interim legibility fixes).
+
+**Notes for next session:**
+- **Layouts are Overprint's until F175–F183.** Landing's two blocks and the lobby's code and players blocks are flat amber and blue rectangles (no multiply), `RULED` is still a 4px ink bar, and `FIGURE` and the Screen figures are Antonio, not DotGothic16. Nothing renders in DotGothic16 yet, so `document.fonts` lists it as `unloaded` until a surface uses `font-outlier` at 40px or more.
+- `bg-buzz` fills are now amber: the remote's judging panel, the Screen's buzz banner, the wrong flash and the "Time's up" chip. The wrong flash and the remote's Wrong button should be `stop` (F178, F180 own them).
+- Buttons are 54px tall with a 6px key edge drawn as a `box-shadow`, so the edge does not take layout space. Rows of buttons may now touch what sits under them; recheck spacing per surface.
+- Callers that add a `text-*` size to `BUTTON_PRIMARY`/`BUTTON_OUTLINE` (`text-xl`, `text-lg`) now compete with the Size s/m classes. Drop the caller's size when recomposing.
+- Old font packages: Kim, run `npm uninstall @fontsource-variable/anybody @fontsource/archivo @fontsource/archivo-narrow`.
+- The built CSS is 251 kB (97 kB gzip), because DotGothic16's `400.css` declares about 120 CJK `unicode-range` subsets. Only the Latin subset downloads.
+- **sloplint `--kept`** (`.playtest/F174/kept.txt`):
+  - 23 FAIL, all the 30a emoji-in-tests that the before record already had. 0 REFLEX, 8 WAIVED.
+  - links 26/26, fields 42/42, handlers 329/329, test hooks 10/10, headings 26/26.
+  - The two WARNs: `.lit-buzzer` 1.04:1 is the base's text colour, but BUZZ sits on the amber cap. /play, /screen and /host weren't compared because the before record's room WJTZ died with the dev server (the after run used EVTH).
+- The review (`review-feature`) found no Must-fix. Not fixed from it: five test titles still name Anybody or Archivo, and their surface features rewrite those tests.
+
+**Playtest** (puppeteer, `.playtest/F174/fonts.mjs`, output in `fonts.txt`):
+- `/` at 1280×800 and `/screen/EVTH` at 1920×1080: `document.fonts` holds Antonio (loaded), Sofia Sans Variable (loaded) and DotGothic16 (declared, unloaded).
+- No request went to a host other than localhost.
+- Screenshots of landing 1280 and 375, screen 1920 (the start gate), play 375, sets 1440 and admin 1440 are in `.playtest/F174/`. I viewed landing, screen, play and sets.
+
+**How to try it:** `npm run dev`, then open `http://localhost:5173/` and `/sets` on a laptop and `http://<LAN-IP>:5173/play/<code>` on a phone. Expect the dark ground, Antonio buttons on amber key edges that lift on hover and slam on press, blue chosen tiles, Sofia Sans labels, and the amber-B favicon. `npm test -- client/src/tokens.test.ts client/src/favicon.test.ts client/src/lib/nameFit.test.ts`.
+
 ## F162 — Live review sweep (2026-11-17)
 **What changed:**
 - `.hallmark/mocks/overprint/buzzers.html` variant E: the cap rises 14/11/2px (it was 12/9/2), as `design.md`, `index.src.html` and `index.css` have it. The base drop is now 14px with the index mock's shadow, to match the 14px rise.

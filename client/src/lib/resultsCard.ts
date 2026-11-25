@@ -115,20 +115,21 @@ export type CardContext = Pick<
   'fillStyle' | 'font' | 'textAlign' | 'textBaseline' | 'fillRect' | 'fillText' | 'measureText'
 >;
 
-// Overprint's tokens (tokens.css) in sRGB hex: a canvas can't read CSS variables from a detached
+// Marquee's tokens (tokens.css) in sRGB hex: a canvas can't read CSS variables from a detached
 // element, and older browsers' canvases take no oklch (F147).
 const COLORS = {
-  bg: '#e6e3d9', // paper
-  surface: '#dad6c9', // paper-2
-  rule: '#bdb7a9',
-  ink: '#120f0c',
-  muted: '#514c46',
-  accent: '#00a2b9', // the teal pass, win
-  accentInk: '#120f0c',
+  bg: '#0f0703', // ground
+  surface: '#1b110a', // well
+  rule: '#493a2d',
+  ink: '#f5eee0',
+  muted: '#b6a996',
+  accent: '#feb41f', // amber, the lead
+  accentInk: '#0f0703',
 };
-// The theme faces (design.md, M32; Archivo ships 400 and 600 only).
-const DISPLAY = "'Anybody Variable', system-ui, sans-serif";
-const SANS = 'Archivo, system-ui, sans-serif';
+// The theme faces (design.md, M35): Antonio ships 700 only; Sofia Sans is variable. Figures here
+// are under 40px, so they are Sofia Sans 800, not DotGothic16 (design.md Rules).
+const DISPLAY = "Antonio, 'Arial Narrow', sans-serif";
+const SANS = "'Sofia Sans Variable', 'Sofia Sans', system-ui, sans-serif";
 
 const MARGIN = 60;
 const STEP_WIDTH = 280;
@@ -148,18 +149,18 @@ export function drawResultsCard(ctx: CardContext, input: ResultsCardInput): void
   ctx.textBaseline = 'middle';
   ctx.fillStyle = COLORS.bg;
   ctx.fillRect(0, 0, CARD_WIDTH, CARD_HEIGHT);
-  // The 4px ink bar, at the card's scale, under the logo and over the foot (design.md Rules).
+  // The ink bar, at the card's scale, under the logo and over the foot (design.md Rules).
   inkBar(ctx, 60);
   inkBar(ctx, CARD_HEIGHT - 60);
 
-  text(ctx, APP_NAME, CARD_WIDTH / 2, 140, { font: `900 96px ${DISPLAY}`, color: COLORS.ink });
+  text(ctx, APP_NAME, CARD_WIDTH / 2, 140, { font: `700 96px ${DISPLAY}`, color: COLORS.accent });
   text(ctx, input.title, CARD_WIDTH / 2, 232, {
     font: `600 48px ${SANS}`,
     color: COLORS.ink,
     maxWidth: CARD_WIDTH - 2 * MARGIN,
   });
   text(ctx, cardDate(input.date), CARD_WIDTH / 2, 290, {
-    font: `400 32px ${SANS}`,
+    font: `500 32px ${SANS}`,
     color: COLORS.muted,
   });
 
@@ -181,18 +182,18 @@ function podium(ctx: CardContext, steps: PodiumStep<CardRow>[]): void {
     const height = STEP_HEIGHTS[step.height];
     const top = STEP_BOTTOM - height;
     const lit = step.height === 0;
-    // Square steps under an ink bar; the winners' floods the teal pass (win), as on the Screen.
+    // Square steps under an ink bar; the winners' is amber, the lead.
     ctx.fillStyle = lit ? COLORS.accent : COLORS.surface;
     ctx.fillRect(x, top, STEP_WIDTH, height);
     ctx.fillStyle = COLORS.ink;
     ctx.fillRect(x, top, STEP_WIDTH, 6);
     const ink = lit ? COLORS.accentInk : COLORS.ink;
     text(ctx, ordinal(step.rank), x + STEP_WIDTH / 2, top + 52, {
-      font: `900 56px ${DISPLAY}`,
+      font: `700 56px ${DISPLAY}`,
       color: ink,
     });
     text(ctx, String(step.players[0]?.points ?? 0), x + STEP_WIDTH / 2, top + 96, {
-      font: `900 32px ${DISPLAY}`,
+      font: `800 32px ${SANS}`,
       color: lit ? ink : COLORS.muted,
     });
 
@@ -222,11 +223,11 @@ function rankingColumn(
   width: number,
 ): void {
   text(ctx, heading, x, RANKING_TOP, {
-    font: `900 34px ${DISPLAY}`,
+    font: `700 34px ${DISPLAY}`,
     color: COLORS.ink,
     align: 'left',
   });
-  // A ruled table: the ink bar over it, a hairline under each row; the leader on the teal pass.
+  // A ruled table: the ink bar over it, a hairline under each row; the leader on amber.
   ctx.fillStyle = COLORS.ink;
   ctx.fillRect(x, RANKING_TOP + 26, width, 6);
   rows.forEach((r, i) => {
@@ -237,7 +238,7 @@ function rankingColumn(
     else ctx.fillRect(x, y + 22, width, 2);
     const ink = leader ? COLORS.accentInk : COLORS.ink;
     text(ctx, ordinal(r.rank), x + 14, y, {
-      font: `900 24px ${DISPLAY}`,
+      font: `700 24px ${DISPLAY}`,
       color: leader ? ink : COLORS.muted,
       align: 'left',
     });
@@ -254,14 +255,14 @@ function rankingColumn(
       maxWidth: width - 114 - pointsWidth - 14,
     });
     text(ctx, String(r.points), x + width - 14, y, {
-      font: `900 26px ${DISPLAY}`,
+      font: `800 26px ${SANS}`,
       color: ink,
       align: 'right',
     });
   });
   if (more > 0) {
     text(ctx, `and ${more} more`, x + 14, RANKING_TOP + 56 + rows.length * ROW_HEIGHT + 10, {
-      font: `400 28px ${SANS}`,
+      font: `500 28px ${SANS}`,
       color: COLORS.muted,
       align: 'left',
     });
@@ -319,8 +320,8 @@ export async function renderResultsCard(input: ResultsCardInput): Promise<Blob> 
 async function loadFonts(): Promise<void> {
   try {
     await Promise.all(
-      [`900 96px 'Anybody Variable'`, `600 48px Archivo`, `400 32px Archivo`].map((f) =>
-        document.fonts.load(f),
+      [`700 96px Antonio`, `600 48px 'Sofia Sans Variable'`, `800 32px 'Sofia Sans Variable'`].map(
+        (f) => document.fonts.load(f),
       ),
     );
   } catch {

@@ -14,28 +14,34 @@ interface NameFit {
   floor: string;
 }
 
-/** The buzz banner: Anybody 900 at 140% in capitals, about 1em a letter, one line. */
+/**
+ * The buzz banner: Antonio 700 in capitals, one line. Measured in Chromium (F174): real names run
+ * 0.40 to 0.47em a letter, spaces included, so 0.47 fits the widest of them.
+ */
 export const BANNER_NAME: NameFit = {
-  perChar: 1.05,
+  perChar: 0.47,
   extra: 0.8,
   byWord: false,
   floor: 'var(--screen-min-name)',
 };
 
-/** A podium step: Archivo 600, about 0.6em a letter; the dot and the step's padding share the line. */
+/**
+ * A podium step: Sofia Sans 600, measured at 0.42 to 0.50em a letter (0.57 for a two-letter name);
+ * the dot and the step's padding share the line.
+ */
 export const PODIUM_NAME: NameFit = {
-  perChar: 0.62,
+  perChar: 0.5,
   extra: 1.7,
   byWord: true,
   floor: 'var(--screen-min-body)',
 };
 
 /**
- * The lobby's join address (F155), fitted by its longest part between slashes: Archivo 600, lower
- * case, digits and dots, about 0.6em a character. The floor is the mock's small print (13px), at 14.
+ * The lobby's join address (F155), fitted by its longest part between slashes: Sofia Sans 600, lower
+ * case, digits and dots, measured at 0.47em a character. The floor is the mock's small print (13px), at 14.
  */
 export const JOIN_ADDRESS: NameFit = {
-  perChar: 0.6,
+  perChar: 0.48,
   extra: 0,
   byWord: false,
   floor: 'var(--screen-min-label)',

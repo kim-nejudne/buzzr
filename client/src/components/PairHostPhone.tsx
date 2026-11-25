@@ -82,8 +82,8 @@ export function PairHostPhone({
         type="button"
         onClick={show}
         aria-haspopup="dialog"
-        // The secondary: a 2px ink outline, Archivo Narrow 600 in capitals (design.md Controls).
-        className={`rounded-control border-2 border-ink px-[1em] py-[0.5em] font-outlier font-semibold uppercase transition not-disabled:active:bg-bg-deep ${HOVER} ${className}`}
+        // The secondary: a 2px ink outline, Antonio 700 in capitals (design.md Controls).
+        className={`rounded-control border-2 border-ink px-[1em] py-[0.5em] font-display font-semibold uppercase transition not-disabled:active:bg-bg-deep ${HOVER} ${className}`}
       >
         Pair host phone
       </button>
@@ -189,7 +189,7 @@ function PairingDialog({
               <p
                 data-testid="pairing-pin"
                 aria-busy={pin === null}
-                // An Anybody figure, set wide (design.md Rules).
+                // A display figure (design.md Rules).
                 className="font-display text-[2.2em] leading-none font-black tracking-[0.05em] whitespace-nowrap font-stretch-150% tabular-nums"
               >
                 {pin === null ? '··· ···' : `${pin.slice(0, 3)} ${pin.slice(3)}`}
@@ -202,7 +202,7 @@ function PairingDialog({
           ref={hideRef}
           type="button"
           onClick={onHide}
-          className={`min-h-11 rounded-control border-2 border-ink px-[1em] py-[0.3em] font-outlier font-semibold uppercase transition active:bg-bg-deep ${HOVER}`}
+          className={`min-h-11 rounded-control border-2 border-ink px-[1em] py-[0.3em] font-display font-semibold uppercase transition active:bg-bg-deep ${HOVER}`}
         >
           Hide{' '}
           <kbd

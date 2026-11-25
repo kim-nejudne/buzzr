@@ -732,9 +732,9 @@ describe('Set editor toolbar and outline (F95)', () => {
       'true',
       null,
     ]);
-    // F150: the entry in view floods the teal pass, multiplied, in a ruled list.
+    // F150: the entry in view is amber with ground type, in a ruled list.
     expect(entries[1]!.className).toContain('aria-[current]:bg-accent');
-    expect(entries[1]!.className).toContain('aria-[current]:mix-blend-multiply');
+    expect(entries[1]!.className).toContain('aria-[current]:text-accent-ink');
     expect(entries[1]!.className).not.toMatch(/ring|rounded/);
     expect(outline().getByRole('list').className).toBe(RULED);
     vi.unstubAllGlobals();
@@ -906,8 +906,8 @@ describe('Set editor images', () => {
   it('Delete question reads as destructive before it is armed (FND-07)', async () => {
     await seed([q('a')]);
     await renderEditor();
-    expect(menuItem(1, 'Delete').className).toContain('text-buzz');
-    expect(menuItem(1, 'Duplicate').className).not.toContain('text-buzz');
+    expect(menuItem(1, 'Delete').className).toContain('text-stop');
+    expect(menuItem(1, 'Duplicate').className).not.toContain('text-stop');
     // Delete is the menu's last item (FND-07).
     expect(card(1).getAllByRole('menuitem').at(-1)!.textContent).toBe('Delete');
   });

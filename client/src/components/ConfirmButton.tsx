@@ -60,8 +60,8 @@ export function ConfirmButton({
           onConfirm();
         }}
         disabled={disabled}
-        // `!` keeps the danger red under the hover style's ink border.
-        className={`${className} border-buzz text-buzz not-disabled:hover:border-buzz!`}
+        // Armed, it fills stop with ground type (design.md Controls, Danger); `!` beats the unarmed look.
+        className={`${className} border-stop! bg-stop! text-stop-ink!`}
       >
         {confirmLabel}
       </button>

@@ -69,7 +69,7 @@ function SignInForm() {
         className={INPUT}
       />
       {error && (
-        <p id="admin-error" role="alert" className="text-lg text-buzz">
+        <p id="admin-error" role="alert" className="text-lg text-stop">
           {error}
         </p>
       )}
@@ -141,7 +141,7 @@ function AdminHeader({ expiresAt }: { expiresAt: number }) {
         )}
       </header>
       {error && (
-        <p role="alert" className="text-lg text-buzz">
+        <p role="alert" className="text-lg text-stop">
           {error}
         </p>
       )}
@@ -268,7 +268,7 @@ export function AdminLayout() {
       return (
         <Gate>
           <h1 className="text-3xl uppercase">Admin</h1>
-          <p role="alert" className="text-lg text-buzz">
+          <p role="alert" className="text-lg text-stop">
             Could not reach the server.
           </p>
           <button type="button" onClick={session.retry} className={`${BUTTON_SMALL} self-start`}>

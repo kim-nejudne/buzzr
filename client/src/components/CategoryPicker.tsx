@@ -95,7 +95,7 @@ export function CategoryPicker({
         <span className="line-clamp-2 font-sans text-base leading-tight font-semibold break-words">
           {item.set.title}
         </span>
-        <span className="font-outlier text-sm font-semibold text-muted group-has-checked:text-ink">
+        <span className="font-sans text-sm font-semibold text-muted group-has-checked:text-ink">
           {detail(item.set)}
         </span>
       </label>
@@ -173,10 +173,10 @@ export function CategoryPicker({
       <span aria-hidden="true" className="font-display text-3xl leading-none">
         +
       </span>
-      <span className="font-outlier text-base font-semibold uppercase">Build a game</span>
+      <span className="font-display text-base font-semibold uppercase">Build a game</span>
       <span
         id={`${id}-build-hint`}
-        className="max-w-[18ch] font-outlier text-sm font-semibold text-muted"
+        className="max-w-[18ch] font-sans text-sm font-semibold text-muted"
       >
         Mix categories or make a category board
       </span>
@@ -262,7 +262,7 @@ function Section({
         <h3 id={id} className={LABEL}>
           {title}
         </h3>
-        <span className="font-outlier text-sm font-semibold text-muted tabular-nums">{count}</span>
+        <span className="font-sans text-sm font-semibold text-muted tabular-nums">{count}</span>
       </div>
       {children}
     </div>

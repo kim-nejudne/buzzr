@@ -31,7 +31,7 @@ import {
   RULED,
 } from '../lib/ui.js';
 
-/** A running total: Anybody 900 capitals at normal width, so "Total: 105 questions" fits a phone. */
+/** A running total: display capitals at normal width, so "Total: 105 questions" fits a phone. */
 const TOTAL = 'font-display text-xl font-black uppercase tabular-nums font-stretch-normal';
 
 /** A built game and where its pictures come from, for `hostSet` or `hostNextSet`. */
@@ -184,7 +184,7 @@ export function GameBuilder({
         {MODES.map((option) => (
           <label
             key={option.mode}
-            className="flex min-h-11 cursor-pointer items-center justify-center rounded-control px-3 py-2 text-center font-outlier text-base font-semibold text-ink-2 uppercase not-has-checked:not-has-disabled:hover:hover-tint has-checked:bg-accent has-checked:text-accent-ink has-checked:mix-blend-multiply has-focus-visible:outline-3 has-focus-visible:outline-offset-2 has-focus-visible:outline-focus has-disabled:cursor-default has-disabled:opacity-40"
+            className="flex min-h-11 cursor-pointer items-center justify-center rounded-control px-3 py-2 text-center font-display text-base font-semibold text-ink-2 uppercase not-has-checked:not-has-disabled:hover:hover-tint has-checked:bg-accent has-checked:text-accent-ink has-focus-visible:outline-3 has-focus-visible:outline-offset-2 has-focus-visible:outline-focus has-disabled:cursor-default has-disabled:opacity-40"
           >
             <input
               type="radio"
@@ -279,7 +279,7 @@ export function GameBuilder({
                     Remove
                   </button>
                   {got < row.count && (
-                    <p className="col-span-3 text-base text-buzz md:col-span-4">
+                    <p className="col-span-3 text-base text-stop md:col-span-4">
                       {got === 0 ? 'No questions match.' : `Only ${questionCount(got)} match.`}
                     </p>
                   )}
@@ -304,9 +304,9 @@ export function GameBuilder({
       {/* Every message in one place, above the actions (LND-07). */}
       {(showProblem || error) && (
         <div className="flex flex-col gap-1">
-          {showProblem && <p className="text-buzz">{problem}</p>}
+          {showProblem && <p className="text-stop">{problem}</p>}
           {error && (
-            <p role="alert" className="text-buzz">
+            <p role="alert" className="text-stop">
               {error}
             </p>
           )}
@@ -354,7 +354,7 @@ interface BoardPicksProps {
 /** Category board mode: a tick per category that can fill a column, up to six (F90). */
 function BoardPicks({ options, picked, onToggle, locked }: BoardPicksProps) {
   if (options.length === 0) {
-    return <p className="text-buzz">No category has an Easy, a Medium and a Hard question.</p>;
+    return <p className="text-stop">No category has an Easy, a Medium and a Hard question.</p>;
   }
   const full = picked.length >= BOARD_COLUMNS_MAX;
   return (
@@ -381,7 +381,7 @@ function BoardPicks({ options, picked, onToggle, locked }: BoardPicksProps) {
               />
               <span className="min-w-0 flex-1 break-words">{category}</span>
               {column !== -1 && (
-                <span className="shrink-0 font-outlier text-base font-semibold">
+                <span className="shrink-0 font-sans text-base font-semibold">
                   Column {column + 1}
                 </span>
               )}

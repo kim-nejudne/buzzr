@@ -369,7 +369,7 @@ function TitleCard({ view }: { view: ScreenView }) {
       aria-label="Title card"
       className="flex flex-1 flex-col items-center justify-center gap-[4vh] px-[min(6vw,10.67vh)] text-center"
     >
-      <p className="font-outlier text-[max(var(--screen-min-label),min(1.8vw,3.2vh))] font-semibold text-muted">
+      <p className="font-sans text-[max(var(--screen-min-label),min(1.8vw,3.2vh))] font-semibold text-muted">
         {t('titleCardReady')}
       </p>
       {/* Wide capitals under the 4px ink bar (design.md Rules). */}
@@ -405,9 +405,9 @@ const CHIP_MIN_PX = 14;
  */
 const ZOOM_4K = '[@media(min-width:2560px)_and_(min-height:1440px)]:[zoom:2]';
 
-/** The lobby's small print: Room code, Join at. Archivo Narrow 600 (design.md Rules). */
+/** The lobby's small print: Room code, Join at. Sofia Sans 600 (design.md Rules). */
 const LOBBY_LABEL =
-  'font-outlier text-[max(var(--screen-min-label),min(1.25cqw,2.25vh))] font-semibold leading-tight';
+  'font-sans text-[max(var(--screen-min-label),min(1.25cqw,2.25vh))] font-semibold leading-tight';
 /** The host row's controls: Start game, Settings, Pair host phone, the sound button (the mock's 1.8 cqw). */
 const LOBBY_CONTROL =
   'px-[min(2cqw,3.6vh)] py-[min(1.2cqw,2.2vh)] text-[max(var(--screen-min-label),min(1.8cqw,3.2vh))]';
@@ -463,7 +463,7 @@ function Lobby({ view, url, unreachable, hostToken, command }: LobbyProps) {
             </p>
             <div className="lobby-code">
               <p className={LOBBY_LABEL}>{t('roomCode')}</p>
-              {/* The signature: the code as an Anybody 900 figure at 150%, on the teal pass (M32). */}
+              {/* The signature: the code as a display figure at 150%, on the teal pass (M32). */}
               <h1
                 className={`font-display ${many ? 'text-[clamp(3rem,9cqw,15vh)]' : 'text-[clamp(3rem,11.5cqw,18vh)]'} leading-none font-black whitespace-nowrap uppercase font-stretch-150% tabular-nums`}
               >
@@ -518,7 +518,7 @@ function Lobby({ view, url, unreachable, hostToken, command }: LobbyProps) {
                 {/* No key hint on touch (SCR-12). */}
                 <kbd
                   aria-hidden
-                  className="font-outlier text-[max(var(--screen-min-label),0.8em)] normal-case opacity-80 pointer-coarse:hidden"
+                  className="font-sans text-[max(var(--screen-min-label),0.8em)] normal-case opacity-80 pointer-coarse:hidden"
                 >
                   Space
                 </kbd>
@@ -671,7 +671,7 @@ function PlayerChips({ players, teams, scrolls }: PlayerChipsProps) {
                   aria-label={`${team.name} team`}
                   className="flex min-w-0 flex-col gap-[0.3em]"
                 >
-                  <h2 className="flex items-baseline justify-between gap-[0.5em] border-t-4 border-ink pt-[0.3em] font-outlier text-[1em] font-semibold normal-case [font-stretch:100%]">
+                  <h2 className="flex items-baseline justify-between gap-[0.5em] border-t-4 border-ink pt-[0.3em] font-sans text-[1em] font-semibold normal-case [font-stretch:100%]">
                     <span className="flex min-w-0 items-center gap-[0.4em]">
                       <ColourDot
                         color={team.color}
@@ -769,7 +769,7 @@ function SoundButton() {
       {SOUND_LEVEL_LABEL[level]}
       <kbd
         aria-hidden
-        className="ml-[0.5em] font-outlier text-[max(var(--screen-min-label),0.8em)] normal-case opacity-80"
+        className="ml-[0.5em] font-sans text-[max(var(--screen-min-label),0.8em)] normal-case opacity-80"
       >
         M
       </kbd>

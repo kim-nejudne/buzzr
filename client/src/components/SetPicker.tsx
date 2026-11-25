@@ -69,7 +69,7 @@ export function SetPicker({
           </button>
           <div className="flex-1">
             {heading}
-            <p className="font-outlier text-base font-semibold text-muted">
+            <p className="font-sans text-base font-semibold text-muted">
               Choose a category, then a level
             </p>
           </div>
@@ -94,13 +94,13 @@ export function SetPicker({
         <div className="min-w-0 lg:mx-5 lg:mt-4 lg:flex lg:flex-col lg:gap-2.5">
           {selected && ticket ? (
             <>
-              <p className="hidden font-outlier text-sm font-semibold text-muted lg:block">
+              <p className="hidden font-sans text-sm font-semibold text-muted lg:block">
                 {ticket.kicker}
               </p>
               <p className="line-clamp-1 font-display text-base leading-tight font-black break-words uppercase lg:line-clamp-3 lg:text-2xl">
                 {ticket.title}
               </p>
-              <p className="truncate font-outlier text-sm font-semibold text-muted lg:hidden">
+              <p className="truncate font-sans text-sm font-semibold text-muted lg:hidden">
                 {/* Two items at most on the dot (F160): a draft's flag takes the count's place. */}
                 {(ticket.chips.length > 2 ? [ticket.chips[0]!, ticket.chips[2]!] : ticket.chips)
                   .map((chip) => chip.label)
@@ -110,7 +110,7 @@ export function SetPicker({
                 {ticket.chips.map((chip) => (
                   <li
                     key={chip.label}
-                    className={`rounded-pill px-3 py-1 font-outlier text-sm font-semibold ${chip.level ? 'bg-accent text-accent-ink mix-blend-multiply' : 'inset-ring-2 inset-ring-ink text-ink'}`}
+                    className={`rounded-pill px-3 py-1 font-sans text-sm font-semibold ${chip.level ? 'bg-accent text-accent-ink' : 'inset-ring-2 inset-ring-ink text-ink'}`}
                   >
                     {chip.label}
                   </li>
@@ -118,7 +118,7 @@ export function SetPicker({
               </ul>
             </>
           ) : (
-            <p className="font-outlier font-semibold text-muted">Pick a set</p>
+            <p className="font-sans font-semibold text-muted">Pick a set</p>
           )}
         </div>
         {selected && onPreview ? (

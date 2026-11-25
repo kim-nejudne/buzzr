@@ -33,12 +33,13 @@ describe('StartOverlay', () => {
     expect(word.className).toContain('bg-accent');
     expect(word.className).toContain('uppercase');
     expect(word.className).toContain('group-hover:bg-accent-2');
-    // The focus ring is on the word, in ink, since the button fills the window.
-    expect(word.className).toContain('group-focus-visible:outline-ink');
+    // The focus ring is on the word, in ground on the amber (11:1), since the button fills the window.
+    expect(word.className).toContain('group-focus-visible:outline-accent-ink');
     // Inside the pass, so the window's edges can't clip it to bars over the caption (F152).
     expect(word.className).toContain('group-focus-visible:-outline-offset-');
-    // Multiplied, like every pass (design.md Rules).
-    expect(word.className).toContain('mix-blend-multiply');
+    // Ground type on the amber, never blended (design.md Tokens, F174).
+    expect(word.className).toContain('text-accent-ink');
+    expect(word.className).not.toContain('mix-blend');
     expect(screen.getByText('Turns on sound and fullscreen').className).toContain(
       'border-t-4 border-ink',
     );

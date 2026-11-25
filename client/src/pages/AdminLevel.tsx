@@ -175,7 +175,7 @@ function Field({ id, label, value, max, error, multiline, disabled, hint, onChan
         </p>
       )}
       {error && (
-        <p id={`${id}-error`} className="text-buzz">
+        <p id={`${id}-error`} className="text-stop">
           {error}
         </p>
       )}
@@ -286,7 +286,7 @@ function NoteForm({ id, label, submitLabel, onSubmit, onCancel, keysOn }: NoteFo
         </button>
       </div>
       {error && (
-        <p role="alert" className="text-buzz">
+        <p role="alert" className="text-stop">
           {error}
         </p>
       )}
@@ -500,7 +500,7 @@ function QuestionCard({
           </div>
         )}
         {job?.kind === 'failed' && (
-          <p role="alert" className="text-buzz">
+          <p role="alert" className="text-stop">
             The replacement failed: {job.error}
           </p>
         )}
@@ -680,7 +680,7 @@ function QuestionCard({
         )}
 
         {error && (
-          <p role="alert" className="text-buzz">
+          <p role="alert" className="text-stop">
             {error}
           </p>
         )}
@@ -938,7 +938,7 @@ function LevelReview({ name, setId }: { name: string; setId: string }) {
       <div className="flex flex-col gap-3">
         {back}
         <h1 className="text-3xl uppercase">Review</h1>
-        <p role="alert" className="text-lg text-buzz">
+        <p role="alert" className="text-lg text-stop">
           {loaded.error}
         </p>
         <button type="button" onClick={retry} className={BUTTON_SMALL}>
@@ -1031,10 +1031,10 @@ function LevelReview({ name, setId }: { name: string; setId: string }) {
         </p>
         {keysOn && count > 0 && (
           <p className={LABEL}>
-            <kbd className="font-outlier font-semibold">{REVIEW_KEYS.next.hint}</kbd> or{' '}
-            <kbd className="font-outlier font-semibold">↓</kbd> next question,{' '}
-            <kbd className="font-outlier font-semibold">{REVIEW_KEYS.prev.hint}</kbd> or{' '}
-            <kbd className="font-outlier font-semibold">↑</kbd> previous
+            <kbd className="font-sans font-semibold">{REVIEW_KEYS.next.hint}</kbd> or{' '}
+            <kbd className="font-sans font-semibold">↓</kbd> next question,{' '}
+            <kbd className="font-sans font-semibold">{REVIEW_KEYS.prev.hint}</kbd> or{' '}
+            <kbd className="font-sans font-semibold">↑</kbd> previous
           </p>
         )}
       </div>
@@ -1075,7 +1075,7 @@ function LevelReview({ name, setId }: { name: string; setId: string }) {
       <section aria-label="Add a question" className="flex flex-col gap-3">
         {adds.map((job, index) =>
           job.kind === 'failed' ? (
-            <p key={job.jobId} role="alert" className="text-buzz">
+            <p key={job.jobId} role="alert" className="text-stop">
               Could not add a question: {job.error}
             </p>
           ) : job.kind === 'queued' || job.kind === 'running' ? (
@@ -1118,12 +1118,12 @@ function LevelReview({ name, setId }: { name: string; setId: string }) {
           </button>
         )}
         {addError && (
-          <p role="alert" className="text-buzz">
+          <p role="alert" className="text-stop">
             {addError}
           </p>
         )}
         {misses >= MISSES_SHOWN && (
-          <p role="alert" className="text-buzz">
+          <p role="alert" className="text-stop">
             Cannot reach the server. Still trying every 2 seconds…
           </p>
         )}
@@ -1172,7 +1172,7 @@ function LevelReview({ name, setId }: { name: string; setId: string }) {
             </span>
           </p>
           {markError && (
-            <p role="alert" className="text-buzz">
+            <p role="alert" className="text-stop">
               {markError}
             </p>
           )}

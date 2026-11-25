@@ -520,13 +520,13 @@ export function Sets() {
             )}
 
             {error && (
-              <p role="alert" className="text-lg text-buzz">
+              <p role="alert" className="text-lg text-stop">
                 {error}
               </p>
             )}
 
             {importErrors && (
-              <div role="alert" className="flex flex-col gap-2 text-lg text-buzz">
+              <div role="alert" className="flex flex-col gap-2 text-lg text-stop">
                 <p>{importErrors.heading}</p>
                 <ul className="list-disc pl-6">
                   {importErrors.problems.map((problem, i) =>
@@ -591,7 +591,7 @@ export function Sets() {
                     tabIndex={tab === id ? 0 : -1}
                     onClick={() => setTab(id)}
                     onKeyDown={onTabKey}
-                    className={`flex min-h-11 items-center gap-2 border-2 border-transparent px-3 font-outlier text-lg font-semibold whitespace-nowrap text-ink-2 uppercase sm:px-4 aria-selected:bg-accent aria-selected:text-accent-ink aria-selected:mix-blend-multiply ${HOVER}`}
+                    className={`flex min-h-11 items-center gap-2 border-2 border-transparent px-3 font-display text-lg font-semibold whitespace-nowrap text-ink-2 uppercase sm:px-4 aria-selected:bg-accent aria-selected:text-accent-ink ${HOVER}`}
                   >
                     {label}{' '}
                     <span className="font-display text-base font-black tabular-nums font-stretch-150% empty:hidden">

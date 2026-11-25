@@ -295,7 +295,7 @@ describe('Category page', () => {
     await screen.findByRole('list', { name: 'Levels' });
     const buttons = screen.getAllByRole('button');
     expect(buttons.at(-1)!.getAttribute('aria-label')).toBe('Delete Rivers');
-    expect(buttons.at(-1)!.className).toMatch(/text-buzz/);
+    expect(buttons.at(-1)!.className).toMatch(/text-stop/);
     fireEvent.click(screen.getByRole('button', { name: 'Delete Rivers' }));
     expect(callsTo(calls, DELETE)).toBe(0);
     fireEvent.click(screen.getByRole('button', { name: 'Delete 4 sets' }));

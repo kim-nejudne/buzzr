@@ -129,7 +129,7 @@ export function SetBrowser(props: SelectProps | ActionProps | CatalogueProps) {
                 <>
                   {/* The cells show only E, M, H here, so the chosen level's line goes with its
                       actions, named, so it can't be read as the row's total (F152). */}
-                  <span className="min-w-0 flex-1 truncate font-outlier text-sm font-semibold text-muted @2xl:hidden">
+                  <span className="min-w-0 flex-1 truncate font-sans text-sm font-semibold text-muted @2xl:hidden">
                     {CHIP_LABELS[chipOf(pick)]} · {detail(pick)}
                   </span>
                   <div
@@ -195,7 +195,7 @@ export function SetBrowser(props: SelectProps | ActionProps | CatalogueProps) {
                     <span className="flex min-w-0 flex-col">
                       {/* Two lines before it clips: a built-in title never needs more (LND-02). */}
                       <span className="line-clamp-2 break-words @2xl:text-base">{set.title}</span>
-                      <span className="font-outlier text-sm font-semibold">{detail(set)}</span>
+                      <span className="font-sans text-sm font-semibold">{detail(set)}</span>
                     </span>
                   </label>
                 </div>
@@ -231,7 +231,7 @@ export function SetBrowser(props: SelectProps | ActionProps | CatalogueProps) {
                     >
                       {props.cardTitle ? props.cardTitle(set) : set.title}
                     </h3>
-                    <p className="font-outlier text-sm font-semibold text-muted">{detail(set)}</p>
+                    <p className="font-sans text-sm font-semibold text-muted">{detail(set)}</p>
                   </div>
                   <div className="flex items-center gap-2">{props.actions(set)}</div>
                 </li>
@@ -268,7 +268,7 @@ export function SetBrowser(props: SelectProps | ActionProps | CatalogueProps) {
               aria-pressed={filter.difficulties.includes(chip)}
               onClick={() => toggle(chip)}
               disabled={disabled}
-              className={`min-h-11 rounded-control border-2 border-ink px-3 font-outlier text-base font-semibold text-ink uppercase not-disabled:active:bg-bg-deep disabled:opacity-40 sm:px-4 aria-pressed:bg-accent aria-pressed:text-accent-ink aria-pressed:mix-blend-multiply ${HOVER}`}
+              className={`min-h-11 rounded-control border-2 border-ink px-3 font-display text-base font-semibold text-ink uppercase not-disabled:active:bg-bg-deep disabled:opacity-40 sm:px-4 aria-pressed:bg-accent aria-pressed:text-accent-ink ${HOVER}`}
             >
               {CHIP_LABELS[chip]}
             </button>

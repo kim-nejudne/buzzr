@@ -250,7 +250,7 @@ export function ScreenHostControls({
           // Not on a short stage: there it would sit on the lobby's buttons, and ? still opens it (F154).
           className={`absolute bottom-[1.2vh] left-[min(2vw,3.56vh)] z-10 border-2 border-transparent bg-bg-deep px-[0.8em] text-[max(var(--screen-min-label),min(0.9vw,1.6vh))] text-muted short:hidden hover:text-ink focus-visible:text-ink ${HOVER}`}
         >
-          <span aria-hidden className="font-outlier font-semibold">
+          <span aria-hidden className="font-sans font-semibold">
             ?
           </span>{' '}
           Shortcuts
@@ -483,8 +483,8 @@ function BoardPick({
   );
 }
 
-/** Archivo Narrow 600 in capitals, untracked: the type of every control (design.md Controls). */
-const CONTROL_TYPE = 'font-outlier font-semibold uppercase';
+/** Antonio 700 in capitals, untracked: the type of every control (design.md Controls). */
+const CONTROL_TYPE = 'font-display font-semibold uppercase';
 /** Square, flat; the press does not tween (design.md Motion). */
 const BAR_BUTTON_SHAPE = `border-2 px-[min(1vw,1.78vh)] py-[0.6vh] ${CONTROL_TYPE}`;
 /**
@@ -528,7 +528,7 @@ function Kbd({ children }: { children: ReactNode }) {
   return (
     <kbd
       aria-hidden
-      className="ml-[min(0.5vw,0.89vh)] font-outlier text-[max(var(--screen-min-label),0.8em)] normal-case opacity-70"
+      className="ml-[min(0.5vw,0.89vh)] font-sans text-[max(var(--screen-min-label),0.8em)] normal-case opacity-70"
     >
       {children}
     </kbd>
@@ -575,7 +575,7 @@ function HelpOverlay({
         <dl className="gap-x-[min(3vw,5.34vh)] landscape:columns-2">
           {SHORTCUTS.map(({ keys, action }) => (
             <div key={action} className="flex gap-[min(1.5vw,2.67vh)] pb-[1vh] break-inside-avoid">
-              <dt className="w-[5.5em] shrink-0 font-outlier font-semibold whitespace-nowrap text-ink">
+              <dt className="w-[5.5em] shrink-0 font-sans font-semibold whitespace-nowrap text-ink">
                 {keys.join(' or ')}
               </dt>
               <dd>{action}</dd>

@@ -70,7 +70,7 @@ export function TypedMarking({ typed, phase, command, showGroups }: TypedMarking
                 <label htmlFor={id} className="flex min-w-0 flex-1 flex-col">
                   <span className="font-semibold break-words">{group.text}</span>
                   {group.preMarked && (
-                    <span className="font-outlier text-sm font-semibold">Pre-marked</span>
+                    <span className="font-sans text-sm font-semibold">Pre-marked</span>
                   )}
                 </label>
                 {group.correct && !marking && <Icon name="check" className="size-5 shrink-0" />}

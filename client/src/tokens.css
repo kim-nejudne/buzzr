@@ -1,51 +1,63 @@
 /*
- * Overprint (design.md, M32). Colours, faces, text steps, radii, shadow and easings are Tailwind
- * theme tokens, so each one is also a utility (bg-paper-2, font-display, rounded-card, shadow-card).
- * The app keeps Tailwind's own xs-3xl steps: the scaffold's ratio-1.2 copies of them are not here,
- * because they would resize every text-lg in the app (DECISIONS, F132).
+ * Marquee (design.md, M35). Colours, faces, text steps, radii, shadow and easings are Tailwind
+ * theme tokens, so each one is also a utility (bg-paper-2, font-display, rounded-card, text-stop).
+ * The roles sit on the names the code already uses: paper is the ground, accent the amber lead,
+ * accent-2 the blue answer, warn the stop red. The app keeps Tailwind's own xs-3xl steps (DECISIONS, F132).
  */
 @theme static {
-  --color-paper: oklch(91.5% 0.014 92);
-  --color-paper-2: oklch(87.5% 0.018 90);
-  --color-paper-3: oklch(83% 0.021 88);
-  --color-ink: oklch(17% 0.008 60);
-  --color-ink-2: oklch(29% 0.01 60);
-  --color-muted: oklch(42% 0.012 70);
-  --color-rule: oklch(78% 0.02 85);
-  /* Pass 1, teal. */
-  --color-accent: oklch(65% 0.12 212);
-  --color-accent-ink: oklch(17% 0.008 60);
-  /* Pass 2, orange. */
-  --color-accent-2: oklch(71% 0.19 50);
-  --color-accent-2-ink: oklch(17% 0.008 60);
-  /* What the multiply prints where the passes cross: never painted, never under a letter. */
-  --color-mix: oklch(35.5% 0.121 142);
-  --color-focus: oklch(44% 0.1 220);
-  /* The one paper surface per screen: paper-2 under the ink bar. */
-  --color-card: oklch(87.5% 0.018 90);
-  --color-card-ink: oklch(17% 0.008 60);
-  /* Game states: buzz = first to buzz and wrong, win = correct, warn = reconnecting and too early. Never decoration. */
-  --color-buzz: oklch(56% 0.215 27);
-  --color-buzz-hi: oklch(80% 0.12 30);
-  --color-buzz-deep: oklch(40% 0.17 27);
-  --color-buzz-wall: oklch(33% 0.14 27);
-  /* Paper on the red is 4.0:1; the small labels on a buzz fill need 4.5, so their type is a whiter paper. */
-  --color-buzz-ink: oklch(98% 0.008 92);
-  --color-win: oklch(65% 0.12 212);
-  --color-win-ink: oklch(17% 0.008 60);
-  --color-warn: oklch(71% 0.19 50);
-  --font-display: 'Anybody Variable', 'Anybody', ui-sans-serif, system-ui, sans-serif;
-  --font-body: 'Archivo', ui-sans-serif, system-ui, sans-serif;
-  --font-outlier: 'Archivo Narrow', ui-sans-serif, system-ui, sans-serif;
+  /* Ground: warm black. */
+  --color-paper: oklch(14% 0.018 60);
+  /* Well: boards, panels, the top bar. */
+  --color-paper-2: oklch(19% 0.022 60);
+  /* Well-2: tiles, the idle button, fields. */
+  --color-paper-3: oklch(25% 0.025 60);
+  /* Code tiles, the deepest wells. */
+  --color-shade: oklch(8% 0.01 60);
+  --color-ink: oklch(95% 0.02 85);
+  --color-ink-2: oklch(87% 0.02 85);
+  --color-muted: oklch(74% 0.03 75);
+  /* Hairlines and panel edges: decorative, 1.8:1. */
+  --color-rule: oklch(36% 0.03 60);
+  /* Lead: sodium amber. The primary, the buzz, lit bulbs. */
+  --color-accent: oklch(82% 0.165 78);
+  --color-accent-ink: oklch(14% 0.018 60);
+  /* The key edge under amber. */
+  --color-lead-deep: oklch(56% 0.12 65);
+  /* Answer: electric blue. Correct, the cursor row, links, focus. */
+  --color-accent-2: oklch(68% 0.16 255);
+  --color-accent-2-ink: oklch(14% 0.018 60);
+  --color-focus: oklch(68% 0.16 255);
+  --color-bulb-off: oklch(31% 0.04 65);
+  /* Wrong, too early, locked, danger. Always with its word, and never light type on it (3.38:1). */
+  --color-stop: oklch(64% 0.2 28);
+  --color-stop-ink: oklch(14% 0.018 60);
+  --color-card: oklch(19% 0.022 60);
+  --color-card-ink: oklch(95% 0.02 85);
+  /* Game states: buzz = the amber buzzer, win = the blue answer, warn = stop. Never decoration. */
+  --color-buzz: oklch(82% 0.165 78);
+  --color-buzz-deep: oklch(56% 0.12 65);
+  --color-buzz-ink: oklch(14% 0.018 60);
+  /* The buzzer's dome highlight and wall until F176 redraws it as the bulb ring. */
+  --color-buzz-hi: oklch(92% 0.09 85);
+  --color-buzz-wall: oklch(40% 0.09 60);
+  --color-win: oklch(68% 0.16 255);
+  --color-win-ink: oklch(14% 0.018 60);
+  --color-warn: oklch(64% 0.2 28);
+  /* Antonio ships 700 only: display lines and buttons, in capitals. */
+  --font-display: 'Antonio', 'Arial Narrow', sans-serif;
+  /* Everything you read, 500 to 800. */
+  --font-body: 'Sofia Sans Variable', 'Sofia Sans', ui-sans-serif, sans-serif;
+  /* Figures only, 40px and up: room codes, scores, timers. */
+  --font-outlier: 'DotGothic16', ui-monospace, monospace;
   --text-md: 1rem;
   --text-display-s: 1.44rem;
   --text-display: 1.728rem;
   --text-section: 1.2rem;
   --text-title: 1rem;
   --text-lead: 1rem;
-  --radius-card: 0;
-  --radius-control: 0;
-  --radius-pill: 0;
+  --radius-card: 2px;
+  --radius-control: 2px;
+  --radius-pill: 999px;
   --shadow-card: none;
   --shadow-badge: none;
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
@@ -54,12 +66,13 @@
 }
 
 :root {
-  color-scheme: light;
-  --blend: multiply;
-  /* The buzzer's dome (Kim, 2026-11-16): its bulb glow and the drop under the base. */
-  --buzz-glow: oklch(88% 0.1 40 / 0.9);
-  --buzz-glow-0: oklch(88% 0.1 40 / 0);
-  --buzz-drop: oklch(17% 0.008 60 / 0.35);
+  color-scheme: dark;
+  /* Marquee prints no passes: the lobby and Landing blocks paint flat. */
+  --blend: normal;
+  /* The buzzer's glow and drop until F176. Never a glow anywhere else. */
+  --buzz-glow: oklch(92% 0.09 85 / 0.9);
+  --buzz-glow-0: oklch(92% 0.09 85 / 0);
+  --buzz-drop: oklch(8% 0.01 60 / 0.6);
   --space-3xs: 2px;
   --space-2xs: 4px;
   --space-xs: 8px;
@@ -88,9 +101,13 @@
   --z-toast: 500;
   --z-tooltip: 600;
   --rule-hair: 1px;
-  --rule-bar: 4px;
-  --tracking-display: -0.01em;
-  --display-weight: 900;
-  /* Figures 150%. */
-  --display-stretch: 140%;
+  --rule-bar: 2px;
+  /* The hard drop under a pressable, and what is left of it when pressed. */
+  --edge-key: 6px;
+  --edge-press: 1px;
+  --bulb: 10px;
+  --bulb-pitch: 24px;
+  --tracking-display: 0;
+  --display-weight: 700;
+  --display-stretch: 100%;
 }

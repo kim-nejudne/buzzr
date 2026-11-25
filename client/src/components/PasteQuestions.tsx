@@ -83,7 +83,7 @@ export function PasteQuestions({ count, onAdd, onCancel }: PasteQuestionsProps) 
 
           {bad.length > 0 && (
             <div className="flex flex-col gap-1">
-              <h3 className="font-outlier font-semibold text-buzz">
+              <h3 className="font-sans font-semibold text-stop">
                 {plural(bad.length, 'line')} skipped
               </h3>
               <ul aria-label="Lines skipped" className={RULED}>

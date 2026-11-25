@@ -166,7 +166,7 @@ export function AddCategoryForm({ names, blocked, onStarted }: AddCategoryFormPr
           ))}
         </fieldset>
         {error && (
-          <p role="alert" className="text-lg text-buzz">
+          <p role="alert" className="text-lg text-stop">
             {error}
           </p>
         )}

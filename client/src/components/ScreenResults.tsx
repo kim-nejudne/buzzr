@@ -20,7 +20,7 @@ const SCREEN_COLUMN = 'pt-[min(2vw,3.5vh)]';
 const CARD_HEADING =
   'shrink-0 font-display text-[max(var(--screen-min-body),min(2vw,3.6vh))] text-ink uppercase';
 
-/** Ranks and scores: Anybody 900 at 150% in tabular figures (design.md Rules). */
+/** Ranks and scores: the display face in tabular figures (F179 sets them in DotGothic16). */
 const FIGURE = 'font-display font-black tabular-nums font-stretch-150%';
 
 /** How long the scoreboard shows the previous standings before it reorders. */

@@ -177,14 +177,14 @@ export function EmojiPicker({ name, emoji, onSave }: EmojiPickerProps) {
               </button>
             </div>
             {otherError && (
-              <p id={`${id}-other-error`} className="text-buzz">
+              <p id={`${id}-other-error`} className="text-stop">
                 {otherError}
               </p>
             )}
           </form>
           {saving && <p className="text-muted">Saving…</p>}
           {error && (
-            <p role="alert" className="text-buzz">
+            <p role="alert" className="text-stop">
               {error}
             </p>
           )}

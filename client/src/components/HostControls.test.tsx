@@ -128,18 +128,18 @@ describe('SecondaryActions', () => {
     setup(SecondaryActions, hostView({ showScoreboard: true }));
     const skip = button('Skip question').className;
     expect(skip).toContain('border-ink');
-    expect(skip).toContain('font-outlier');
+    expect(skip).toContain('font-sans');
     expect(skip).not.toMatch(/(^| )bg-/);
     const shown = button('Hide scoreboard').className;
     expect(shown).toContain('bg-accent');
     expect(shown).not.toContain('ring-accent');
-    expect(button('End game').className).toContain('border-buzz');
+    expect(button('End game').className).toContain('border-stop');
   });
 
   it('End game keeps the red outline and sets its label in ink, as red type on paper is 4.03:1 (F157)', () => {
     setup(SecondaryActions, hostView());
     const end = button('End game').className;
-    expect(end).toContain('border-buzz');
+    expect(end).toContain('border-stop');
     expect(end).toContain('text-ink!');
     fireEvent.click(button('End game'));
     expect(button('Confirm end').className).toContain('text-ink!');
@@ -178,10 +178,10 @@ describe('SecondaryActions', () => {
 
   it('End game reads as destructive before it is armed, and its Cancel does not (FND-07)', () => {
     setup(SecondaryActions, hostView());
-    expect(button('End game').className).toContain('text-buzz');
-    expect(button('Show scoreboard').className).not.toContain('text-buzz');
+    expect(button('End game').className).toContain('text-stop');
+    expect(button('Show scoreboard').className).not.toContain('text-stop');
     fireEvent.click(button('End game'));
-    expect(button('Cancel').className).not.toContain('text-buzz');
+    expect(button('Cancel').className).not.toContain('text-stop');
   });
 
   it('sends once on a double tap; a new snapshot enables the buttons again', () => {
@@ -272,7 +272,8 @@ describe('HostPlayers', () => {
     expect(score.className).toContain('font-stretch-150%');
     expect(score.className).toContain('tabular-nums');
     expect(button('Add 200 to Player 1').className).toContain('border-ink');
-    expect(button('Add 200 to Player 1').className).not.toContain('font-display');
+    // A button is Antonio capitals (design.md Controls, F174).
+    expect(button('Add 200 to Player 1').className).toContain('font-display');
     expect(button('More for Player 1').className).toContain('border-ink');
   });
 
@@ -427,11 +428,11 @@ describe('HostPlayers', () => {
     setup(HostPlayers, hostView());
     const items = within(openMenu('Player 2')).getAllByRole('menuitem');
     expect(items.at(-1)!.textContent).toBe('Kick');
-    expect(items.at(-1)!.className).toContain('text-buzz');
+    expect(items.at(-1)!.className).toContain('text-stop');
     fireEvent.click(items.at(-1)!);
     expect(
       within(row('Player 2')).getByRole('menuitem', { name: 'Cancel' }).className,
-    ).not.toContain('text-buzz');
+    ).not.toContain('text-stop');
   });
 
   it('shows a long name whole, on up to two lines, not cut to one (HST-04)', () => {
@@ -783,10 +784,10 @@ describe('HostSettings', () => {
     );
   });
 
-  it('sets labels and steppers in Archivo Narrow 600 and values as figures (F156)', () => {
+  it('sets labels and steppers in Sofia Sans 600 and values as figures (F156, F174)', () => {
     setup(HostSettings, hostView());
-    expect(screen.getByText('Answer time').className).toContain('font-outlier font-semibold');
-    expect(button('Less answer time').className).toContain('font-outlier font-semibold');
+    expect(screen.getByText('Answer time').className).toContain('font-sans font-semibold');
+    expect(button('Less answer time').className).toContain('font-sans font-semibold');
     expect(every().className).toContain('font-display font-black font-stretch-150%');
     expect(screen.getByRole('region', { name: 'Settings' }).innerHTML).not.toMatch(
       /font-(bold|extrabold|medium)/,

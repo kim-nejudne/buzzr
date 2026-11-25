@@ -56,14 +56,14 @@ export function CategoryRow({
           {emoji}
         </span>
         <span className="flex min-w-0 flex-col">
-          {/* Data in a ruled table, so Archivo, not the display face (design.md Rules). */}
+          {/* Data in a ruled table, so Sofia Sans, not the display face (design.md Rules). */}
           <Name
             id={headingId}
             className="font-sans text-base leading-tight font-semibold tracking-normal break-words font-stretch-normal @2xl:text-lg"
           >
             {name}
           </Name>
-          <span className="font-outlier text-sm font-semibold text-muted">{meta}</span>
+          <span className="font-sans text-sm font-semibold text-muted">{meta}</span>
         </span>
       </div>
       {children}
@@ -91,10 +91,10 @@ interface LevelTileProps {
 
 /**
  * A level's word: in a narrow container only its initial shows, drawn from `data-initial` as a wide
- * Anybody figure, so the text (and every reader of it) stays "Easy"; from 42rem, the word itself.
+ * display figure, so the text (and every reader of it) stays "Easy"; from 42rem, the word itself.
  */
 export const LEVEL_WORD =
-  'font-outlier text-[0px] leading-tight font-semibold before:font-display before:text-lg before:leading-none before:font-black before:font-stretch-150% before:content-[attr(data-initial)] @2xl:text-base @2xl:before:content-none';
+  'font-sans text-[0px] leading-tight font-semibold before:font-display before:text-lg before:leading-none before:font-black before:font-stretch-150% before:content-[attr(data-initial)] @2xl:text-base @2xl:before:content-none';
 
 /** One level of a category as a choosable cell around a native radio: its initial in a narrow container, its name from 42rem. */
 export function LevelTile({
@@ -124,7 +124,7 @@ export function LevelTile({
         {level}
       </span>
       {sub && (
-        <span className="hidden max-w-full truncate font-outlier text-sm font-semibold @2xl:block">
+        <span className="hidden max-w-full truncate font-sans text-sm font-semibold @2xl:block">
           {sub}
         </span>
       )}

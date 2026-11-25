@@ -56,7 +56,7 @@ function StepBar({ job }: { job: GenerateJob }) {
           </div>
         ))}
       </div>
-      <div aria-hidden="true" className="flex gap-3 font-outlier text-sm font-semibold text-muted">
+      <div aria-hidden="true" className="flex gap-3 font-sans text-sm font-semibold text-muted">
         {job.levels.map((level) => (
           <span key={level.difficulty} className="flex-1">
             {DIFFICULTY_LABELS[level.difficulty]}
@@ -103,7 +103,7 @@ function Checklist({ job }: { job: GenerateJob }) {
           key={level.difficulty}
           className={`flex items-center gap-3 text-lg ${
             level.status === 'done' || level.status === 'running' ? '' : 'text-muted'
-          } ${level.status === 'failed' || level.status === 'cancelled' ? 'text-buzz' : ''}`}
+          } ${level.status === 'failed' || level.status === 'cancelled' ? 'text-stop' : ''}`}
         >
           <span
             aria-hidden="true"
@@ -158,7 +158,7 @@ export function GenerateProgress({ job, cancelling, actions }: GenerateProgressP
       </h1>
       <StepBar job={job} />
       {stopped ? (
-        <p role="alert" className="text-xl text-buzz">
+        <p role="alert" className="text-xl text-stop">
           {stopText(job)}
         </p>
       ) : (

@@ -13,8 +13,8 @@ interface HostPlayersProps {
   command: HostCommand;
 }
 
-// Secondary controls (design.md): a 2px ink outline, Archivo Narrow 600 in capitals.
-const small = `min-h-11 rounded-control border-2 border-ink px-3 py-2 font-outlier font-semibold uppercase tabular-nums transition not-disabled:active:bg-bg-deep disabled:opacity-40 ${HOVER}`;
+// Secondary controls (design.md): a 2px ink outline, Antonio 700 in capitals.
+const small = `min-h-11 rounded-control border-2 border-ink px-3 py-2 font-display font-semibold uppercase tabular-nums transition not-disabled:active:bg-bg-deep disabled:opacity-40 ${HOVER}`;
 
 /**
  * The remote's Players tab (UI spec, Host remote): each player's score and connection, buttons
@@ -95,7 +95,7 @@ function TeamGroups({
               {/* Ink name and a ringed square: red or blue text is under 3:1 on newsprint. */}
               <ColourDot color={team.color} square className="size-4 self-center ring-2 ring-ink" />
               <span>{team.name}</span>
-              <span className="font-outlier text-sm font-semibold tracking-normal text-muted normal-case font-stretch-normal">
+              <span className="font-sans text-sm font-semibold tracking-normal text-muted normal-case font-stretch-normal">
                 {members.length} {members.length === 1 ? 'player' : 'players'}
               </span>
               <span className="ml-auto font-stretch-150% tabular-nums">{team.score}</span>
@@ -180,7 +180,7 @@ function PlayerRow({
         <PlayerAvatar avatar={player.avatar} className="text-xl" />
         <span className="flex min-w-0 flex-1 flex-col">
           <span className="line-clamp-2 font-semibold break-words">{player.name}</span>
-          <span className="font-outlier text-sm font-semibold text-muted">
+          <span className="font-sans text-sm font-semibold text-muted">
             {unknown
               ? 'status unknown'
               : player.connected

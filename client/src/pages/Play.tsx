@@ -258,7 +258,7 @@ function NameForm({ code, name, avatar, error, onName, onAvatar, onSubmit }: Nam
           className={`${INPUT} text-3xl`}
         />
         {error && (
-          <p id="name-error" role="alert" className="text-lg text-buzz">
+          <p id="name-error" role="alert" className="text-lg text-stop">
             {error}
           </p>
         )}
@@ -661,7 +661,7 @@ function Buzzer({ view, send, answer, rename, leave }: BuzzerProps) {
           {inGame && (
             <span
               data-rank
-              className="flex flex-col items-end font-outlier text-sm leading-tight font-semibold whitespace-nowrap text-muted"
+              className="flex flex-col items-end font-sans text-sm leading-tight font-semibold whitespace-nowrap text-muted"
             >
               <span className="font-display text-sm font-black font-stretch-150% text-ink tabular-nums">
                 {ordinal(view.me.rank)}
@@ -933,7 +933,7 @@ function Buzzer({ view, send, answer, rename, leave }: BuzzerProps) {
                   <p
                     role="timer"
                     aria-label="Buzz time"
-                    className="flex shrink-0 items-baseline gap-2 font-outlier font-semibold text-muted"
+                    className="flex shrink-0 items-baseline gap-2 font-sans font-semibold text-muted"
                   >
                     <span className="font-display text-4xl leading-none font-black font-stretch-150% text-ink tabular-nums">
                       {buzzCountdown.secondsLeft}
@@ -946,7 +946,7 @@ function Buzzer({ view, send, answer, rename, leave }: BuzzerProps) {
                   <p
                     role="timer"
                     aria-label="Time to answer"
-                    className="flex shrink-0 items-baseline gap-2 font-outlier font-semibold text-muted"
+                    className="flex shrink-0 items-baseline gap-2 font-sans font-semibold text-muted"
                   >
                     <span className="font-display text-4xl leading-none font-black font-stretch-150% text-ink tabular-nums">
                       {answeringCountdown.secondsLeft}
@@ -1031,7 +1031,7 @@ function ChoiceButtons({ className, choice, picked, enabled, onPick }: ChoiceBut
               )}
               {mine && (
                 // On a short screen's narrow tile, the badge sits on the top edge.
-                <span className="shrink-0 bg-bg px-2.5 py-1 font-outlier text-sm whitespace-nowrap text-ink short:absolute short:-top-3 short:right-2 short:py-0">
+                <span className="shrink-0 bg-bg px-2.5 py-1 font-sans text-sm whitespace-nowrap text-ink short:absolute short:-top-3 short:right-2 short:py-0">
                   {t('yourPick')}
                 </span>
               )}
@@ -1189,7 +1189,7 @@ function RenameForm({ current, rename, onDone }: RenameFormProps) {
           className={`${INPUT} text-3xl select-text`}
         />
         {error && (
-          <p id="rename-error" role="alert" className="text-lg text-buzz">
+          <p id="rename-error" role="alert" className="text-lg text-stop">
             {error}
           </p>
         )}
@@ -1290,7 +1290,7 @@ function BuzzerStatus({
         state.label.length > 40 ? 'text-xl' : 'text-[30px] leading-tight'
       } ${compact ? 'short:text-xl' : ''} ${STATUS_LOOK[state.kind]}`}
     >
-      {state.kind === 'out' && <Icon name="x" className="size-8 shrink-0 text-buzz" />}
+      {state.kind === 'out' && <Icon name="x" className="size-8 shrink-0 text-stop" />}
       <span className="min-w-0">{state.label}</span>
     </h1>
   );

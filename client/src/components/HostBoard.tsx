@@ -29,8 +29,8 @@ export function HostBoard({ board, command }: HostBoardProps) {
       >
         {board.columns.map((column, c) => (
           <Fragment key={c}>
-            {/* A table head: Archivo Narrow 600 on a hairline (design.md Rules), as on the Screen. */}
-            <h3 className="flex min-w-0 items-center border-b border-edge font-outlier text-base leading-tight font-semibold tracking-normal break-words text-ink font-stretch-normal">
+            {/* A table head: Sofia Sans 600 on a hairline (design.md Rules), as on the Screen. */}
+            <h3 className="flex min-w-0 items-center border-b border-edge font-sans text-base leading-tight font-semibold tracking-normal break-words text-ink font-stretch-normal">
               {column.title}
             </h3>
             {column.tiles.map((tile, r) => (

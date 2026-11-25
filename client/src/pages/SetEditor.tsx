@@ -270,7 +270,7 @@ function Editor({
           </p>
         )}
         {load.state === 'error' && (
-          <p role="alert" className="text-lg text-buzz">
+          <p role="alert" className="text-lg text-stop">
             {admin ? ADMIN_LOAD_ERROR : LOAD_ERROR}
           </p>
         )}
@@ -417,7 +417,7 @@ function Editor({
                 role="status"
                 aria-label="Save status"
                 className={`flex shrink items-center gap-1 text-right leading-tight ${
-                  status === 'error' ? 'max-w-40 text-sm text-buzz md:max-w-56' : 'text-muted'
+                  status === 'error' ? 'max-w-40 text-sm text-stop md:max-w-56' : 'text-muted'
                 }`}
               >
                 {admin && status === 'saved' && hasDraft ? 'Draft saved' : STATUS_TEXT[status]}
@@ -491,7 +491,7 @@ function Editor({
               <button
                 type="button"
                 onClick={() => jumpTo(attention[0]!.id)}
-                className={`flex min-h-11 items-center gap-2 self-start border-2 border-transparent px-2 text-buzz ${HOVER}`}
+                className={`flex min-h-11 items-center gap-2 self-start border-2 border-transparent px-2 text-stop ${HOVER}`}
               >
                 <span aria-hidden="true" className="size-2.5 bg-buzz" />
                 {attention.length === 1
@@ -691,7 +691,7 @@ function AdminBar({ hasDraft, live, action, busy, onPublish, onDiscard }: AdminB
         </div>
       </div>
       {action.state === 'failed' && (
-        <div role="alert" className="text-buzz">
+        <div role="alert" className="text-stop">
           <p>{action.error}</p>
           {action.problems.length > 0 && (
             <ul className="list-disc pl-6">
@@ -742,7 +742,7 @@ function QuestionOutline({ questions, currentId, onJump }: QuestionOutlineProps)
                 type="button"
                 aria-current={question.id === currentId ? 'true' : undefined}
                 onClick={() => onJump(question.id)}
-                className={`flex min-h-11 w-full items-center gap-2 px-2 text-left aria-[current]:bg-accent aria-[current]:text-accent-ink aria-[current]:mix-blend-multiply ${HOVER}`}
+                className={`flex min-h-11 w-full items-center gap-2 px-2 text-left aria-[current]:bg-accent aria-[current]:text-accent-ink ${HOVER}`}
               >
                 <span className="w-8 shrink-0 text-right font-display font-black tabular-nums font-stretch-150%">
                   {index + 1}
@@ -768,7 +768,7 @@ function QuestionOutline({ questions, currentId, onJump }: QuestionOutlineProps)
 function FieldError({ id, message }: { id: string; message: string | undefined }) {
   if (!message) return null;
   return (
-    <p id={id} className="text-buzz">
+    <p id={id} className="text-stop">
       {message}
     </p>
   );
@@ -1063,7 +1063,7 @@ function QuestionCard({
         // EDT-09: the whole card takes the file. Decorative: the drop itself reports any problem.
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 z-10 grid place-items-center inset-ring-2 inset-ring-ink bg-bg-deep/90 p-4 text-center font-outlier text-2xl font-semibold text-ink uppercase"
+          className="pointer-events-none absolute inset-0 z-10 grid place-items-center inset-ring-2 inset-ring-ink bg-bg-deep/90 p-4 text-center font-display text-2xl font-semibold text-ink uppercase"
         >
           Drop image for {label}
         </div>
@@ -1249,7 +1249,7 @@ function ImageField({ id, number, imageId, busy, error, onFile, onRemove }: Imag
         </p>
       )}
       {error && (
-        <p role="alert" className="text-buzz">
+        <p role="alert" className="text-stop">
           {error}
         </p>
       )}

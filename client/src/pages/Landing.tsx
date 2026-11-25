@@ -50,7 +50,7 @@ export function Landing() {
             <h2 id="join-heading" className="sr-only">
               Join a game
             </h2>
-            <label htmlFor="room-code" className="font-outlier text-sm font-semibold">
+            <label htmlFor="room-code" className="font-sans text-sm font-semibold">
               Room code
             </label>
             <div className="flex flex-wrap items-center gap-4">
@@ -94,7 +94,11 @@ export function Landing() {
         )}
 
         <HostGame onOpenChange={setHosting}>
-          <Link to="/sets" className={LINK}>
+          {/* Ground type on the blue block until F175 moves the link off it. */}
+          <Link
+            to="/sets"
+            className={`${LINK} text-accent-2-ink! decoration-accent-2-ink/60! not-disabled:hover:decoration-accent-2-ink!`}
+          >
             Question sets
           </Link>
         </HostGame>

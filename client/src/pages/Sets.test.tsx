@@ -221,14 +221,18 @@ describe('Set list tabs', () => {
     );
   });
 
-  it('a chosen level floods the teal pass, and Host is the ink primary (F139, F149)', async () => {
+  it('a chosen level turns the blue answer, and Host is the amber primary (F139, F149, F174)', async () => {
     renderSets();
     const sample = await card(SAMPLE_SET.title);
-    expect(sample.getByRole('button', { name: /^Host / }).className.split(' ')).toContain('bg-ink');
-    expect(sample.getByRole('button', { name: /^Preview / }).className).not.toContain('bg-accent');
+    expect(sample.getByRole('button', { name: /^Host / }).className.split(' ')).toContain(
+      'bg-accent',
+    );
+    expect(sample.getByRole('button', { name: /^Preview / }).className.split(' ')).not.toContain(
+      'bg-accent',
+    );
     const tile = screen.getByRole('radio', { name: SAMPLE_SET.title }).closest('label')!;
     expect(tile.className).toContain('has-checked:bg-accent');
-    expect(tile.className).toContain('has-checked:mix-blend-multiply');
+    expect(tile.className).toContain('has-checked:bg-accent-2');
     expect(tile.className).not.toContain('border');
   });
 
@@ -577,7 +581,7 @@ describe('Set list /sets, My sets', () => {
       'Export JSON',
       'Delete',
     ]);
-    expect(items.map((item) => item.className.includes('text-buzz'))).toEqual([
+    expect(items.map((item) => item.className.includes('text-stop'))).toEqual([
       false,
       false,
       false,
@@ -617,7 +621,7 @@ describe('Set list /sets, My sets', () => {
       'Confirm delete',
       'Cancel',
     ]);
-    expect(menu.getByRole('menuitem', { name: 'Cancel' }).className).not.toContain('text-buzz');
+    expect(menu.getByRole('menuitem', { name: 'Cancel' }).className).not.toContain('text-stop');
     fireEvent.click(menu.getByRole('menuitem', { name: 'Cancel' }));
     expect(await getSet(OWN.id)).toBeDefined();
     expect(menu.getByRole('menuitem', { name: 'Delete' })).toBeTruthy();
@@ -1045,7 +1049,7 @@ describe('Set list /sets, header and tabs (F94)', () => {
       header.getAllByRole('button').map((b) => b.getAttribute('aria-label') ?? b.textContent),
     ).toEqual(['New set', 'Build a game', 'Backup']);
     expect(header.getByRole('button', { name: 'New set' }).className.split(' ')).toContain(
-      'bg-ink',
+      'bg-accent',
     );
   });
 

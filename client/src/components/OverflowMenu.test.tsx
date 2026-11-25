@@ -123,12 +123,12 @@ describe('OverflowMenu', () => {
   it('a destructive item is red, and asks again in place before it acts', () => {
     const { remove } = renderMenu();
     open();
-    expect(item('Delete').className).toContain('text-buzz');
-    expect(item('Duplicate').className).not.toContain('text-buzz');
+    expect(item('Delete').className).toContain('text-stop');
+    expect(item('Duplicate').className).not.toContain('text-stop');
     fireEvent.click(item('Delete'));
     expect(remove).not.toHaveBeenCalled();
     expect(document.activeElement).toBe(item('Confirm delete'));
-    expect(item('Cancel').className).not.toContain('text-buzz');
+    expect(item('Cancel').className).not.toContain('text-stop');
     fireEvent.click(item('Confirm delete'));
     expect(remove).toHaveBeenCalledOnce();
     expect(screen.queryByRole('menu')).toBeNull();

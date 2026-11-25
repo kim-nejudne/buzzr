@@ -123,8 +123,8 @@ describe('CategoryPicker', () => {
     for (const name of ['Animals – Medium', SAMPLE_SET.title]) {
       const tile = screen.getByRole('radio', { name }).closest('label')!;
       expect(tile.className).toContain('has-checked:bg-accent');
-      expect(tile.className).toContain('has-checked:mix-blend-multiply');
-      // Overprint's choice does not tween.
+      expect(tile.className).toContain('has-checked:bg-accent-2');
+      // A choice does not tween.
       expect(tile.className).not.toContain('transition');
     }
     expect(

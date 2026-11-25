@@ -31,7 +31,7 @@ export function ScreenHeader({
 }: ScreenHeaderProps) {
   const t = useCopy();
   // Every size has a floor for small displays (F100); the editor's preview turns the floors off.
-  // A square ink-edged box, the number an Anybody figure (M32).
+  // A square ink-edged box, the number a display figure (M32; F177 restyles it).
   const pill = `inset-ring-2 inset-ring-ink px-[min(1.6cqw,2.85cqh)] py-[min(0.6cqw,1.1cqh)] font-display font-black uppercase font-stretch-150% text-[max(var(--screen-min-label),min(1.56cqw,2.8cqh))] leading-none whitespace-nowrap tabular-nums`;
   return (
     <header className="grid shrink-0 grid-cols-[1fr_auto_1fr] items-center gap-[min(2cqw,3.56cqh)] px-[min(3.75cqw,6.67cqh)] py-[min(1.2cqw,2.1cqh)]">

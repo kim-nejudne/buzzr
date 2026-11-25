@@ -104,17 +104,25 @@ describe('Landing', () => {
     expect(explainer.previousElementSibling).toBe(screen.getByRole('heading', { level: 1 }));
   });
 
-  it("Host a game is the outline button at Join's size, Join the ink block (F144 mock)", () => {
+  it("Host a game is the secondary at Join's size, Join the amber primary (F174)", () => {
     const { join } = renderLanding();
     const host = screen.getByRole('button', { name: 'Host a game' });
-    const size = ['min-h-11', 'px-6', 'py-3', 'text-base', 'font-outlier', 'uppercase'];
+    const size = [
+      'min-h-[54px]',
+      'px-4',
+      'py-3',
+      'text-xl',
+      'md:text-[28px]',
+      'font-display',
+      'uppercase',
+    ];
     for (const name of size) {
       expect(host.className.split(' ')).toContain(name);
       expect(join.className.split(' ')).toContain(name);
     }
-    expect(join.className.split(' ')).toContain('bg-ink');
+    expect(join.className.split(' ')).toContain('bg-accent');
     expect(host.className.split(' ')).toEqual(
-      expect.arrayContaining(['border-2', 'border-ink', 'bg-transparent']),
+      expect.arrayContaining(['border-2', 'border-accent', 'bg-surface', 'text-accent']),
     );
   });
 
@@ -146,12 +154,12 @@ describe('Landing', () => {
     );
   });
 
-  it('a disabled Join empties to a 2px ink-2 inset outline with an ink-2 label, not a faded block (LND-08)', () => {
+  it('a disabled Join goes well-2 with a muted label and no key edge, not a faded block (LND-08, F174)', () => {
     const { join } = renderLanding();
     expect(join.disabled).toBe(true);
-    expect(join.className).toContain('disabled:bg-transparent');
-    expect(join.className).toContain('disabled:inset-ring-2 disabled:inset-ring-ink-2');
-    expect(join.className).toContain('disabled:text-ink-2');
+    expect(join.className).toContain('disabled:bg-bg-deep');
+    expect(join.className).toContain('disabled:shadow-none');
+    expect(join.className).toContain('disabled:text-muted');
     expect(join.className).not.toContain('disabled:opacity');
   });
 

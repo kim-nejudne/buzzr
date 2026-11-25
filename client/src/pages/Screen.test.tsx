@@ -1935,8 +1935,8 @@ describe('Screen result states', () => {
       socket.fire('fx', { kind: 'correct', playerId: 'p2', points: 100 });
       expect(flash()?.dataset.flash).toBe('correct');
       expect(flash()?.className).toContain('bg-win');
-      // Multiplied, so the ink "+100" stays ink under the teal (F154).
-      expect(flash()?.className).toContain('mix-blend-multiply');
+      // A flat blue wash that fades: nothing blends on the dark ground (F174).
+      expect(flash()?.className).not.toContain('mix-blend');
       // Reduced motion: no flash at all (F137).
       expect(flash()?.className).toContain('motion-reduce:hidden');
       expect(within(scorer()!).getByText('+100').className).toContain('animate-float-up');
@@ -3493,7 +3493,7 @@ describe('legibility on any display (F100)', () => {
     const longest = Math.max(...joinUrl.split(/(?=\/)/).map((part) => part.length));
     expect(address.style.fontSize).toContain('var(--screen-min-label)');
     expect(address.style.fontSize).toContain(
-      `calc(100cqw / ${Number((longest * 0.6).toFixed(2))})`,
+      `calc(100cqw / ${Number((longest * 0.48).toFixed(2))})`,
     );
   });
 

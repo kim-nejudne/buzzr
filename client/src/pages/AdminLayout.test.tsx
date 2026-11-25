@@ -317,7 +317,8 @@ describe('AdminLayout: the Overprint look (F141, F151)', () => {
     const other = within(list).getByRole('link', { name: /^Oceans/ });
     expect(open.getAttribute('aria-current')).toBe('page');
     expect(open.className).toMatch(/\bbg-accent\b/);
-    expect(open.className).toMatch(/mix-blend-multiply/);
+    expect(open.className).toMatch(/\btext-accent-ink\b/);
+    expect(open.className).not.toMatch(/mix-blend/);
     for (const row of [open, other]) expect(row.className).not.toMatch(/\bborder-|\bring-/);
     expect(other.className).not.toMatch(/bg-accent/);
     expect(open.closest('ul')!.className).toMatch(/divide-y/);

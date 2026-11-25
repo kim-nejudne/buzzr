@@ -10,7 +10,7 @@ export function BuiltInSetsError({
   retrying?: boolean;
 }) {
   return (
-    <div role="alert" className="flex flex-wrap items-center gap-3 text-buzz">
+    <div role="alert" className="flex flex-wrap items-center gap-3 text-stop">
       <p>{BUILT_IN_LOAD_ERROR}</p>
       <button type="button" onClick={onRetry} disabled={retrying} className={BUTTON_SMALL}>
         {retrying ? 'Retrying…' : 'Retry'}

@@ -55,8 +55,8 @@ export function ScreenBoard({ board, cursor, onCursor, onPick, busy = false }: S
     >
       {board.columns.map((column, c) => (
         <Fragment key={c}>
-          {/* A table head: Archivo Narrow 600 under the 4px ink bar (design.md Rules). */}
-          <h2 className="flex min-h-[12vh] min-w-0 items-center justify-center border-t-4 border-ink px-[min(0.8vw,1.43vh)] py-[1vh] text-center font-outlier leading-tight font-semibold tracking-normal text-balance hyphens-auto break-words text-ink font-stretch-normal">
+          {/* A table head: Sofia Sans 600 under the 4px ink bar (design.md Rules). */}
+          <h2 className="flex min-h-[12vh] min-w-0 items-center justify-center border-t-4 border-ink px-[min(0.8vw,1.43vh)] py-[1vh] text-center font-sans leading-tight font-semibold tracking-normal text-balance hyphens-auto break-words text-ink font-stretch-normal">
             {column.title}
           </h2>
           {column.tiles.map((tile, r) => {
@@ -69,7 +69,7 @@ export function ScreenBoard({ board, cursor, onCursor, onPick, busy = false }: S
               </>
             );
             const look = `flex min-h-0 min-w-0 items-center justify-center font-display text-[max(var(--screen-min-body),var(--tile-text))] font-black tabular-nums font-stretch-150% ${
-              tile.used ? 'bg-accent-2 mix-blend-multiply' : 'bg-surface text-ink'
+              tile.used ? 'bg-accent-2' : 'bg-surface text-ink'
             } ${selected ? 'shadow-[0_0_0_min(0.3vw,0.54vh)_var(--color-bg),0_0_0_min(0.6vw,1.07vh)_var(--color-ink)]' : ''}`;
             return onPick ? (
               <button

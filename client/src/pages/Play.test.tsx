@@ -929,7 +929,7 @@ describe('Play result states', () => {
     expect(button.dataset.mark).toBe('x');
     const status = screen.getByRole('heading', { level: 1 });
     expect(status.textContent).toBe('Locked out this round');
-    expect(status.querySelector('svg')?.getAttribute('class')).toContain('text-buzz');
+    expect(status.querySelector('svg')?.getAttribute('class')).toContain('text-stop');
   });
 
   it('sets the top bar figures in Anybody 900 wide and keeps the room and score on one line (F159)', async () => {
@@ -2594,7 +2594,7 @@ describe('Play on tablet and desktop (F97)', () => {
       expect.arrayContaining(['size-[calc(100cqh-14px)]', 'text-[calc((100cqh-14px)/6)]']),
     );
     // The 14px is the drop `.lit-buzzer` draws.
-    expect(css).toMatch(/\.lit-buzzer \{[^}]*box-shadow:\s*0 14px 0 var\(--color-ink-2\)/);
+    expect(css).toMatch(/\.lit-buzzer \{[^}]*box-shadow:\s*0 14px 0 var\(--color-rule\)/);
   });
 
   it('from md the choices are a 2×2 grid, A/B over C/D in the Screen’s tile colours', async () => {

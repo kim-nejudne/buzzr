@@ -231,7 +231,7 @@ export function HostGame({
           onPreview={creating ? undefined : setPreviewing}
           message={
             error && (
-              <p role="alert" className="text-center text-lg text-buzz">
+              <p role="alert" className="text-center text-lg text-stop">
                 {error}
               </p>
             )

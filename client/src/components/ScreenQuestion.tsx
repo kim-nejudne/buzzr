@@ -38,9 +38,9 @@ const QUESTION_MIN_PX = 14;
  * floor for small displays (F100): `--screen-min-label`, `-body` or `-name`, 0 in the editor's preview.
  */
 const SCREEN_LABEL =
-  'font-outlier text-[max(var(--screen-min-label),min(1.2cqw,2.1cqh))] font-semibold';
+  'font-sans text-[max(var(--screen-min-label),min(1.2cqw,2.1cqh))] font-semibold';
 
-/** A figure on the Screen: Anybody 900 at 150% in tabular figures (design.md Rules). */
+/** A figure on the Screen: the display face in tabular figures (design.md Rules). */
 const FIGURE = 'font-display font-black font-stretch-150% tabular-nums';
 
 /**
@@ -90,7 +90,7 @@ export function ScreenQuestion({ view, imageSrc }: { view: ScreenView; imageSrc?
           >
             {text && (
               <h1
-                // Reading text, so Archivo 600: wide capitals are for heads and figures (design.md Rules).
+                // Reading text, so Sofia Sans 600: wide capitals are for heads and figures (design.md Rules).
                 className={`min-w-0 flex-1 font-sans leading-tight font-semibold tracking-normal break-words font-stretch-normal ${question.imageId ? 'stage-portrait:flex-none' : ''}`}
               >
                 {text}

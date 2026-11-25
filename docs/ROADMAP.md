@@ -451,19 +451,7 @@ Source: `docs/ux/10-live-review-fixes.md` (every finding from the 2026-11-17 UI/
 
 **Dependency:** `@fontsource/antonio`, `@fontsource-variable/sofia-sans` and `@fontsource/dotgothic16` are already in `devDependencies`, next to the existing fonts. They were added on 2026-11-25 with this plan, because the unattended run may not use npm. Each is OFL-1.1 and replaces one of Overprint's faces.
 
-- [ ] F174 Marquee foundations and fonts
-  - Spec: `design.md` Tokens, Rules, Controls, Motion; `12` § Surfaces F174; mock `components-primitives.png`
-  - Depends: none
-  - Done when:
-    - With `npm run dev` running, `sloplint client/src --genre playful --scope app --render --before` records /, /sets, /play/:code, /screen/:code, /host/:code and /admin into `.hallmark/before*`.
-    - `client/src/tokens.css` holds the Marquee tokens from `design.md` on the existing names, plus the new ones (`lead-deep`, `bulb-off`, `shade`, `stop`, `stop-ink`). `color-scheme: dark`. Radii 2px and pill.
-    - `lib/ui.ts` primaries, secondaries, chosen, disabled, danger, links, fields and labels follow `design.md` Controls: Antonio capitals, the key edge, Size m and s.
-    - `client/src/main.tsx` imports `@fontsource/antonio/700.css`, `@fontsource-variable/sofia-sans/wght.css` and `@fontsource/dotgothic16/400.css`, and drops the Anybody and Archivo imports. The old packages stay in `package.json` for Kim to uninstall after the run (`12` § Open 1).
-    - `lib/nameFit.ts` letter widths are measured for Antonio 700. `lib/resultsCard.ts` uses Marquee's colours (sRGB copies) and faces.
-    - `client/index.html` `theme-color` and `client/public/favicon.svg` use the ground and amber.
-    - The `index.css` stamp names Marquee, M35, the custom theme, and the two waivers (Antonio button capitals, the buzzer's chase).
-    - `/playtest` shows `document.fonts` holding Antonio, Sofia Sans and DotGothic16 on / and /screen, with no request to a third-party host.
-  - Tests: existing suites green. `nameFit` and `resultsCard` tests change only where a width or colour constant changed, with the reason in PROGRESS.
+- [x] F174 Marquee foundations and fonts
 
 - [ ] F175 Landing and join
   - Spec: `12` § Surfaces F175; mock `landing.png`

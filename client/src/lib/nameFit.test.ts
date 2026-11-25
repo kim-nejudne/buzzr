@@ -13,13 +13,13 @@ describe('nameFitSize (F153)', () => {
   });
 
   it('gives the banner a whole line: every character and the dot', () => {
-    expect(ems(nameFitSize('Bartholomew Quin', BANNER_NAME))).toBeCloseTo(16 * 1.05 + 0.8);
-    expect(ems(nameFitSize('Cy', BANNER_NAME))).toBeCloseTo(2 * 1.05 + 0.8);
+    expect(ems(nameFitSize('Bartholomew Quin', BANNER_NAME))).toBeCloseTo(16 * 0.47 + 0.8);
+    expect(ems(nameFitSize('Cy', BANNER_NAME))).toBeCloseTo(2 * 0.47 + 0.8);
   });
 
   it('gives a podium name its longest word, since it may wrap at a space', () => {
-    expect(ems(nameFitSize('Bartholomew Quin', PODIUM_NAME))).toBeCloseTo(11 * 0.62 + 1.7);
-    expect(ems(nameFitSize('Ana Revilla', PODIUM_NAME))).toBeCloseTo(7 * 0.62 + 1.7);
+    expect(ems(nameFitSize('Bartholomew Quin', PODIUM_NAME))).toBeCloseTo(11 * 0.5 + 1.7);
+    expect(ems(nameFitSize('Ana Revilla', PODIUM_NAME))).toBeCloseTo(7 * 0.5 + 1.7);
   });
 
   it('leaves room for an avatar', () => {

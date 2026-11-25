@@ -254,7 +254,7 @@ function CategoryPage({ category, generation, onChanged }: CategoryPageProps) {
         </ul>
       )}
       {category.job?.state === 'failed' && category.job.error && (
-        <p className="text-buzz">{category.job.error}</p>
+        <p className="text-stop">{category.job.error}</p>
       )}
       {blocked && <p className="text-muted">{blocked}</p>}
       {drafts.length > 0 && (
@@ -278,7 +278,7 @@ function CategoryPage({ category, generation, onChanged }: CategoryPageProps) {
         </div>
       )}
       {error && (
-        <div role="alert" className="flex flex-col gap-1 text-buzz">
+        <div role="alert" className="flex flex-col gap-1 text-stop">
           <p>{error.text}</p>
           {error.problems && (
             <ul className="list-disc pl-6">
@@ -345,7 +345,7 @@ function CategoryLoader({ name }: { name: string }) {
     return loadError ? (
       <div className="flex flex-col gap-3">
         <h1 className="text-3xl break-words uppercase">{name}</h1>
-        <p role="alert" className="text-lg text-buzz">
+        <p role="alert" className="text-lg text-stop">
           {loadError}
         </p>
         <button type="button" onClick={reload} className={`${BUTTON_SMALL} self-start`}>

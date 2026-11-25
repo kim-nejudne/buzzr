@@ -110,10 +110,10 @@ function matches(settings: RoomSettings, preset: Preset) {
 const LANGUAGE_NAMES: Record<CopyLanguage, string> = { en: 'English', taglish: 'Taglish' };
 
 // The hover shows only under a mouse: the Screen lobby's settings (F52), never a phone.
-// Secondary controls (design.md): a 2px ink outline, Archivo Narrow 600 in capitals. The teal pass
+// Secondary controls (design.md): a 2px ink outline, Antonio 700 in capitals. The teal pass
 // marks only the chosen preset or language, at full strength: chosen is not unavailable (F156).
-const stepper = `rounded-control border-2 border-ink font-outlier font-semibold text-ink transition not-disabled:active:bg-bg-deep disabled:text-muted disabled:opacity-40 ${HOVER}`;
-const presetButton = `rounded-control border-2 border-ink font-outlier font-semibold uppercase transition not-disabled:active:bg-bg-deep disabled:not-aria-pressed:opacity-40 ${HOVER}`;
+const stepper = `rounded-control border-2 border-ink font-sans font-semibold text-ink transition not-disabled:active:bg-bg-deep disabled:text-muted disabled:opacity-40 ${HOVER}`;
+const presetButton = `rounded-control border-2 border-ink font-display font-semibold uppercase transition not-disabled:active:bg-bg-deep disabled:not-aria-pressed:opacity-40 ${HOVER}`;
 
 /**
  * The remote's Settings tab (UI spec, Host remote), also shown in a hosting Screen's lobby. Each

@@ -166,7 +166,7 @@ export function OverflowMenu({
           role="menuitem"
           tabIndex={-1}
           onClick={() => choose(item, index)}
-          className={`${ITEM} ${itemText} border-buzz ${DANGER}`}
+          className={`${ITEM} ${itemText} border-stop ${DANGER}`}
         >
           {item.confirmLabel}
         </button>,

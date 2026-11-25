@@ -22,7 +22,7 @@ export function ReadAloudJoin({ code }: { code: string }) {
       {/* The screen's one paper surface, as on the Screen lobby: the address and the QR on paper-2
           under the 4px ink bar, so every phone camera reads it. */}
       <div className="flex flex-col items-center gap-3 border-t-4 border-ink bg-card p-5 text-card-ink shadow-card">
-        <p className="font-outlier text-sm font-semibold">Join at</p>
+        <p className="font-sans text-sm font-semibold">Join at</p>
         <p className="text-xl font-semibold break-all">{displayUrl(url)}</p>
         <QRCodeSVG
           value={url}
@@ -96,8 +96,8 @@ function AnswerCover({ answer, hostNotes, revealed }: AnswerCoverProps) {
       <button
         type="button"
         onClick={() => setShown(true)}
-        // A cover, not a field: a dashed 2px ink edge, Archivo Narrow 600 (design.md).
-        className="min-h-14 rounded-control border-2 border-dashed border-ink bg-bg px-3.5 py-3 font-outlier text-lg font-semibold text-ink-2"
+        // A cover, not a field: a dashed 2px ink edge, Sofia Sans 600 (design.md).
+        className="min-h-14 rounded-control border-2 border-dashed border-ink bg-bg px-3.5 py-3 font-sans text-lg font-semibold text-ink-2"
       >
         {pointerFine ? 'Click to show answer' : 'Tap to show answer'}
       </button>

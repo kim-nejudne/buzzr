@@ -58,7 +58,7 @@ const LEGEND: DotState[] = ['live', 'draft', 'review', 'generating', 'failed'];
 /** What the dots' colours mean, for eyes and touch screens that never see a `title`. */
 function DotLegend() {
   return (
-    <p aria-hidden className="flex flex-wrap gap-x-3 font-outlier text-sm font-semibold text-muted">
+    <p aria-hidden className="flex flex-wrap gap-x-3 font-sans text-sm font-semibold text-muted">
       {LEGEND.map((state) => (
         <span key={state} className="flex items-center gap-1">
           <span className={`inline-block size-2.5 border-2 border-ink ${DOT_CLASS[state]}`} />
@@ -92,9 +92,7 @@ function CategoryRow({
         to={categoryRoute(category.name) + search}
         aria-current={open ? 'page' : undefined}
         className={`group flex min-h-11 items-center gap-3 px-3 py-2 ${
-          open
-            ? 'bg-accent text-accent-ink mix-blend-multiply'
-            : 'hover:hover-tint active:bg-bg-deep'
+          open ? 'bg-accent text-accent-ink' : 'hover:hover-tint active:bg-bg-deep'
         }`}
       >
         {/* A fixed slot, so names line up whether or not a category has an emoji yet (F130). */}
@@ -131,7 +129,7 @@ function CategoryRow({
   );
 }
 
-const CHIP = `min-h-11 shrink-0 rounded-control border-2 border-ink px-3 font-outlier text-base font-semibold whitespace-nowrap text-ink uppercase active:bg-bg-deep aria-pressed:bg-accent aria-pressed:text-accent-ink aria-pressed:mix-blend-multiply ${HOVER}`;
+const CHIP = `min-h-11 shrink-0 rounded-control border-2 border-ink px-3 font-display text-base font-semibold whitespace-nowrap text-ink uppercase active:bg-bg-deep aria-pressed:bg-accent aria-pressed:text-accent-ink ${HOVER}`;
 
 /**
  * The search box and count chips above the list (F121). Both live in the URL (`?filter=&q=`), so
@@ -244,7 +242,7 @@ export function AdminCategories({ showCounts = false }: { showCounts?: boolean }
   if (data === null) {
     return loadError ? (
       <div className="flex flex-col gap-3">
-        <p role="alert" className="text-lg text-buzz">
+        <p role="alert" className="text-lg text-stop">
           {loadError}
         </p>
         <button type="button" onClick={refresh} className={`${BUTTON_SMALL} self-start`}>
@@ -296,7 +294,7 @@ export function AdminCategories({ showCounts = false }: { showCounts?: boolean }
         )}
       </div>
       {loadError && (
-        <p role="alert" className="text-lg text-buzz">
+        <p role="alert" className="text-lg text-stop">
           {loadError}
         </p>
       )}
