@@ -37,9 +37,6 @@
   --color-buzz: oklch(82% 0.165 78);
   --color-buzz-deep: oklch(56% 0.12 65);
   --color-buzz-ink: oklch(14% 0.018 60);
-  /* The buzzer's dome highlight and wall until F176 redraws it as the bulb ring. */
-  --color-buzz-hi: oklch(92% 0.09 85);
-  --color-buzz-wall: oklch(40% 0.09 60);
   --color-win: oklch(68% 0.16 255);
   --color-win-ink: oklch(14% 0.018 60);
   --color-warn: oklch(64% 0.2 28);
@@ -69,10 +66,6 @@
   color-scheme: dark;
   /* Marquee prints no passes: the Screen lobby's blocks paint flat until F177. */
   --blend: normal;
-  /* The buzzer's glow and drop until F176. Never a glow anywhere else. */
-  --buzz-glow: oklch(92% 0.09 85 / 0.9);
-  --buzz-glow-0: oklch(92% 0.09 85 / 0);
-  --buzz-drop: oklch(8% 0.01 60 / 0.6);
   --space-3xs: 2px;
   --space-2xs: 4px;
   --space-xs: 8px;

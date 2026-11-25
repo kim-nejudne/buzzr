@@ -62,7 +62,16 @@ import {
 } from '../lib/useAnswerCountdown.js';
 import { useFalseStartWait } from '../lib/useFalseStartWait.js';
 import { usePointerFine } from '../lib/usePointerFine.js';
-import { BUTTON_OUTLINE, BUTTON_PRIMARY, CARD, INPUT, LABEL, LINK, PILL } from '../lib/ui.js';
+import {
+  BUTTON_DANGER,
+  BUTTON_PRIMARY_SMALL,
+  BUTTON_SMALL,
+  CARD,
+  INPUT,
+  LABEL,
+  LINK,
+  PILL,
+} from '../lib/ui.js';
 import { useWakeLock } from '../lib/useWakeLock.js';
 
 interface PlayProps {
@@ -237,9 +246,14 @@ interface NameFormProps {
 
 function NameForm({ code, name, avatar, error, onName, onAvatar, onSubmit }: NameFormProps) {
   return (
-    <main className="mx-auto flex min-h-dvh max-w-md flex-col justify-center gap-8 px-4 py-10">
+    // Top-aligned, as the mock's join frame (player.png): the amber Antonio heading, the field, the
+    // avatar tiles, then JOIN at Size s across the column.
+    <main className="mx-auto flex min-h-dvh max-w-md flex-col gap-6 px-4 py-10">
       <form onSubmit={onSubmit} aria-labelledby="name-heading" className="flex flex-col gap-4">
-        <h1 id="name-heading" className="font-display text-3xl uppercase">
+        <h1
+          id="name-heading"
+          className="font-display text-[44px] leading-none text-accent uppercase"
+        >
           Join room <span className="tabular-nums">{code}</span>
         </h1>
         <label htmlFor="player-name" className={LABEL}>
@@ -255,7 +269,7 @@ function NameForm({ code, name, avatar, error, onName, onAvatar, onSubmit }: Nam
           maxLength={PLAYER_NAME_MAX}
           aria-invalid={error !== null}
           aria-describedby={error ? 'name-error' : undefined}
-          className={`${INPUT} text-3xl`}
+          className={`${INPUT} text-lg`}
         />
         {error && (
           <p id="name-error" role="alert" className="text-lg text-stop">
@@ -266,12 +280,12 @@ function NameForm({ code, name, avatar, error, onName, onAvatar, onSubmit }: Nam
         <button
           type="submit"
           disabled={name.trim() === ''}
-          className={`${BUTTON_PRIMARY} min-h-14 text-2xl`}
+          className={`${BUTTON_PRIMARY_SMALL} mt-2 w-full`}
         >
           Join
         </button>
       </form>
-      <Link to="/" className={`${LINK} self-center text-lg`}>
+      <Link to="/" className={`${LINK} self-start`}>
         Back to start
       </Link>
     </main>
@@ -301,8 +315,8 @@ function AvatarPicker({
             aria-label={`Avatar ${option}`}
             aria-pressed={avatar === option}
             onClick={() => onAvatar(avatar === option ? null : option)}
-            // Square paper-2 tiles; the chosen one sinks to paper-3 in a 2px ink ring (09 § Surfaces F145).
-            className={`grid aspect-square min-h-11 place-items-center rounded-control border-2 border-transparent text-[26px] leading-none ${HOVER} ${
+            // Square well tiles on a rule edge; the chosen one sinks to well-2 in a 2px ink ring (12 § Surfaces F176).
+            className={`grid aspect-square min-h-11 place-items-center rounded-control border border-edge text-[26px] leading-none ${HOVER} ${
               avatar === option ? 'bg-bg-deep ring-2 ring-ink' : 'bg-surface'
             }`}
           >
@@ -461,20 +475,30 @@ function useAnswerHaptics(view: PlayerView): void {
   }, [view]);
 }
 
-/** The status line's look above the button. Too early prints its word on the orange pass. */
+/**
+ * The status heading's ink (12 § The buzzer): amber where the phone asks for a press or an answer,
+ * muted once it is out of the round. The winner's and too early's words sit on their own panel
+ * (`STATUS_PANEL`), in ground type.
+ */
 const STATUS_LOOK: Record<BuzzerKind, string> = {
-  idle: 'text-ink',
-  choice: 'text-ink',
-  typed: 'text-ink',
-  practice: 'text-ink',
-  early: 'bg-warn px-2 py-1 text-ink',
-  live: 'text-ink',
+  idle: 'text-ink-2',
+  choice: 'text-accent',
+  typed: 'text-accent',
+  practice: 'text-accent',
+  early: 'text-stop-ink',
+  live: 'text-accent',
   pressed: 'text-ink',
   won: 'text-buzz-ink',
   lost: 'text-muted',
   out: 'text-muted',
   revealed: 'text-card-ink',
   final: '',
+};
+
+/** The full-width panel under the top bar's rule: amber for the winner, stop for too early. */
+const STATUS_PANEL: Partial<Record<BuzzerKind, string>> = {
+  won: 'bg-buzz text-buzz-ink',
+  early: 'bg-warn text-stop-ink',
 };
 
 interface BuzzerProps {
@@ -615,16 +639,17 @@ function Buzzer({ view, send, answer, rename, leave }: BuzzerProps) {
     // From `md`, one centred shell holds the top bar, the stage and Who's here, so nothing sits at
     // the window's edges; from `lg` the shell is framed like a device (PLY-07).
     <main className="relative flex h-dvh touch-none flex-col overflow-hidden bg-bg select-none [-webkit-touch-callout:none] md:mx-auto md:w-full md:max-w-2xl lg:my-6 lg:h-[calc(100dvh-3rem)] lg:border-2 lg:border-ink">
-      <header className="flex shrink-0 items-center justify-between gap-2 px-4 pt-4 pb-2 short:pt-2 short:pb-1">
+      {/* The top bar: the well over the status block's 4px ink rule (12 § Surfaces F176). */}
+      <header className="flex shrink-0 items-center justify-between gap-2 border-b-4 border-ink bg-surface px-4 py-2 short:py-1">
         <span className="flex min-w-0 flex-1 items-center gap-2">
-          <span className="relative grid size-11 shrink-0 place-items-center bg-surface font-display text-xl font-black font-stretch-150% text-ink">
+          <span className="relative grid size-11 shrink-0 place-items-center rounded-full bg-bg-deep font-display text-xl text-ink">
             {/* The avatar replaces the initial when the player picked one (F75). */}
             {view.me.avatar ? (
               <PlayerAvatar avatar={view.me.avatar} className="text-2xl" />
             ) : (
               <span aria-hidden="true">{[...view.me.name][0]?.toUpperCase()}</span>
             )}
-            {/* Their palette colour inside a 2px ink ring, which holds 3:1 on newsprint; the one round chip (design.md Rules). */}
+            {/* Their palette colour, round inside a 2px ink ring (design.md Rules, Content stays content). */}
             <span
               aria-hidden="true"
               data-player-color
@@ -635,7 +660,7 @@ function Buzzer({ view, send, answer, rename, leave }: BuzzerProps) {
           {/* Never narrower than the room line: the name takes the room left and truncates, the
               room never does (F159). */}
           <span className="flex flex-1 flex-col">
-            <span className="truncate text-lg leading-tight font-semibold contain-inline-size">
+            <span className="truncate text-lg leading-tight font-bold contain-inline-size">
               {view.me.name}
             </span>
             {/* With teams on, their team's name and colour (UI spec, Player view: top bar; F82). */}
@@ -645,7 +670,7 @@ function Buzzer({ view, send, answer, rename, leave }: BuzzerProps) {
                   aria-hidden="true"
                   data-team-color
                   style={{ backgroundColor: team.color }}
-                  className="size-2.5 shrink-0 ring-2 ring-ink"
+                  className="size-2.5 shrink-0 rounded-full ring-2 ring-ink"
                 />
                 <span className="truncate">{t('teamName', { team: team.name })}</span>
               </span>
@@ -663,7 +688,7 @@ function Buzzer({ view, send, answer, rename, leave }: BuzzerProps) {
               data-rank
               className="flex flex-col items-end font-sans text-sm leading-tight font-semibold whitespace-nowrap text-muted"
             >
-              <span className="font-display text-sm font-black font-stretch-150% text-ink tabular-nums">
+              <span className="font-sans text-sm font-extrabold text-ink tabular-nums">
                 {ordinal(view.me.rank)}
               </span>{' '}
               {t('of')} {view.playerCount}
@@ -671,8 +696,8 @@ function Buzzer({ view, send, answer, rename, leave }: BuzzerProps) {
           )}
           <span
             aria-label="Score"
-            // Boxed in ink (the mock's score).
-            className="px-1.5 py-2 font-display text-lg leading-none font-black font-stretch-150% whitespace-nowrap tabular-nums inset-ring-2 inset-ring-ink"
+            // In amber: a figure under 40px is Sofia Sans 800 in tabular figures (design.md Rules).
+            className="font-sans text-xl leading-none font-extrabold whitespace-nowrap text-accent tabular-nums"
           >
             {view.me.score}
           </span>
@@ -682,7 +707,7 @@ function Buzzer({ view, send, answer, rename, leave }: BuzzerProps) {
             aria-expanded={panel === 'menu'}
             aria-controls="player-menu"
             onClick={() => setPanel((open) => (open === 'menu' ? null : 'menu'))}
-            className={`grid size-11 place-items-center text-ink inset-ring-2 inset-ring-ink ${HOVER}`}
+            className={`grid size-11 place-items-center rounded-control border border-edge text-ink ${HOVER}`}
           >
             <Icon name="more" />
           </button>
@@ -702,14 +727,10 @@ function Buzzer({ view, send, answer, rename, leave }: BuzzerProps) {
           />
           <div
             id="player-menu"
-            className={`absolute top-16 right-4 z-20 flex w-72 flex-col gap-2 ${CARD} border-t-4 border-ink p-3`}
+            className="absolute top-16 right-4 z-20 flex w-72 flex-col gap-3 rounded-card border border-edge bg-surface p-3"
           >
             {inLobby && (
-              <button
-                type="button"
-                onClick={() => setPanel('rename')}
-                className={`${BUTTON_OUTLINE} text-left`}
-              >
+              <button type="button" onClick={() => setPanel('rename')} className={BUTTON_SMALL}>
                 {t('changeName')}
               </button>
             )}
@@ -718,7 +739,8 @@ function Buzzer({ view, send, answer, rename, leave }: BuzzerProps) {
               confirmLabel={t('confirmLeave')}
               onConfirm={leaveGame}
               disabled={leaving}
-              className={`${BUTTON_OUTLINE} text-left`}
+              className={BUTTON_DANGER}
+              cancelClassName={BUTTON_SMALL}
               // Armed, Confirm and Cancel each take a full-width row (PLY-11).
               armedClassName="flex flex-col gap-2"
             />
@@ -743,7 +765,7 @@ function Buzzer({ view, send, answer, rename, leave }: BuzzerProps) {
             players={view.lobby}
             meId={view.me.id}
             id="whos-here-popover"
-            className="absolute top-2 left-4 z-20 max-h-[calc(100dvh-1rem)] w-[min(24rem,calc(100%-2rem))] touch-auto border-t-4 border-ink"
+            className="absolute top-2 left-4 z-20 max-h-[calc(100dvh-1rem)] w-[min(24rem,calc(100%-2rem))] touch-auto border border-edge"
           />
         </>
       )}
@@ -753,28 +775,29 @@ function Buzzer({ view, send, answer, rename, leave }: BuzzerProps) {
         <section
           aria-label="Final result"
           data-final
-          className="flex min-h-0 flex-1 touch-pan-y flex-col items-center justify-center-safe gap-4 overflow-y-auto p-6 text-center short:gap-2 short:py-3"
+          // Left-aligned in one column, as the mock's final frame (player.png).
+          className="mx-auto flex min-h-0 w-full max-w-sm flex-1 touch-pan-y flex-col items-stretch justify-center-safe gap-4 overflow-y-auto p-6 short:max-w-none short:gap-2 short:py-3"
         >
-          <p className={`${LABEL} w-full max-w-sm border-t-4 border-ink pt-3`}>{t('gameOver')}</p>
-          {/* Side by side on a short screen. */}
-          <div className="flex flex-col items-center gap-4 short:flex-row short:items-baseline short:gap-6">
-            <p className="font-display text-6xl font-black text-ink uppercase short:text-5xl">
+          <p className={LABEL}>{t('gameOver')}</p>
+          {/* The rank is a figure in DotGothic, 48px and up; side by side on a short screen. */}
+          <div className="flex flex-col gap-3 short:flex-row short:items-baseline short:gap-6">
+            <p className="font-outlier text-[64px] leading-none break-words text-accent short:text-5xl">
               {state.label}
             </p>
-            <p className="font-display text-3xl font-black font-stretch-150% uppercase tabular-nums">
+            <p className="font-display text-[44px] leading-none uppercase short:text-3xl">
               {state.detail}
             </p>
           </div>
           {/* With teams on, how their team finished (F82). */}
           {team && view.teams && (
-            <p aria-label="Team" className="mt-2 flex flex-col gap-1 text-lg text-muted">
+            <p aria-label="Team" className={FINAL_BOX}>
               <span className={LABEL}>{t('teamName', { team: team.name })}</span>
-              <span className="flex items-center justify-center gap-2 font-display text-2xl font-black text-ink">
+              <span className="flex items-center gap-2 text-lg font-extrabold text-ink tabular-nums">
                 <span
                   aria-hidden="true"
                   data-team-color
                   style={{ backgroundColor: team.color }}
-                  className="size-3.5 shrink-0 ring-2 ring-ink"
+                  className="size-3.5 shrink-0 rounded-full ring-2 ring-ink"
                 />
                 {t('teamRank', {
                   rank: ordinal(team.rank),
@@ -786,9 +809,9 @@ function Buzzer({ view, send, answer, rename, leave }: BuzzerProps) {
           )}
           {/* From game 2, the night so far (F77). */}
           {view.tonight && (
-            <p aria-label="Tonight" className="mt-2 flex flex-col gap-1 text-lg text-muted">
+            <p aria-label="Tonight" className={FINAL_BOX}>
               <span className={LABEL}>{t('tonight')}</span>
-              <span className="font-display text-2xl font-black text-ink">
+              <span className="text-lg font-extrabold text-ink tabular-nums">
                 {rankText(t, view.tonight.rank, view.tonight.count)} ·{' '}
                 {pointsText(t, view.tonight.total)}
               </span>
@@ -798,7 +821,7 @@ function Buzzer({ view, send, answer, rename, leave }: BuzzerProps) {
             <ShareResults
               card={() => cardFromPlayer(view, new Date())}
               mode="share"
-              className={`${BUTTON_OUTLINE} mt-2 w-full max-w-xs`}
+              className={`${BUTTON_SMALL} mt-2 w-full`}
             />
           )}
         </section>
@@ -824,7 +847,7 @@ function Buzzer({ view, send, answer, rename, leave }: BuzzerProps) {
               data-status-column
               // Around a drawn buzzer, the status and the row under it share the height equally, so
               // the buzzer holds its place as lines come and go between states.
-              className={`flex w-full flex-col items-center gap-5 short:col-start-1 short:row-start-2 short:gap-3 short:px-3 ${look ? 'flex-1 justify-end' : ''}`}
+              className={`flex w-full flex-col items-center gap-5 short:col-start-1 short:row-start-2 short:gap-3 ${look ? 'flex-1 justify-end' : ''}`}
             >
               <BuzzerStatus state={state} progress={progress} hint={hint} compact={typing} />
               {view.lobby && (
@@ -860,15 +883,15 @@ function Buzzer({ view, send, answer, rename, leave }: BuzzerProps) {
                 onTyping={(focused) => setTypingAt(focused ? opening : null)}
               />
             ) : look ? (
-              // The buzzer's slot, a size container: it gives way when the stage is short, so the buzzer
-              // and its 14px drop (`.lit-buzzer`'s ink-2 shadow) never cross Who's here (F158). On a
-              // short screen it steps aside and the buzzer is a cell of the stage's grid.
+              // The buzzer's slot, a size container: it gives way when the stage is short, so the
+              // buzzer and its ring never cross Who's here (F158); the key edge sits inside the ring.
+              // On a short screen it steps aside and the buzzer is a cell of the stage's grid.
               <div
                 data-buzzer-slot
-                className="flex min-h-0 w-full basis-[calc(min(290px,78vw,40dvh)+14px)] justify-center [container-type:size] md:basis-[calc(min(400px,60vw,44dvh)+14px)] short:contents"
+                className="flex min-h-0 w-full basis-[min(320px,86vw,44dvh)] justify-center [container-type:size] md:basis-[min(440px,64vw,48dvh)] short:contents"
               >
-                {/* The Lit buzzer (index.css `.lit-buzzer`): its state is BUZZER_LOOK's data attributes.
-                  Its label is a sixth of its width, as the mock's 2.9rem on 280px. */}
+                {/* The amber buzzer in its bulb ring (index.css `.lit-buzzer`): its state is
+                  BUZZER_LOOK's data attributes. BUZZ is a third of the ring's width, as the mock. */}
                 <button
                   type="button"
                   disabled={!enabled}
@@ -881,19 +904,14 @@ function Buzzer({ view, send, answer, rename, leave }: BuzzerProps) {
                   aria-describedby="buzzer-status"
                   onPointerDown={onPointerDown}
                   onContextMenu={(event) => event.preventDefault()}
-                  className={`lit-buzzer size-[calc(100cqh-14px)] shrink-0 touch-none text-[calc((100cqh-14px)/6)] ${ANSWER_CELL} short:size-[min(70dvh,42vw)] short:text-[min(11.5dvh,7vw)] select-none [-webkit-touch-callout:none]`}
+                  className={`lit-buzzer size-[100cqh] shrink-0 touch-none text-[calc(100cqh/3.3)] ${ANSWER_CELL} short:size-[min(70dvh,42vw)] short:text-[min(21dvh,12.7vw)] select-none [-webkit-touch-callout:none]`}
                 >
+                  <BulbRing />
+                  {state.kind === 'practice' && practices > 0 && (
+                    // Keyed by the count, so every test buzz lights the ring again.
+                    <BulbRing key={practices} flare />
+                  )}
                   <span className="lit-buzzer-cap">
-                    <span aria-hidden="true" className="lit-buzzer-glow lit-buzzer-bulb" />
-                    {state.kind === 'practice' && practices > 0 && (
-                      // Keyed by the count, so every test buzz flares the bulb again.
-                      <span
-                        key={practices}
-                        aria-hidden="true"
-                        data-practice-ring
-                        className="lit-buzzer-glow motion-safe:animate-bulb-flare"
-                      />
-                    )}
                     <span className="lit-buzzer-label">BUZZ</span>
                   </span>
                 </button>
@@ -919,11 +937,11 @@ function Buzzer({ view, send, answer, rename, leave }: BuzzerProps) {
                       {t('spaceToBuzz')}
                     </p>
                   )}
-                {/* The winner's answer countdown, a figure under the buzzer (09 § The buzzer). */}
+                {/* The winner's answer countdown, a DotGothic figure under the buzzer (12 § The buzzer). */}
                 {state.secondsLeft !== undefined && (
                   <span
                     aria-label="Seconds left"
-                    className="font-display text-6xl leading-none font-black font-stretch-150% text-ink tabular-nums"
+                    className="font-outlier text-[110px] leading-none text-accent tabular-nums short:text-6xl"
                   >
                     {state.secondsLeft}
                   </span>
@@ -933,9 +951,9 @@ function Buzzer({ view, send, answer, rename, leave }: BuzzerProps) {
                   <p
                     role="timer"
                     aria-label="Buzz time"
-                    className="flex shrink-0 items-baseline gap-2 font-sans font-semibold text-muted"
+                    className="flex shrink-0 flex-col items-center gap-1 font-sans text-sm font-semibold text-muted"
                   >
-                    <span className="font-display text-4xl leading-none font-black font-stretch-150% text-ink tabular-nums">
+                    <span className="font-outlier text-[64px] leading-none text-accent tabular-nums short:text-5xl">
                       {buzzCountdown.secondsLeft}
                     </span>
                     {t(buzzCountdown.secondsLeft === 1 ? 'secondToBuzz' : 'secondsToBuzz')}
@@ -946,9 +964,9 @@ function Buzzer({ view, send, answer, rename, leave }: BuzzerProps) {
                   <p
                     role="timer"
                     aria-label="Time to answer"
-                    className="flex shrink-0 items-baseline gap-2 font-sans font-semibold text-muted"
+                    className="flex shrink-0 items-baseline gap-2 font-sans text-sm font-semibold text-muted"
                   >
-                    <span className="font-display text-4xl leading-none font-black font-stretch-150% text-ink tabular-nums">
+                    <span className="font-outlier text-5xl leading-none text-accent tabular-nums">
                       {answeringCountdown.secondsLeft}
                     </span>
                     {t(answeringCountdown.secondsLeft === 1 ? 'secondToAnswer' : 'secondsToAnswer')}
@@ -975,6 +993,30 @@ function Buzzer({ view, send, answer, rename, leave }: BuzzerProps) {
 /** The right-hand cell of the short-screen stage: the buzzer, the choices or the typed answer. */
 const ANSWER_CELL = 'short:col-start-2 short:row-span-4 short:row-start-1 short:self-center';
 
+/** The final result's Team and Tonight boxes: a well on a rule hairline (player.png, final). */
+const FINAL_BOX = 'flex flex-col gap-1 rounded-card border border-edge bg-surface px-3 py-2';
+
+/** Where each of the ring's 22 bulbs sits, as a turn about its centre. */
+const BULB_TURNS = Array.from({ length: 22 }, (_, index) => `${(index * 360) / 22}deg`);
+
+/**
+ * The buzzer's ring of 22 bulbs (index.css `.lit-buzzer-bulb`); the button's `data-bulb` lights
+ * them. `flare`: the copy a lobby test press lights once, fading out.
+ */
+function BulbRing({ flare = false }: { flare?: boolean }) {
+  return (
+    <span
+      aria-hidden="true"
+      data-practice-ring={flare || undefined}
+      className={`lit-buzzer-ring ${flare ? 'lit-buzzer-flare motion-safe:animate-bulb-flare' : ''}`}
+    >
+      {BULB_TURNS.map((turn) => (
+        <span key={turn} className="lit-buzzer-bulb" style={{ rotate: turn }} />
+      ))}
+    </span>
+  );
+}
+
 interface ChoiceButtonsProps {
   className: string;
   choice: PlayerChoiceView;
@@ -986,9 +1028,10 @@ interface ChoiceButtonsProps {
 }
 
 /**
- * A choice question on the phone (UI spec, Player view): one big lettered button per choice, in
- * its tile colour, with the choice text. The pick stays marked "Your pick". At REVEAL the correct
- * one gets a check and the others dim; the view has no correct choice before then.
+ * A choice question on the phone (UI spec, Player view): one big button per choice, its letter on a
+ * square in the choice's colour, with the choice text. The pick turns blue and stays marked "Your
+ * pick". At REVEAL the correct one turns blue with a check, a wrong pick takes a stop edge, and the
+ * others dim; the view has no correct choice before then.
  */
 function ChoiceButtons({ className, choice, picked, enabled, onPick }: ChoiceButtonsProps) {
   const revealed = choice.correctChoice !== undefined;
@@ -1011,15 +1054,21 @@ function ChoiceButtons({ className, choice, picked, enabled, onPick }: ChoiceBut
               disabled={!enabled}
               data-correct={correct || undefined}
               onClick={() => onPick(index)}
-              style={{ backgroundColor: CHOICE_COLORS[index] }}
-              // Square tiles in their colour with ink type, which holds 4.5:1 on all four.
-              className={`relative flex min-h-16 w-full items-center gap-3 border-4 px-3 py-2.5 text-left text-lg leading-snug md:h-full short:h-full short:min-h-14 short:gap-2 short:px-2 short:py-1.5 short:text-base font-semibold text-ink not-disabled:active:brightness-90 not-disabled:hover:hover-tint ${
-                mine ? 'border-ink shadow-[0_0_0_3px_var(--color-bg)]' : 'border-transparent'
-              } ${correct ? 'ring-4 ring-accent ring-offset-2 ring-offset-bg' : ''} ${
-                (revealed && !correct) || (!revealed && !enabled) ? 'opacity-50' : ''
-              }`}
+              // The well on a rule edge (components-player.png); the pick or the right answer turns blue.
+              className={`relative flex min-h-16 w-full items-center gap-3 rounded-control border-2 px-3 py-2.5 text-left text-lg leading-snug font-semibold md:h-full short:h-full short:min-h-14 short:gap-2 short:px-2 short:py-1.5 short:text-base not-disabled:hover:hover-tint ${
+                (mine && !revealed) || correct
+                  ? 'border-accent-2 bg-accent-2 text-accent-2-ink'
+                  : mine
+                    ? 'border-stop bg-surface text-ink'
+                    : 'border-edge bg-surface text-ink'
+              } ${(revealed && !correct) || (!revealed && !enabled) ? 'opacity-50' : ''}`}
             >
-              <span className="grid size-11 shrink-0 place-items-center bg-bg font-display text-2xl text-ink short:size-9 short:text-xl">
+              {/* The letter on its colour, in ground type, which reads on all four (F86). */}
+              <span
+                data-choice-letter
+                style={{ backgroundColor: CHOICE_COLORS[index] }}
+                className="grid size-11 shrink-0 place-items-center rounded-control font-display text-2xl text-accent-ink short:size-9 short:text-xl"
+              >
                 {CHOICE_LETTERS[index]}
               </span>
               <span className="min-w-0 flex-1 break-words">{text}</span>
@@ -1031,7 +1080,7 @@ function ChoiceButtons({ className, choice, picked, enabled, onPick }: ChoiceBut
               )}
               {mine && (
                 // On a short screen's narrow tile, the badge sits on the top edge.
-                <span className="shrink-0 bg-bg px-2.5 py-1 font-sans text-sm whitespace-nowrap text-ink short:absolute short:-top-3 short:right-2 short:py-0">
+                <span className="shrink-0 rounded-pill bg-bg px-2.5 py-1 font-sans text-sm whitespace-nowrap text-ink short:absolute short:-top-3 short:right-2 short:py-0">
                   {t('yourPick')}
                 </span>
               )}
@@ -1086,7 +1135,7 @@ function TypedAnswer({ className, typed, enabled, answer, onRefused, onTyping }:
       // One row on a short screen, so the box and Send fit above the keyboard (PLY-03).
       className={`flex w-full max-w-sm shrink-0 touch-auto flex-col gap-3 short:max-w-none short:flex-row ${className}`}
     >
-      <label htmlFor="typed-answer" className="sr-only">
+      <label htmlFor="typed-answer" className={`${LABEL} -mb-1 short:sr-only`}>
         {t('yourAnswer')}
       </label>
       <input
@@ -1107,7 +1156,7 @@ function TypedAnswer({ className, typed, enabled, answer, onRefused, onTyping }:
         spellCheck={false}
         enterKeyHint="send"
         maxLength={TYPED_ANSWER_MAX}
-        className={`${INPUT} min-w-0 text-2xl select-text disabled:opacity-60 short:flex-1 short:text-xl`}
+        className={`${INPUT} min-w-0 text-lg select-text disabled:opacity-60 short:flex-1`}
       />
       {/* At REVEAL the box stays as a record of the answer; there is nothing left to send. */}
       {typed.groups === undefined && (
@@ -1117,7 +1166,7 @@ function TypedAnswer({ className, typed, enabled, answer, onRefused, onTyping }:
           // Keeps focus in the box: a blur on press would end `typing` and move Send on a short
           // screen before the click lands (F162). Submit drops the keyboard itself.
           onMouseDown={(event) => event.preventDefault()}
-          className={`${BUTTON_PRIMARY} min-h-14 text-2xl short:shrink-0 short:py-3 short:text-xl`}
+          className={`${BUTTON_PRIMARY_SMALL} short:shrink-0`}
         >
           {t('send')}
         </button>
@@ -1169,7 +1218,7 @@ function RenameForm({ current, rename, onDone }: RenameFormProps) {
         aria-labelledby="rename-heading"
         className={`flex w-full max-w-md flex-col gap-4 ${CARD}`}
       >
-        <h2 id="rename-heading" className="font-display text-3xl">
+        <h2 id="rename-heading" className="font-display text-3xl text-accent uppercase">
           {t('changeName')}
         </h2>
         <label htmlFor="new-name" className={LABEL}>
@@ -1186,7 +1235,7 @@ function RenameForm({ current, rename, onDone }: RenameFormProps) {
           maxLength={PLAYER_NAME_MAX}
           aria-invalid={error !== null}
           aria-describedby={error ? 'rename-error' : undefined}
-          className={`${INPUT} text-3xl select-text`}
+          className={`${INPUT} text-lg select-text`}
         />
         {error && (
           <p id="rename-error" role="alert" className="text-lg text-stop">
@@ -1194,13 +1243,13 @@ function RenameForm({ current, rename, onDone }: RenameFormProps) {
           </p>
         )}
         <div className="flex gap-3">
-          <button type="button" onClick={onDone} className={`${BUTTON_OUTLINE} flex-1`}>
+          <button type="button" onClick={onDone} className={`${BUTTON_SMALL} flex-1`}>
             {t('cancel')}
           </button>
           <button
             type="submit"
             disabled={name.trim() === '' || sending}
-            className={`${BUTTON_PRIMARY} flex-1 text-xl`}
+            className={`${BUTTON_PRIMARY_SMALL} flex-1`}
           >
             {t('save')}
           </button>
@@ -1235,7 +1284,7 @@ function WhosHere({
     <section
       id={id}
       aria-labelledby={headingId}
-      className={`flex min-h-0 flex-col gap-2 border-t-4 border-ink bg-surface px-5 py-3 ${className}`}
+      className={`flex min-h-0 flex-col gap-2 rounded-card bg-surface px-4 py-3 ${className}`}
     >
       <h2 id={headingId} className={LABEL}>
         {t('whosHere', { n: players.length })}
@@ -1245,13 +1294,14 @@ function WhosHere({
           <li
             key={player.id}
             data-connected={player.connected}
-            className={`flex max-w-full items-center gap-2 bg-bg py-1 pr-3 pl-1.5 font-semibold ${player.connected ? '' : 'opacity-40'}`}
+            // A chip: the ground on a rule hairline, the swatch round in its ink ring; away at 40%.
+            className={`flex max-w-full items-center gap-2 rounded-control border border-edge bg-bg py-1 pr-3 pl-1.5 font-semibold ${player.connected ? '' : 'opacity-40'}`}
           >
             <span
               aria-hidden="true"
               data-player-color
               style={{ backgroundColor: player.color }}
-              className="size-4 shrink-0 ring-2 ring-ink"
+              className="size-4 shrink-0 rounded-full ring-2 ring-ink"
             />
             <PlayerAvatar avatar={player.avatar} />
             <span className="truncate">{player.name}</span>
@@ -1264,9 +1314,10 @@ function WhosHere({
 }
 
 /**
- * The status over the button, under the 4px ink bar (the mock's `.status`): "Question 3 of 12", the
- * state's word as the heading, and a hint under it ("Tap to buzz in"). The winner's word sits on
- * the red, too early's on the orange pass, and at reveal the answer takes the paper surface.
+ * The status under the top bar's 4px ink rule (player.png): "Question 3 of 12", the state's word as
+ * an Antonio heading, and a hint under it ("Tap to buzz in"), centred. The winner's word sits on a
+ * full-width amber panel, too early's on stop red, and at reveal the answer takes the answer card:
+ * amber, blue when this player got it, stop when they got it wrong.
  */
 function BuzzerStatus({
   state,
@@ -1283,59 +1334,81 @@ function BuzzerStatus({
   compact: boolean;
 }) {
   const t = useCopy();
+  const revealed = state.kind === 'revealed';
+  // "Answer sent" and "Answers closed" ask nothing more of the player, so they drop the amber.
+  const settled = state.label === t('answerSent') || state.label === t('answersClosed');
   const heading = (
     <h1
       id="buzzer-status"
-      className={`flex items-center gap-2 font-display break-words uppercase ${
-        state.label.length > 40 ? 'text-xl' : 'text-[30px] leading-tight'
-      } ${compact ? 'short:text-xl' : ''} ${STATUS_LOOK[state.kind]}`}
+      className={`break-words ${
+        revealed
+          ? 'font-sans text-[30px] leading-tight font-bold'
+          : `font-display uppercase ${state.label.length > 40 ? 'text-2xl' : 'text-[44px] leading-none'} ${compact ? 'short:text-xl' : 'short:text-3xl'}`
+      } ${settled ? 'text-ink' : STATUS_LOOK[state.kind]}`}
     >
-      {state.kind === 'out' && <Icon name="x" className="size-8 shrink-0 text-stop" />}
-      <span className="min-w-0">{state.label}</span>
+      {state.label}
     </h1>
   );
-  if (state.kind === 'revealed') {
+  if (revealed) {
+    const wrong = state.verdict === 'wrong' || state.detail?.startsWith('−');
+    // A caption is set only when this player's own answer was right.
+    const right = !wrong && (state.verdict === 'correct' || state.caption !== undefined);
     return (
       <section
         aria-label="Answer"
-        // The screen's one paper surface: paper-2 under the ink bar (design.md Rules).
+        // The answer card (components-player.png): the well, its edge and top bar in the verdict's ink.
         data-card
-        className="flex w-full max-w-sm flex-col items-start gap-2 border-t-4 border-ink bg-card px-5 py-4 text-card-ink shadow-card"
+        className={`flex w-full max-w-sm flex-col items-start gap-2 rounded-card border-2 border-t-4 bg-card px-5 py-4 text-card-ink shadow-card ${
+          wrong ? 'border-stop' : right ? 'border-win' : 'border-accent'
+        }`}
       >
-        <p className={LABEL}>{state.caption ?? t('answer')}</p>
+        <p
+          className={`font-sans text-sm font-bold ${wrong ? 'text-stop' : right ? 'text-win' : 'text-ink'}`}
+        >
+          {state.caption ?? t('answer')}
+        </p>
         {heading}
         {(state.detail || state.verdict) && (
-          // Points as a game-state chip with its word (design.md Rules): win for a score, buzz for
-          // a wrong answer or a penalty.
+          // Points as a game-state chip with its word (design.md Rules): win for a score, stop for
+          // a wrong answer or a penalty. A figure under 40px, so Sofia Sans 800.
           // The word is a step smaller, so "Correct! +100" holds one line at 375 (F159).
           <span
             data-points-chip
             data-verdict={state.verdict}
-            className={`flex flex-wrap items-baseline gap-x-3 px-3 py-1 font-display text-3xl leading-none font-black font-stretch-150% uppercase tabular-nums ${
-              state.verdict === 'wrong' || state.detail?.startsWith('−')
-                ? 'bg-buzz text-buzz-ink'
-                : 'bg-win text-win-ink'
+            className={`flex flex-wrap items-baseline gap-x-3 rounded-control px-3 py-1 font-sans text-2xl leading-none font-extrabold tabular-nums ${
+              wrong ? 'bg-stop text-stop-ink' : 'bg-win text-win-ink'
             }`}
           >
-            {state.verdict && <span className="text-xl">{t(state.verdict)}</span>}
+            {state.verdict && <span className="text-lg">{t(state.verdict)}</span>}
             {state.detail && <span>{state.detail}</span>}
           </span>
         )}
       </section>
     );
   }
+  const panel = STATUS_PANEL[state.kind];
+  const Block = state.kind === 'won' ? 'section' : 'div';
   return (
-    <div className="flex w-full max-w-sm flex-col gap-1 border-t-4 border-ink pt-3">
-      {progress && <p className={`${LABEL} ${compact ? 'short:hidden' : ''}`}>{progress}</p>}
-      {state.kind === 'won' ? (
-        <section aria-label="Your turn" className="bg-buzz px-3 py-2">
-          {heading}
-        </section>
-      ) : (
-        heading
+    <Block
+      aria-label={state.kind === 'won' ? 'Your turn' : undefined}
+      data-status-panel={panel ? state.kind : undefined}
+      // A panel runs the stage's full width, out through its padding (short: inside its column).
+      className={`flex flex-col items-center gap-1 text-center ${
+        panel
+          ? `-mx-4 w-[calc(100%+2rem)] px-4 py-3 short:mx-0 short:w-full ${panel}`
+          : 'w-full max-w-sm'
+      }`}
+    >
+      {progress && (
+        <p
+          className={`${panel ? 'font-sans text-sm font-semibold' : LABEL} ${compact ? 'short:hidden' : ''}`}
+        >
+          {progress}
+        </p>
       )}
+      {heading}
       {hint && <p className={`text-muted ${compact ? 'short:hidden' : ''}`}>{hint}</p>}
-    </div>
+    </Block>
   );
 }
 

@@ -766,7 +766,7 @@ describe('Play buzzer', () => {
     const question = (overrides: Partial<PlayerView> = {}) =>
       playerView({ phase: 'QUESTION', questionIndex: 0, falseStartMs: 500, ...overrides });
 
-    it('the grey button takes a press in QUESTION and shows "Too early!" in amber at once', async () => {
+    it('the grey button takes a press in QUESTION and shows "Too early!" on stop red at once', async () => {
       const socket = await joined();
       socket.fire('state', question());
       expect(status().textContent).toBe('Get ready…');
@@ -778,10 +778,13 @@ describe('Play buzzer', () => {
       fireEvent.pointerDown(buzzer(), { button: 0 });
       expect(buzzes(socket)).toHaveLength(1);
       expect(status().textContent).toBe('Too early!');
-      // The word on the orange pass, and the pass ringing the buzzer's base.
-      expect(status().className).toContain('bg-warn');
+      // The word in ground type on the full-width stop panel, and a stop ring round the drained button.
+      const panel = status().closest('[data-status-panel]')!;
+      expect(panel.className).toContain('bg-warn');
+      expect(status().className).toContain('text-stop-ink');
       expect(buzzer().dataset.look).toBe('early');
       expect(buzzer().dataset.mark).toBe('warn');
+      expect(buzzer().dataset.tone).toBe('drained');
       expect(buzzer().dataset.cap).toBe('down');
       expect(buzzer().disabled).toBe(true);
     });
@@ -914,7 +917,7 @@ describe('Play result states', () => {
     return sockets[0]!;
   }
 
-  it('a locked-out player sees a buzz X, "Locked out this round" and a drained, disabled buzzer with an ink X', async () => {
+  it('a locked-out player sees "Locked out this round" muted over a drained, disabled buzzer with an ink X', async () => {
     const socket = await joined();
     socket.fire(
       'state',
@@ -929,10 +932,12 @@ describe('Play result states', () => {
     expect(button.dataset.mark).toBe('x');
     const status = screen.getByRole('heading', { level: 1 });
     expect(status.textContent).toBe('Locked out this round');
-    expect(status.querySelector('svg')?.getAttribute('class')).toContain('text-stop');
+    // The X is the buzzer's (12 § The buzzer, out); the status is muted.
+    expect(status.className).toContain('text-muted');
+    expect(status.querySelector('svg')).toBeNull();
   });
 
-  it('sets the top bar figures in Anybody 900 wide and keeps the room and score on one line (F159)', async () => {
+  it('sets the top bar figures in Sofia Sans 800, the score amber, the initial in Antonio, and keeps the room and score on one line (F159)', async () => {
     const socket = await joined();
     socket.fire(
       'state',
@@ -949,11 +954,14 @@ describe('Play result states', () => {
     // The initial sits in the avatar box, which sets its type.
     const initial = header.querySelector('span[aria-hidden="true"]')!.parentElement!;
     const rank = header.querySelector('[data-rank] > span')!;
-    for (const figure of [score, initial, rank]) {
+    // Figures under 40px are Sofia Sans 800 in tabular figures (design.md Rules).
+    for (const figure of [score, rank]) {
       expect(cls(figure)).toEqual(
-        expect.arrayContaining(['font-display', 'font-black', 'font-stretch-150%']),
+        expect.arrayContaining(['font-sans', 'font-extrabold', 'tabular-nums']),
       );
     }
+    expect(cls(score)).toContain('text-accent');
+    expect(cls(initial)).toContain('font-display');
     expect(initial.textContent).toBe('B');
     expect(score.textContent).toBe('-999');
     expect(cls(score)).toContain('whitespace-nowrap');
@@ -984,10 +992,12 @@ describe('Play result states', () => {
     const chip = card.querySelector('[data-points-chip]')!;
     expect(chip.textContent).toBe('Correct!+100');
     expect(chip.className).toContain('bg-win');
+    // The answer card's edge and top bar are the blue answer.
+    expect(card.className).toContain('border-win');
     expect(screen.getByLabelText('Score').textContent).toBe('100');
   });
 
-  it('says "Wrong" on the buzz chip at reveal when this player was judged wrong', async () => {
+  it('says "Wrong" on a stop chip, in a stop-edged card, at reveal when this player was judged wrong', async () => {
     const socket = await joined();
     socket.fire(
       'state',
@@ -996,7 +1006,8 @@ describe('Play result states', () => {
     const card = screen.getByRole('region', { name: 'Answer' });
     const chip = () => card.querySelector('[data-points-chip]')!;
     expect(chip().textContent).toBe('Wrong');
-    expect(chip().className).toContain('bg-buzz');
+    expect(chip().className).toContain('bg-stop');
+    expect(card.className).toContain('border-stop');
     socket.fire(
       'state',
       playerView({
@@ -1009,7 +1020,7 @@ describe('Play result states', () => {
       }),
     );
     expect(chip().textContent).toBe('Mali−100');
-    expect(chip().className).toContain('bg-buzz');
+    expect(chip().className).toContain('bg-stop');
   });
 
   it('shows the answer without points at reveal when this player did not score', async () => {
@@ -1666,7 +1677,10 @@ describe('Play choice questions (F86)', () => {
     ]);
     const probe = document.createElement('span');
     probe.style.backgroundColor = CHOICE_COLORS[1];
-    expect(choiceButton('Canberra').style.backgroundColor).toBe(probe.style.backgroundColor);
+    // The colour is on the letter's square; the tile is the well.
+    const letter = choiceButton('Canberra').querySelector<HTMLElement>('[data-choice-letter]')!;
+    expect(letter.style.backgroundColor).toBe(probe.style.backgroundColor);
+    expect(choiceButton('Canberra').className).toContain('bg-surface');
     expect(screen.queryByRole('button', { name: 'BUZZ' })).toBeNull();
     expect(status().textContent).toBe('Pick your answer');
   });
@@ -2266,7 +2280,7 @@ describe('Play on short screens (F96)', () => {
     expectTwoColumns(buzzer());
     expect(classes(stage())).toContain('short:grid-cols-[minmax(0,1fr)_auto]');
     expect(classes(buzzer())).toEqual(
-      expect.arrayContaining(['short:size-[min(70dvh,42vw)]', 'size-[calc(100cqh-14px)]']),
+      expect.arrayContaining(['short:size-[min(70dvh,42vw)]', 'size-[100cqh]']),
     );
     // The size-container slot steps aside, so the buzzer is a cell of the stage's grid.
     expect(classes(buzzer().parentElement!)).toContain('short:contents');
@@ -2569,32 +2583,30 @@ describe('Play on tablet and desktop (F97)', () => {
     expect(shell.contains(document.getElementById('player-menu'))).toBe(true);
   });
 
-  it('from md the buzzer grows to 400px, capped by the window, and the phone and short sizes stay', async () => {
+  it('from md the buzzer grows to 440px, capped by the window, and the phone and short sizes stay', async () => {
     const socket = await joined();
     socket.fire('state', open());
     expect(classes(buzzer())).toEqual(
-      expect.arrayContaining(['size-[calc(100cqh-14px)]', 'short:size-[min(70dvh,42vw)]']),
+      expect.arrayContaining(['size-[100cqh]', 'short:size-[min(70dvh,42vw)]']),
     );
     expect(classes(buzzer().parentElement!)).toEqual(
-      expect.arrayContaining([
-        'basis-[calc(min(290px,78vw,40dvh)+14px)]',
-        'md:basis-[calc(min(400px,60vw,44dvh)+14px)]',
-      ]),
+      expect.arrayContaining(['basis-[min(320px,86vw,44dvh)]', 'md:basis-[min(440px,64vw,48dvh)]']),
     );
   });
 
-  it('the buzzer sits in a size container that gives way, its 14px drop counted, so it clears Who’s here (F158)', async () => {
+  it('the buzzer sits in a size container that gives way, with nothing drawn outside its ring, so it clears Who’s here (F158)', async () => {
     const socket = await joined();
     socket.fire('state', open());
     const slot = buzzer().parentElement!;
     expect(slot.hasAttribute('data-buzzer-slot')).toBe(true);
-    // Shrinkable to nothing, its height the buzzer plus the drop; the buzzer is that height less the drop.
+    // Shrinkable to nothing; the buzzer is the slot's height, BUZZ a third of it.
     expect(classes(slot)).toEqual(expect.arrayContaining(['[container-type:size]', 'min-h-0']));
     expect(classes(buzzer())).toEqual(
-      expect.arrayContaining(['size-[calc(100cqh-14px)]', 'text-[calc((100cqh-14px)/6)]']),
+      expect.arrayContaining(['size-[100cqh]', 'text-[calc(100cqh/3.3)]']),
     );
-    // The 14px is the drop `.lit-buzzer` draws.
-    expect(css).toMatch(/\.lit-buzzer \{[^}]*box-shadow:\s*0 14px 0 var\(--color-rule\)/);
+    // The key edge and the button sit inside the ring (inset), and the button casts no drop.
+    expect(css).toMatch(/\.lit-buzzer::before \{[^}]*inset: var\(--cap-inset\)/);
+    expect(css).not.toMatch(/\.lit-buzzer \{[^}]*box-shadow/);
   });
 
   it('from md the choices are a 2×2 grid, A/B over C/D in the Screen’s tile colours', async () => {
@@ -2610,7 +2622,8 @@ describe('Play on tablet and desktop (F97)', () => {
       // Normalised the same way, as jsdom reports the colour as rgb().
       const screenColour = document.createElement('span');
       screenColour.style.backgroundColor = CHOICE_COLORS[index]!;
-      expect(button.style.backgroundColor).toBe(screenColour.style.backgroundColor);
+      const letter = button.querySelector<HTMLElement>('[data-choice-letter]')!;
+      expect(letter.style.backgroundColor).toBe(screenColour.style.backgroundColor);
       expect(classes(button)).toContain('md:h-full');
     });
     // The pick's badge stays.

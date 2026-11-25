@@ -455,16 +455,7 @@ Source: `docs/ux/10-live-review-fixes.md` (every finding from the 2026-11-17 UI/
 
 - [x] F175 Landing and join
 
-- [ ] F176 Player phone and the bulb-ring buzzer
-  - Spec: `12` § The buzzer, § Surfaces F176; mocks `player.png`, `components-player.png`
-  - Depends: F174
-  - Done when:
-    - Every `BuzzerKind` renders per the `12` table, through the existing `data-cap`, `data-bulb`, `data-tone` and `data-mark` values.
-    - Only the button's `translate` and the bulbs' `opacity` animate. The chase holds still under reduced motion.
-    - BUZZ on amber is 11:1 or better.
-    - The join form, top bar, status block, who's here, menu, choice, typed, reveal and final are restyled, with buttons Size s.
-    - `/playtest` covers the lobby test, live, pressed, won, lost, early and out at 375×667 and 390×844.
-  - Tests: `buzzerState.test.ts`, `buzzerLook.test.ts` and `Play.test.tsx` green.
+- [x] F176 Player phone and the bulb-ring buzzer
 
 - [ ] F177 Screen lobby and chrome
   - Spec: `12` § Surfaces F177, § Open 3; mocks `screen-lobby-*.png`, `components-screen.png`

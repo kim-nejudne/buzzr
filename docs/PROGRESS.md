@@ -10,6 +10,63 @@ Handoff log, one entry per feature or bug. Newest first. Template:
 **How to try it:** exact commands / URLs / which devices
 ```
 
+## F176 — Player phone and the bulb-ring buzzer (2026-11-26)
+**What changed:**
+- **The buzzer** (`index.css` `.lit-buzzer`, `Play.tsx` `BulbRing`):
+  - A ring of 22 bulbs round a round amber button on a fixed lead-deep key edge. BUZZ is Antonio in ground type, a third of the ring's width.
+  - It is drawn from the same `data-cap`, `data-bulb`, `data-tone` and `data-mark` values. `up` sits the button 4px raised. `breathe` is now the chase: alternate bulbs swap every 0.5s, opacity only, `steps(1)`. `drained` is well-2 with muted BUZZ, `dim` is amber at 40%, `warn` is a 6px stop ring, and `x` is a 6px ink X.
+  - `won` adds the mock's blue ring. A lobby test press lights a fading copy of the ring.
+  - `BUZZER_LOOK.early` is now `drained`, per the `12` table (it was `red`).
+  - The slot no longer counts Lit's 14px drop: `size-[100cqh]`, with the basis `min(320px,86vw,44dvh)` and `md:min(440px,64vw,48dvh)`.
+  - Removed the Lit tokens `buzz-hi`, `buzz-wall`, `buzz-glow`, `buzz-glow-0` and `buzz-drop`, and the `bulb-breathe` animation.
+- **The rest of the phone** (`Play.tsx`):
+  - Join form: top-aligned, an amber Antonio heading, avatar tiles on a rule edge, JOIN at Size s across the column, Back to start on the left.
+  - Top bar: the well over a 4px ink rule, a round avatar, and the score in amber Sofia Sans 800. Rank and score are now Sofia Sans 800 (they were Anybody).
+  - Status: centred Antonio at 44px. Amber for test, open, pick and type. Winner on a full-width amber panel, too early on full-width stop. Countdowns are DotGothic in amber (110px for the answer, 64px to buzz, 48px to answer).
+  - Who's here: the well, with chips on a rule hairline and round swatches.
+  - Menu: the well on a rule. Change name is a Size s secondary, and Leave game is `BUTTON_DANGER`.
+  - Choice tiles: the well, with the letter on its colour square. The pick and the right answer are blue, and a wrong pick has a stop edge.
+  - Typed: a visible "Your answer" label (sr-only on a short screen) and a Size s Send.
+  - Answer card: amber, blue or stop edge, with the answer in Sofia Sans. The chip is blue for a score and stop for wrong.
+  - Final: the rank in DotGothic 64px amber, the points in Antonio 44px, Team and Tonight in well boxes, and Share at Size s.
+  - Rename overlay buttons are Size s.
+- **Tests:**
+  - `buzzerLook.test.ts` +4. They check the CSS for BUZZ at 11:1 on amber (`contrast`), that only translate and opacity animate, that the chase holds still under reduced motion, and that every tone, mark and lit rule is there. The early row now reads `drained`.
+  - `Play.test.tsx`: 10 assertions moved from the Overprint look to the Marquee look:
+    - too early's panel is `bg-warn`, its ground type and drained tone
+    - out's muted status with no icon
+    - Sofia Sans figures, the amber score and the Antonio initial
+    - the stop chip and edge on a wrong reveal, and the blue edge on a correct one
+    - the choice colour on the letter square
+    - the new buzzer sizes and no drop outside the ring
+  - 3475 tests in total. No new dependency.
+
+**Decisions:** five DECISIONS rows dated 2026-11-26 for F176: the buzzer build; won's blue ring and the dropped out icon; the status block; the choice tiles and answer card; the top bar, final and menu.
+
+**Notes for next session:**
+- **Copy rewrites:** none. Every string is kept. The `x` icon dropped from the locked-out status is recorded in the `index.css` stamp.
+- **Before/after:**
+  - The Anybody figures in the top bar are now Sofia Sans 800.
+  - The wrong chip was buzz amber and is now stop red.
+  - The choice colour moved from the whole tile to the letter square.
+- **sloplint `--kept`** on `/play/<code>` (`.playtest/F176/kept.txt`): 0 FAIL, 0 REFLEX, 1 WAIVED (39b), 2 DISMISSED (70, F3). F175's `.lit-buzzer` 1.04:1 WARN is gone. The two WARNs are "not compared" because only /play was rendered. kept: links 1/1, fields 4/5 (the `x` dropped on record), handlers 29/29.
+- The Who's here test `[data-bulbs]` (M31) still passes. The ring is `.lit-buzzer-ring`; `data-bulbs` belonged to a component that is long gone.
+- The review (`review-feature`) found no Must-fix. Fixed from its Should-fixes:
+  - `up` is now 4px, not the 6px key edge.
+  - The playtest now covers every state at both sizes.
+  - Added the DECISIONS rows.
+- Main `index` chunk 515.79 → 518.58 kB (since F89's figure; the F174/F175 fonts and CSS account for most of it).
+
+**Playtest** (Playwright, headless Chromium, `.playtest/F176/states.mjs` and `flare.mjs`; screenshots in `.playtest/F176/`, viewed):
+- Phones at 375×667, 390×844 and 667×375, with 16-character names and a host socket.
+- Every state checked by its data attributes and a screenshot at both 375×667 and 390×844: join, lobby, lobby test, idle, early, live, pressed, won, lost and out. Also reveal (buzz, choice and typed), choice and choice sent, typed, final and menu.
+- No horizontal overflow and no console errors.
+- The lobby buzzer is 263px at 375×667, with its bottom at y=467 and Who's here starting at 491. At 390×844 it is 320px, with its bottom at 524 and Who's here at 658.
+- The test flare's opacity is 1 at the press and 0 after 700ms. Under reduced motion it never shows.
+- Under reduced motion the live bulbs read `1010…` twice, 600ms apart (held still).
+
+**How to try it:** `npm run dev`. Host a game from `http://localhost:5173/` on the laptop, and join on a phone at `http://<LAN-IP>:5173/play/<code>`. Tap the buzzer in the lobby, then Start, tap early, Open buzzers, buzz, and judge Wrong to see Locked out. Try a choice question and a typed question. `npm test -- client/src/lib/buzzerLook.test.ts client/src/pages/Play.test.tsx`.
+
 ## F175 — Landing and join (2026-11-26)
 **What changed:**
 - **Marquee sign** (`Landing.tsx`): BUZZR in amber Antonio at hero size (`min(34vw,17.5rem)`, then `min(22vw,17.5rem)` from `lg`) on a bulb border.
