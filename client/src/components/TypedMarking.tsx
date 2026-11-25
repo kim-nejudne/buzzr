@@ -45,7 +45,7 @@ export function TypedMarking({ typed, phase, command, showGroups }: TypedMarking
       ) : typed.groups.length === 0 ? (
         <p className="text-muted">{phase === 'QUESTION' ? 'Not open yet.' : 'No answers yet.'}</p>
       ) : (
-        <ul className="flex flex-col border-t-4 border-ink">
+        <ul className="flex flex-col border-t-2 border-edge">
           {typed.groups.map((group, index) => {
             // Keys hold spaces, which an id may not.
             const id = `${idPrefix}-${index}`;
@@ -53,7 +53,7 @@ export function TypedMarking({ typed, phase, command, showGroups }: TypedMarking
               <li
                 key={group.key}
                 data-correct={group.correct || undefined}
-                // A ruled row per group; a marked one floods the teal pass, win (design.md Rules).
+                // A ruled row per group; a marked one is the blue answer, win (design.md Rules).
                 className={`flex items-center gap-3 border-b border-edge px-3 py-2 ${
                   group.correct ? 'bg-win text-win-ink' : ''
                 }`}
@@ -65,7 +65,7 @@ export function TypedMarking({ typed, phase, command, showGroups }: TypedMarking
                   checked={group.correct}
                   disabled={!marking || command.busy}
                   onChange={(event) => toggle(group.key, event.target.checked)}
-                  className="size-6 shrink-0 accent-ink"
+                  className="size-6 shrink-0 accent-accent-2-ink"
                 />
                 <label htmlFor={id} className="flex min-w-0 flex-1 flex-col">
                   <span className="font-semibold break-words">{group.text}</span>
@@ -77,7 +77,7 @@ export function TypedMarking({ typed, phase, command, showGroups }: TypedMarking
                 <span
                   data-count
                   aria-label={`${group.playerIds.length} typed it`}
-                  className="min-w-6 shrink-0 text-right font-display text-xl font-black font-stretch-150% tabular-nums"
+                  className="min-w-6 shrink-0 text-right font-sans text-xl font-extrabold tabular-nums"
                 >
                   {group.playerIds.length}
                 </span>

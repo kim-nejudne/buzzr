@@ -124,25 +124,27 @@ describe('SecondaryActions', () => {
     expect(sent).toMatchObject([{ event, payload }]);
   });
 
-  it('tiles are secondaries, ink outlines with narrow captions; the shown scoreboard floods the teal pass, End game is a buzz outline (M32)', () => {
+  it('tiles are amber secondaries at Size s in Antonio capitals; the shown scoreboard is the chosen blue (M35)', () => {
     setup(SecondaryActions, hostView({ showScoreboard: true }));
     const skip = button('Skip question').className;
-    expect(skip).toContain('border-ink');
-    expect(skip).toContain('font-sans');
-    expect(skip).not.toMatch(/(^| )bg-/);
-    const shown = button('Hide scoreboard').className;
-    expect(shown).toContain('bg-accent');
-    expect(shown).not.toContain('ring-accent');
+    expect(skip).toContain('border-accent');
+    expect(skip).toContain('text-accent');
+    expect(skip).toContain('font-display');
+    expect(skip).toContain('px-4 text-xl');
+    const shown = button('Hide scoreboard');
+    expect(shown.getAttribute('aria-pressed')).toBe('true');
+    expect(shown.className).toContain('aria-pressed:bg-accent-2');
     expect(button('End game').className).toContain('border-stop');
   });
 
-  it('End game keeps the red outline and sets its label in ink, as red type on paper is 4.03:1 (F157)', () => {
+  it('End game is a stop outline with stop type; armed, Confirm end fills stop with ground type (design.md Danger)', () => {
     setup(SecondaryActions, hostView());
     const end = button('End game').className;
     expect(end).toContain('border-stop');
-    expect(end).toContain('text-ink!');
+    expect(end).toContain('text-stop');
     fireEvent.click(button('End game'));
-    expect(button('Confirm end').className).toContain('text-ink!');
+    expect(button('Confirm end').className).toContain('bg-stop!');
+    expect(button('Confirm end').className).toContain('text-stop-ink!');
   });
 
   it('Hide scoreboard sends show false while the scoreboard is up', () => {
@@ -208,15 +210,19 @@ describe('SecondaryActions', () => {
     ['LOBBY', 1],
     ['QUESTION', 4],
     ['REVEAL', 3],
-  ])('in %s the %i tiles share one row equally, leaving no empty cell', (phase, count) => {
-    setup(SecondaryActions, hostView({ phase }));
-    const tiles = button(
-      phase === 'LOBBY' ? 'Show scoreboard' : 'Undo last judgement',
-    ).parentElement!;
-    expect(tiles.children).toHaveLength(count);
-    expect(tiles.className).not.toContain('grid');
-    for (const tile of tiles.children) expect(tile.className).toContain('flex-1 basis-0');
-  });
+  ])(
+    'in %s the %i tiles grow to fill their line, so a wrapped row leaves no empty cell',
+    (phase, count) => {
+      setup(SecondaryActions, hostView({ phase }));
+      const tiles = button(
+        phase === 'LOBBY' ? 'Show scoreboard' : 'Undo last judgement',
+      ).parentElement!;
+      expect(tiles.children).toHaveLength(count);
+      expect(tiles.className).toContain('flex-wrap');
+      expect(tiles.className).not.toContain('grid');
+      for (const tile of tiles.children) expect(tile.className).toContain('flex-auto');
+    },
+  );
 
   it('End game disarms when the game moves on', () => {
     const { rerender } = setup(SecondaryActions, hostView());
@@ -259,22 +265,23 @@ describe('HostPlayers', () => {
     expect(row('Player 2').textContent).toContain('offline');
   });
 
-  it('rows are ruled under the ink bar, with an ink-ringed square, a wide tabular Anybody score and ink-outlined buttons (M32)', () => {
+  it('each row is the well on a rule edge, with a round ink-ringed swatch, an amber DotGothic score and amber secondaries (M35)', () => {
     setup(HostPlayers, hostView({ players: [player(1, { score: 400 })] }));
-    expect(row('Player 1').className).toContain('border-b border-edge');
-    expect(row('Player 1').className).not.toContain('bg-');
-    expect(row('Player 1').parentElement!.className).toContain('border-t-4 border-ink');
+    expect(row('Player 1').className).toContain('border-2 border-edge bg-surface');
+    expect(row('Player 1').parentElement!.className).toContain('gap-2');
     const dot = nameLine('Player 1').querySelector('[data-colour-dot]')!.className;
     expect(dot).toContain('ring-ink');
-    expect(dot).not.toContain('rounded');
+    expect(dot).toContain('rounded-full');
     const score = within(row('Player 1')).getByText('400');
-    expect(score.className).toContain('font-display');
-    expect(score.className).toContain('font-stretch-150%');
-    expect(score.className).toContain('tabular-nums');
-    expect(button('Add 200 to Player 1').className).toContain('border-ink');
-    // A button is Antonio capitals (design.md Controls, F174).
-    expect(button('Add 200 to Player 1').className).toContain('font-display');
-    expect(button('More for Player 1').className).toContain('border-ink');
+    expect(score.className).toContain('font-outlier');
+    expect(score.className).toContain('text-[40px]');
+    expect(score.className).toContain('text-accent');
+    // A button is the secondary at Size s: Antonio capitals (design.md Controls).
+    for (const name of ['Add 200 to Player 1', 'Custom amount for Player 1', 'More for Player 1']) {
+      expect(button(name).className).toContain('border-accent');
+      expect(button(name).className).toContain('font-display');
+      expect(button(name).className).toContain('px-4 text-xl');
+    }
   });
 
   it('shows the avatar beside the name, and nothing for a player without one', () => {
@@ -472,18 +479,38 @@ describe('HostSettings', () => {
     expect(sent).toEqual([expect.objectContaining({ event: 'host:settings', payload })]);
   });
 
-  it('the remote’s rows sit on the paper with hairlines, steppers, presets and switches as ink outlines (M32)', () => {
+  it('the remote’s rows sit on the ground with hairlines; steppers and presets are amber outlines, switches round (M35)', () => {
     setup(HostSettings, hostView());
     const box = toggle(/^Auto-open buzzers/).className;
     expect(box).toContain('border-b');
     expect(box).not.toContain('bg-surface');
-    expect(button('More answer time').className).toContain('border-ink');
+    expect(button('More answer time').className).toContain('border-accent');
     expect(button('More answer time').className).not.toContain('font-display');
-    expect(screen.getByRole('button', { name: 'Party' }).className).toContain('border-ink');
-    // An off switch's track needs 3:1 on the paper: a square 2px ink edge, never the rule.
+    expect(screen.getByRole('button', { name: 'Party' }).className).toContain('border-accent');
+    expect(screen.getByRole('button', { name: 'Party' }).className).toContain('font-display');
+    // An off switch's track needs 3:1 on the ground: a 2px muted edge, never the rule.
     const track = toggle(/^Auto-open buzzers/).querySelector('[aria-hidden]')!;
-    expect(track.className).toContain('border-ink');
-    expect(track.className).not.toContain('rounded');
+    expect(track.className).toContain('border-muted');
+    expect(track.className).toContain('rounded-pill');
+    const on = toggle(/^Wrong-answer penalty/).querySelector('[aria-hidden]')!;
+    expect(toggle(/^Wrong-answer penalty/).getAttribute('aria-checked')).toBe('false');
+    expect(on.className).not.toContain('bg-accent-2');
+  });
+
+  it('the chosen preset and language are the blue Chosen with aria-pressed; the others amber (M35)', () => {
+    setup(HostSettings, hostView({ settings: { ...DEFAULT_SETTINGS, copy: 'en' } }));
+    const english = screen.getByRole('button', { name: 'English' });
+    const taglish = screen.getByRole('button', { name: 'Taglish' });
+    expect(english.getAttribute('aria-pressed')).toBe('true');
+    expect(taglish.getAttribute('aria-pressed')).toBe('false');
+    for (const name of ['English', 'Taglish', 'Party', 'Competitive']) {
+      const { className } = screen.getByRole('button', { name });
+      expect(className).toContain('aria-pressed:bg-accent-2');
+      expect(className).toContain('aria-pressed:text-accent-2-ink');
+    }
+    // The two languages share the row's width.
+    expect(english.className).toContain('flex-1');
+    expect(taglish.className).toContain('flex-1');
   });
 
   it('a switch that is on sends false', () => {
@@ -496,15 +523,15 @@ describe('HostSettings', () => {
   });
 
   it.each(['Presets', 'Answer time', 'Scoreboard every', 'Phone and Screen language'])(
-    'the %s row is a size container that stacks its controls when narrow (HST-05)',
+    'the %s row stacks the label over full-width controls (HST-05, host.png)',
     (label) => {
       setup(HostSettings, hostView());
       const box = screen.getByText(label).closest('.\\@container')!;
       const layout = box.firstElementChild!;
       expect(layout.className).toContain('flex-col');
-      expect(layout.className).toContain('@sm:flex-row');
-      // The controls go under the label, on the right.
-      expect(layout.lastElementChild!.className).toContain('self-end');
+      expect(layout.className).not.toContain('flex-row');
+      // The controls go under the label, across the row: "− value +" or the choice buttons.
+      expect(layout.lastElementChild!.className).toContain('w-full justify-between');
     },
   );
 
@@ -784,13 +811,13 @@ describe('HostSettings', () => {
     );
   });
 
-  it('sets labels and steppers in Sofia Sans 600 and values as figures (F156, F174)', () => {
+  it('sets labels and steppers in Sofia Sans 600, and values in amber Sofia Sans 800, never DotGothic under 40px (F156, M35)', () => {
     setup(HostSettings, hostView());
     expect(screen.getByText('Answer time').className).toContain('font-sans font-semibold');
     expect(button('Less answer time').className).toContain('font-sans font-semibold');
-    expect(every().className).toContain('font-display font-black font-stretch-150%');
+    expect(every().className).toContain('font-sans font-extrabold text-accent tabular-nums');
     expect(screen.getByRole('region', { name: 'Settings' }).innerHTML).not.toMatch(
-      /font-(bold|extrabold|medium)/,
+      /font-(bold|medium|outlier)/,
     );
   });
 
@@ -825,7 +852,7 @@ describe('HostSettings', () => {
 
     setup(HostSettings, view);
     expect(button('More answer time').className).toContain('size-12');
-    expect(toggle(/^Auto-open buzzers/).className).toContain('p-4');
+    expect(toggle(/^Auto-open buzzers/).className).toContain('py-4');
   });
 
   it('compact keeps each detail for screen readers only, so every row is one line; the remote shows them', () => {

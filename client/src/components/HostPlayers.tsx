@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { SCORE_DELTA_MAX } from '../../../shared/constants.js';
 import type { HostView, TeamView } from '../../../shared/types.js';
 import { useRoomStore } from '../lib/roomStore.js';
-import { HOVER } from '../lib/hover.js';
+import { BUTTON_SMALL } from '../lib/ui.js';
 import type { HostCommand } from '../lib/useHostCommand.js';
 import { ColourDot } from './ColourDot.js';
 import { OverflowMenu, type MenuItem } from './OverflowMenu.js';
@@ -13,8 +13,8 @@ interface HostPlayersProps {
   command: HostCommand;
 }
 
-// Secondary controls (design.md): a 2px ink outline, Antonio 700 in capitals.
-const small = `min-h-11 rounded-control border-2 border-ink px-3 py-2 font-display font-semibold uppercase tabular-nums transition not-disabled:active:bg-bg-deep disabled:opacity-40 ${HOVER}`;
+// The secondary at Size s (design.md Controls): an amber outline, Antonio capitals.
+const small = `${BUTTON_SMALL} tabular-nums`;
 
 /**
  * The remote's Players tab (UI spec, Host remote): each player's score and connection, buttons
@@ -35,7 +35,7 @@ export function HostPlayers({ view, command }: HostPlayersProps) {
   return (
     // A size container: where the list has room (the tablet's column), each row is one line (HST-10).
     <section aria-labelledby="players-heading" className="@container/players flex flex-col gap-2">
-      <h2 id="players-heading" className="text-xl text-ink uppercase">
+      <h2 id="players-heading" className="text-[28px] leading-none text-ink uppercase">
         Players ({players.length})
       </h2>
       {players.length === 0 ? (
@@ -55,8 +55,8 @@ export function HostPlayers({ view, command }: HostPlayersProps) {
 
 type HostPlayer = HostView['players'][number];
 
-/** Players as a ruled table: the 4px ink bar over the list, a hairline under each row (design.md Rules). */
-const RULED = 'flex flex-col border-t-4 border-ink';
+/** Players as a stack of boxes, each the well on a 2px rule edge (`host.png`). */
+const RULED = 'flex flex-col gap-2';
 
 interface RowProps {
   view: HostView;
@@ -92,13 +92,15 @@ function TeamGroups({
         return (
           <section key={team.index} aria-labelledby={headingId} className="flex flex-col gap-2">
             <h3 id={headingId} className="flex items-baseline gap-2 text-lg uppercase">
-              {/* Ink name and a ringed square: red or blue text is under 3:1 on newsprint. */}
-              <ColourDot color={team.color} square className="size-4 self-center ring-2 ring-ink" />
+              {/* Ink name and a ringed swatch: a team colour as text may be under 3:1 on the ground. */}
+              <ColourDot color={team.color} className="size-4 self-center ring-2 ring-ink" />
               <span>{team.name}</span>
-              <span className="font-sans text-sm font-semibold tracking-normal text-muted normal-case font-stretch-normal">
+              <span className="font-sans text-sm font-semibold text-muted normal-case">
                 {members.length} {members.length === 1 ? 'player' : 'players'}
               </span>
-              <span className="ml-auto font-stretch-150% tabular-nums">{team.score}</span>
+              <span className="ml-auto font-sans font-extrabold text-accent tabular-nums">
+                {team.score}
+              </span>
             </h3>
             {members.length === 0 ? (
               <p className="text-muted">No players yet</p>
@@ -171,15 +173,15 @@ function PlayerRow({
   return (
     <li
       aria-label={player.name}
-      className="flex flex-col gap-2 border-b border-edge px-1 py-2.5 @xl/players:flex-row @xl/players:flex-wrap @xl/players:items-center"
+      className="flex flex-col gap-2 rounded-card border-2 border-edge bg-surface p-2.5 @xl/players:flex-row @xl/players:flex-wrap @xl/players:items-center"
     >
       <p
         className={`flex items-center gap-3 @xl/players:min-w-0 @xl/players:flex-1 @xl/players:basis-48 ${dim}`}
       >
-        <ColourDot color={player.color} square className="size-4 ring-2 ring-ink" />
+        <ColourDot color={player.color} className="size-4 ring-2 ring-ink" />
         <PlayerAvatar avatar={player.avatar} className="text-xl" />
         <span className="flex min-w-0 flex-1 flex-col">
-          <span className="line-clamp-2 font-semibold break-words">{player.name}</span>
+          <span className="line-clamp-2 font-bold break-words">{player.name}</span>
           <span className="font-sans text-sm font-semibold text-muted">
             {unknown
               ? 'status unknown'
@@ -188,9 +190,8 @@ function PlayerRow({
                 : 'offline'}
           </span>
         </span>
-        <span className="font-display text-xl font-black font-stretch-150% tabular-nums">
-          {player.score}
-        </span>
+        {/* A figure: amber DotGothic at 40px (design.md Rules). */}
+        <span className="font-outlier text-[40px] leading-none text-accent">{player.score}</span>
       </p>
       {/* On one line, the buttons join the row itself, so Custom's field still takes a line below. */}
       <div className="flex flex-wrap items-center justify-end gap-2 @xl/players:contents">
@@ -220,7 +221,7 @@ function PlayerRow({
         <OverflowMenu
           label={`More for ${player.name}`}
           trigger={<span aria-hidden>⋯</span>}
-          triggerClassName={`flex min-h-11 min-w-11 items-center justify-center rounded-control border-2 border-ink font-bold transition not-disabled:active:bg-bg-deep ${HOVER}`}
+          triggerClassName={`${small} flex items-center justify-center`}
           items={[...moves, kick]}
         />
       </div>
@@ -263,7 +264,7 @@ function CustomAdjust({
         aria-label={`Custom amount for ${player.name}`}
         aria-expanded={open}
         onClick={() => setOpen(!open)}
-        className={`${small} ${open ? 'bg-bg-deep' : ''}`}
+        className={small}
       >
         Custom
       </button>
@@ -279,8 +280,8 @@ function CustomAdjust({
             maxLength={String(SCORE_DELTA_MAX).length + 2}
             value={text}
             onChange={(e) => setText(e.target.value)}
-            // A field's 2px ink edge (design.md Rules).
-            className="min-h-11 w-0 min-w-0 flex-1 rounded-control border-2 border-ink bg-bg px-3 py-2 font-sans text-ink tabular-nums placeholder:text-muted"
+            // The field: well-2 on a 1px muted border (design.md Controls, Field).
+            className="min-h-[54px] w-0 min-w-0 flex-1 rounded-control border border-muted bg-bg-deep px-3 py-2 font-sans text-ink tabular-nums placeholder:text-muted"
           />
           <button
             type="button"

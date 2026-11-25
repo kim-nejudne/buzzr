@@ -17,8 +17,8 @@ interface PairHostPhoneProps {
   dialogClassName: string;
   /** CSS width and height of the QR. */
   qrSize: string;
-  /** The button's look and spacing, in place of the 2px ink outline: the Screen's host row (F177). */
-  look?: string;
+  /** The button's look and spacing: the Screen's host row (F177), the remote's Size s secondary (F180). */
+  look: string;
 }
 
 /**
@@ -85,8 +85,7 @@ export function PairHostPhone({
         type="button"
         onClick={show}
         aria-haspopup="dialog"
-        // The secondary: a 2px ink outline, Antonio 700 in capitals (design.md Controls).
-        className={`${look ?? `rounded-control border-2 border-ink px-[1em] py-[0.5em] font-display font-semibold uppercase transition not-disabled:active:bg-bg-deep ${HOVER}`} ${className}`}
+        className={`${look} ${className}`}
       >
         Pair host phone
       </button>
@@ -161,21 +160,24 @@ function PairingDialog({
         role="dialog"
         aria-modal="true"
         aria-label="Pair host phone"
-        // The dialog's one paper surface: paper-2 under the 4px ink bar, square, no lift (design.md Rules).
-        className={`flex max-h-full flex-col items-center gap-[0.6em] overflow-y-auto border-t-4 border-ink bg-surface p-[1.2em] text-center ${className}`}
+        // The well on a 2px rule edge, square, no lift (design.md Rules).
+        className={`flex max-h-full flex-col items-center gap-[0.6em] overflow-y-auto rounded-card border-2 border-edge bg-surface p-[1.2em] text-center ${className}`}
       >
-        <p className="font-display text-[1.3em] font-black uppercase font-stretch-140%">
+        <p className="font-display text-[1.3em] text-accent uppercase">
           Scan with the host’s phone
         </p>
         <div className="flex flex-wrap items-center justify-center gap-[1em]">
-          {/* Transparent on the paper, like the lobby's join QR (F160). */}
-          <QRCodeSVG
-            value={url}
-            title="Pair a host phone"
-            marginSize={0}
-            bgColor="transparent"
-            style={{ width: qrSize, height: qrSize }}
-          />
+          {/* Ground modules on the ink card, so it scans dark on light (design.md Controls, QR). */}
+          <div className="bg-ink p-[0.6em] text-paper">
+            <QRCodeSVG
+              value={url}
+              title="Pair a host phone"
+              marginSize={0}
+              bgColor="transparent"
+              fgColor="currentColor"
+              style={{ width: qrSize, height: qrSize, display: 'block' }}
+            />
+          </div>
           <div className="flex max-w-[14em] flex-col items-center gap-[0.3em]">
             <p className="text-muted">
               or open{' '}
@@ -192,8 +194,8 @@ function PairingDialog({
               <p
                 data-testid="pairing-pin"
                 aria-busy={pin === null}
-                // A display figure (design.md Rules).
-                className="font-display text-[2.2em] leading-none font-black tracking-[0.05em] whitespace-nowrap font-stretch-150% tabular-nums"
+                // A figure in amber DotGothic, never under 40px (design.md Rules).
+                className="font-outlier text-[max(40px,2.2em)] leading-none whitespace-nowrap text-accent"
               >
                 {pin === null ? '··· ···' : `${pin.slice(0, 3)} ${pin.slice(3)}`}
               </p>
@@ -205,7 +207,7 @@ function PairingDialog({
           ref={hideRef}
           type="button"
           onClick={onHide}
-          className={`min-h-11 rounded-control border-2 border-ink px-[1em] py-[0.3em] font-display font-semibold uppercase transition active:bg-bg-deep ${HOVER}`}
+          className={`min-h-11 rounded-control border-2 border-accent px-[1em] py-[0.3em] font-display text-accent uppercase transition active:bg-bg-deep ${HOVER}`}
         >
           Hide{' '}
           <kbd

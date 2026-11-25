@@ -18,7 +18,7 @@ export function buttonsWithNoHover(root: ParentNode = document.body): string[] {
 
 /**
  * The labels of buttons under `root` without the F44 hover style. Text-link buttons keep their own
- * `hover:text-ink` (a set card's title, `hover:underline`), `LINK` its blue underline, destructive ones the stop `DANGER` hover (F92), and the primary and
+ * `hover:text-ink` (a set card's title, `hover:underline`), `LINK` its blue underline, destructive ones the stop `DANGER` hover (F92), the settings controls a tint (F180), and the primary and
  * secondary buttons their key-edge lift (F174). Throws when there is no button at all, so a test cannot pass on an empty page.
  */
 export function buttonsWithoutHover(root: ParentNode = document.body): string[] {
@@ -34,6 +34,8 @@ export function buttonsWithoutHover(root: ParentNode = document.body): string[] 
         !el.className.includes('hover:text-ink') &&
         !el.className.includes('hover:underline') &&
         !el.className.includes('hover:decoration-accent-2') &&
+        // The settings' steppers, presets and switches tint under the mouse (F180).
+        !/hover:hover-tint/.test(el.className) &&
         // The primary and secondary buttons lift off their key edge (design.md Rules, F174).
         !el.className.includes('not-disabled:hover:-translate-y-0.5') &&
         // Surfaces not yet recomposed keep the gold primary's hover (F94).

@@ -463,13 +463,7 @@ Source: `docs/ux/10-live-review-fixes.md` (every finding from the 2026-11-17 UI/
 
 - [x] F179 Scoreboard and final results
 
-- [ ] F180 Host remote
-  - Spec: `12` § Surfaces F180; mock `host.png`
-  - Depends: F174
-  - Done when:
-    - The pairing, header, tabs, question card, primary bar, judging card, players, settings (stacked stepper rows, language as two choice buttons), typed marking, read-aloud and board picker are restyled on the phone and at `lg`.
-    - The chosen language and preset are blue with `aria-pressed`. Phone buttons are Size s.
-  - Tests: `Host.test.tsx` green.
+- [x] F180 Host remote
 
 - [ ] F181 Set library and pickers
   - Spec: `12` § Surfaces F181; mock `sets-pickers-editor.png`
@@ -519,7 +513,8 @@ Source: `docs/ux/10-live-review-fixes.md` (every finding from the 2026-11-17 UI/
 - (F153) The Screen name fit estimates width from the character count. A name of wide letters (W, M) wraps to a second line instead of stepping down further; a measured fit would keep it on one line.
 - (F175) Landing at 1440 keeps `PageShell wide` (72rem), so the marquee sign is 1088px wide against the mock's 1246. Kim to judge: a wider Landing-only shell (it would need `data-width` beyond `wide`).
 - (F152 finish review) The two phone forms (`/play` join, `/host` pairing) are bare stock with outlines and no pass or ink bar, so they carry the least Overprint of any screen. Composition.
-- (F152 finish review) The remote's pairing PIN placeholder "000000" is at display size in `text-muted`, so it can read as a typed PIN. A lighter tone would fall under 4.5:1; a shorter or different placeholder is a copy change for Kim.
+- (F180) Remote at `lg`: `host.png` sets the Game and Players columns on panels of their own (the well). F180 keeps them on the ground, because the panes scroll with a 4px focus-ring margin (F99) that a panel's padding would have to absorb.
+- (F180) The remote's offline player row: the mock dims the whole row, including its buttons; F41 dims the name line only, since the buttons still work. Kim to judge.
 - (F142 finish review) The room code as Gabarito tiles beyond Landing: the phone's "Join room" head, the remote's "Room DBPA." line and the Screen board's corner still set it as plain text. Composition, not a defect.
 - (F142 finish review) Landing at 1440: the join tiles and Host a game sit ~180px apart with the right ~40% empty. Close the gap or stack them as at 375.
 - (F142 finish review) The Screen's start gate is bare text on felt at TV size; Prime Time showed the lobby (code, QR) behind a scrim. Render the lobby behind the gate.

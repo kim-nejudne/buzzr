@@ -10,6 +10,92 @@ Handoff log, one entry per feature or bug. Newest first. Template:
 **How to try it:** exact commands / URLs / which devices
 ```
 
+## F180 — Host remote (2026-11-26)
+**What changed:**
+- **Pairing** (`HostPinEntry.tsx`): "Pair this phone" in amber Antonio, left-aligned. The one PIN input is drawn as six DotGothic code tiles on shade, as Landing's join: the next tile has a blue edge, and all take a stop edge after a wrong PIN. Pair is the primary at Size s across the column.
+- **Header and tabs** (`Host.tsx`):
+  - HOST is amber Antonio over the room line. The Q pill is round, in amber Sofia Sans 800. Read aloud is the Size s secondary and turns blue when on (`aria-pressed`).
+  - Tabs are Sofia Sans 700 on a 4px rule. The open tab is amber on the well with an amber underline.
+  - At `lg` the Game column gets a "Game" head, and Settings ▾ is an Antonio head.
+- **Question card:** the well on a rule edge, with amber points. The answer is in a shade inset, in amber Antonio with muted notes. The read-aloud question and answer take the same look.
+- **Primary bar:** the amber primary at Size s with no icon, on the ground under a 2px rule. The side countdown is a well box with amber DotGothic seconds.
+- **Judging card** (`PrimaryAction.tsx`):
+  - Amber, with a round swatch, the name in Antonio and the answer seconds in DotGothic.
+  - ✓ Correct is blue, ½ Half is on the ground, and ✕ Wrong has a stop outline and stop type. Each puts its icon before the label on one line.
+  - "also buzzed" sits under hairlines.
+- **Secondary actions** (`SecondaryActions.tsx`): Size s amber secondaries with no icons. They grow to fill each line and wrap. Scoreboard is blue when shown. End game is stop type in its own row, and Confirm end fills stop.
+- **Players** (`HostPlayers.tsx`): each row is a well box on a rule edge. It has a round swatch, the score in amber DotGothic 40px, and −N, +N, Custom and ⋯ as Size s secondaries.
+- **Settings** (`HostSettings.tsx`):
+  - Rows are stacked: the label over a full-width "− value +", or over the choice buttons sharing the width. Switch rows keep the switch beside the text.
+  - Switches are round, blue when on.
+  - Steppers and presets have amber outlines. The chosen preset and language are blue with `aria-pressed`. Values are amber Sofia Sans 800.
+  - The Screen lobby's compact settings share the component, so they take the same colours at their own sizes.
+- **Typed marking, board, choice tally, read aloud, game over:**
+  - Typed marking: a 2px rule over the groups, with a ground-coloured checkbox on the blue marked row.
+  - Board: "Pick a tile" is in Antonio. Open tiles are the well with amber figures, and played tiles are shade.
+  - Choice tally: the correct choice has a blue ring.
+  - Read aloud: the join QR is on an ink card, and the room code is in four DotGothic tiles.
+  - Game over: the leaders' rows are amber, as F179's scoreboard.
+- **Pairing dialog** (`PairHostPhone.tsx`, shared with the Screen): the QR is on an ink card with ground modules, and the PIN is in amber DotGothic. `look` is now required.
+- **Tests:** 3490 in total. No new dependency.
+  - `test/hover.ts` `buttonsWithoutHover` now accepts the settings controls' `hover:hover-tint`.
+  - **Changed assertions** (the old Overprint look → Marquee):
+    - `Host.test.tsx`:
+      - PIN: Gabarito input → six DotGothic tiles, with the blue tile moving.
+      - Judging: Half was a buzz-ink outline; Wrong now has a stop outline and type, with icons inline.
+      - Primary: `min-h-14` → `min-h-[54px]` at Size s.
+      - Tabs: ink bar and teal → 4px rule, amber, Sofia Sans.
+      - Played tile: `bg-accent-2` → `bg-shade`.
+      - Game over: the leader was win → amber; the bar is a 2px rule; swatches are round.
+      - Read-aloud code: one clamp-sized text → four tiles.
+    - `HostControls.test.tsx`:
+      - Tiles: ink and `flex-1 basis-0` → amber Size s and `flex-auto`.
+      - End game: ink label → stop type, and Confirm fills stop.
+      - Player rows: ruled → well boxes, with a DotGothic score.
+      - Settings: ink outlines and a square switch → amber outlines and a round switch.
+      - Stacked rows: no `@sm:flex-row`.
+      - Values: Sofia Sans 800 amber.
+      - `p-4` → `py-4`.
+    - `PairHostPhone.test.tsx`: the PIN is `font-outlier`.
+  - **New tests:**
+    - The chosen preset and language are blue with `aria-pressed`.
+    - The PIN tiles.
+
+**Decisions:** eight DECISIONS rows dated 2026-11-26 for F180: the header, tabs and `lg` heads; the question card and the square insets; secondary actions; the judging card; players; settings; pairing and the QR fix; the board, game over, choice and typed.
+
+**Notes for next session:**
+- **Copy:** the PIN field's placeholder "000000" is gone. The tiles show the empty slots, and the input is invisible over them. No other string changed.
+- **Icons dropped**, recorded in the `index.css` stamp:
+  - from the secondary tiles: skip, undo, arrow-left and trophy
+  - from End game: flag
+  - from the primary: arrow-right and eye
+- **Bug fixed along the way:** since F174 the pairing dialog's QR and the read-aloud join QR drew black modules on the dark well, so they were unreadable. Both now sit on ink cards.
+- **Before/after:**
+  - Half was an outline on amber and is now a ground block.
+  - End game's label was ink and is now stop red.
+  - Leaders on the remote's Game over were blue and are now amber.
+- **Review** (`review-feature`): flagged the missing DECISIONS rows and this entry, `PairHostPhone`'s dead default look (now removed, `look` required) and `RankRows` still on the old look (now restyled). The judging buttons' tighter padding is recorded in DECISIONS.
+- **Backlog added:**
+  - the `lg` columns on panels of their own
+  - the whole offline row dimmed, as the mock has it
+- **Backlog removed:** the F152 PIN placeholder item, now moot.
+- **sloplint `--kept`** on `/host/<code>` with `base.css` and `index.css` (`.playtest/F180/kept.txt`): 0 FAIL, 0 REFLEX, 1 DISMISSED (F3), 2 WARN ("not compared", one route rendered). kept: links 1/1, fields 3/8 (5 dropped on record), handlers 48/48, test hooks 1/1.
+  - The first run's card-in-card FAILs (the answer inset and the QR card) were fixed by making those insets square.
+  - Its 26a "no :focus-visible" FAILs came from leaving `base.css` out of the run.
+- Main `index` chunk 521.50 (F179) → 521.8 kB.
+
+**Playtest:**
+- **Playwright** (playtester agent, room on the sample set; Host at 390×844 and 1280×900, Screen at 1920×1080, one real player and 3 bots). It covered pairing in the dialog, the header, tabs, stacked settings, blue English and Party with `aria-pressed`, the question card, primary, judging, Read aloud, Players and `lg`. No console errors.
+- **Puppeteer** (`.playtest/F180/remote.mjs`, 375×667 and 1280×800). Every screenshot viewed:
+  - the PIN page empty and with "483" typed
+  - lobby, board, judging, the board with a played tile, and Players
+  - typed marking with 2 groups, one pre-marked
+  - `lg` judging, which matches `host.png`
+  - No horizontal overflow, no button under 44px, no console errors.
+- **Screen lobby** compact settings at 1280×720 (`screen-settings.mjs`): one line per row and no overflow.
+
+**How to try it:** `npm run dev`. Host a game from `http://localhost:5173/`, open the Screen, and press **Pair host phone**. On a phone, open `http://<LAN-IP>:5173/host/<code>` and type the PIN. Then try the Game, Players and Settings tabs, Read aloud, a buzz and judging, a board set and a typed question. Check a laptop at 1280 for the dashboard. `npm test -- client/src/pages/Host.test.tsx client/src/components/HostControls.test.tsx`.
+
 ## F179 — Scoreboard and final results (2026-11-26)
 **What changed:**
 - `ScreenResults.tsx`, Scoreboard:

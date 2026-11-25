@@ -8,8 +8,7 @@ import {
   TEAM_COUNT_CHOICES,
 } from '../../../shared/constants.js';
 import type { CopyLanguage, HostView, RoomSettings, ScreenView } from '../../../shared/types.js';
-import { HOVER } from '../lib/hover.js';
-import { FIELD_LABEL, FIGURE } from '../lib/ui.js';
+import { FIELD_LABEL } from '../lib/ui.js';
 import type { HostCommand } from '../lib/useHostCommand.js';
 
 interface HostSettingsProps {
@@ -26,23 +25,21 @@ interface HostSettingsProps {
 const SIZES = {
   regular: {
     // Two rows to a line where the remote gives them room: the tablet's column (HST-10).
-    // Under the 4px ink bar, as every list on the remote (design.md Rules).
-    section:
-      'border-t-4 border-ink @xl/settings:grid @xl/settings:grid-cols-2 @xl/settings:gap-x-6',
-    // Below `@sm` (about 384px of row) the controls stack under the label, right-aligned, so the
-    // label and detail keep the full width (HST-05).
-    // Rows on the paper, split by hairlines, as on the Screen lobby: no tile per setting (M31).
+    section: '@xl/settings:grid @xl/settings:grid-cols-2 @xl/settings:gap-x-6',
+    // Rows on the ground, split by hairlines, as on the Screen lobby: no tile per setting (M31).
     box: 'border-b border-edge last:border-b-0',
-    row: 'flex-col items-stretch gap-3 p-4 @sm:flex-row @sm:items-center',
-    text: '@sm:flex-1',
-    // A switch row stays on one line: its track is narrow enough to leave the label room.
-    switchRow: 'gap-3 p-4',
-    controls: 'gap-3 self-end @sm:self-auto',
+    // Stacked (`host.png`): the label and its detail over a full-width "− value +", or over the
+    // choice buttons sharing the width, so the label keeps the whole line (HST-05).
+    row: 'flex-col items-stretch gap-3 px-1 py-4',
+    text: '',
+    // A switch row stays on one line, the switch beside the text: its track leaves the label room.
+    switchRow: 'gap-3 px-1 py-4',
+    controls: 'w-full justify-between gap-3',
     label: 'text-lg',
     detail: 'text-sm',
     stepper: 'size-12 text-2xl',
-    value: 'min-w-16',
-    preset: 'h-12 px-3 text-lg',
+    value: 'flex-1 text-lg',
+    preset: 'h-12 flex-1 px-3 text-xl',
     track: 'h-8 w-14',
     knob: 'size-6',
   },
@@ -109,11 +106,14 @@ function matches(settings: RoomSettings, preset: Preset) {
 /** The language choices' names, each in its own language (F91). */
 const LANGUAGE_NAMES: Record<CopyLanguage, string> = { en: 'English', taglish: 'Taglish' };
 
-// The hover shows only under a mouse: the Screen lobby's settings (F52), never a phone.
-// Secondary controls (design.md): a 2px ink outline, Antonio 700 in capitals. The teal pass
-// marks only the chosen preset or language, at full strength: chosen is not unavailable (F156).
-const stepper = `rounded-control border-2 border-ink font-sans font-semibold text-ink transition not-disabled:active:bg-bg-deep disabled:text-muted disabled:opacity-40 ${HOVER}`;
-const presetButton = `rounded-control border-2 border-ink font-display font-semibold uppercase transition not-disabled:active:bg-bg-deep disabled:not-aria-pressed:opacity-40 ${HOVER}`;
+// Secondary controls (design.md Controls): a 2px amber outline with amber type, with no key edge,
+// so a compact row stays one line. The steppers' − and + are Sofia Sans; the presets and languages
+// Antonio capitals. The chosen preset or language is the blue Chosen with ground type
+// (`aria-pressed`), at full strength: chosen is not unavailable (F156).
+const stepper = `rounded-control border-2 border-accent font-sans font-semibold text-accent not-disabled:hover:hover-tint not-disabled:active:bg-bg-deep disabled:border-edge disabled:text-muted`;
+const presetButton = `rounded-control border-2 border-accent font-display text-accent uppercase not-disabled:hover:hover-tint not-disabled:active:translate-y-px aria-pressed:border-accent-2 aria-pressed:bg-accent-2 aria-pressed:text-accent-2-ink disabled:not-aria-pressed:opacity-40`;
+/** A setting's value: amber Sofia Sans 800, since it is under 40px (design.md Rules, figures). */
+const VALUE = 'text-center font-sans font-extrabold text-accent tabular-nums';
 
 /**
  * The remote's Settings tab (UI spec, Host remote), also shown in a hosting Screen's lobby. Each
@@ -150,9 +150,7 @@ export function HostSettings({
               aria-pressed={active}
               onClick={() => change(preset.settings)}
               disabled={busy}
-              className={`${presetButton} ${size.preset} ${
-                active ? 'bg-accent text-accent-ink' : 'text-ink'
-              }`}
+              className={`${presetButton} ${size.preset}`}
             >
               {preset.name}
             </button>
@@ -224,10 +222,7 @@ export function HostSettings({
         >
           −
         </button>
-        <output
-          aria-labelledby="scoreboard-every-label"
-          className={`${size.value} text-center ${FIGURE}`}
-        >
+        <output aria-labelledby="scoreboard-every-label" className={`${size.value} ${VALUE}`}>
           {every === 0 ? 'Never' : every}
         </output>
         <button
@@ -282,9 +277,7 @@ export function HostSettings({
               aria-pressed={active}
               onClick={() => !active && change({ copy })}
               disabled={busy}
-              className={`${presetButton} ${size.preset} ${
-                active ? 'bg-accent text-accent-ink' : 'text-ink'
-              }`}
+              className={`${presetButton} ${size.preset}`}
             >
               {LANGUAGE_NAMES[copy]}
             </button>
@@ -344,7 +337,7 @@ function ChoiceStepper<T extends number>({
       >
         −
       </button>
-      <output aria-labelledby={id} className={`${size.value} text-center ${FIGURE}`}>
+      <output aria-labelledby={id} className={`${size.value} ${VALUE}`}>
         {value === 0 ? 'Off' : format(value)}
       </output>
       <button
@@ -412,7 +405,7 @@ function Switch({ label, detail, checked, disabled, onChange, size }: SwitchProp
       aria-checked={checked}
       onClick={() => onChange(!checked)}
       disabled={disabled}
-      className={`flex items-center ${size.box} ${size.switchRow} text-left transition disabled:opacity-40 ${HOVER}`}
+      className={`flex items-center ${size.box} ${size.switchRow} text-left disabled:opacity-40 not-disabled:hover:hover-tint`}
     >
       <span className="flex-1">
         <span className={`block ${FIELD_LABEL} ${size.label}`}>{label}</span>
@@ -420,13 +413,15 @@ function Switch({ label, detail, checked, disabled, onChange, size }: SwitchProp
       </span>
       <span
         aria-hidden
-        // A square track and knob in a 2px ink edge: Overprint rounds only the buzzer (design.md Rules).
-        // On, the track floods the teal pass.
-        className={`flex ${size.track} shrink-0 items-center border-2 border-ink px-0.5 transition ${
-          checked ? 'justify-end bg-accent' : 'justify-start bg-bg'
+        // A round track and knob (design.md Shapes: switches are round). On, it is the blue answer
+        // with a ground knob; off, well-2 with a muted 2px edge for 3:1 against the ground.
+        className={`flex ${size.track} shrink-0 items-center rounded-pill border-2 px-0.5 ${
+          checked
+            ? 'justify-end border-accent-2 bg-accent-2'
+            : 'justify-start border-muted bg-bg-deep'
         }`}
       >
-        <span className={`${size.knob} ${checked ? 'bg-accent-ink' : 'bg-ink-2'}`} />
+        <span className={`${size.knob} rounded-full ${checked ? 'bg-accent-2-ink' : 'bg-muted'}`} />
       </span>
     </button>
   );

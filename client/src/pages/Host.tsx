@@ -32,14 +32,13 @@ import {
   withoutReadAloud,
 } from '../lib/hostLayout.js';
 import { clearHostToken, loadHostToken, saveHostToken, tokenFromHash } from '../lib/hostTokens.js';
-import { HOVER } from '../lib/hover.js';
 import { primaryFor } from '../lib/hostControls.js';
 import { isCompleteRoomCode } from '../lib/roomCode.js';
 import { useRoomStore } from '../lib/roomStore.js';
 import { ordinal } from '../lib/results.js';
 import { cardFromRoom } from '../lib/resultsCard.js';
 import { createSocket, type GameSocket } from '../lib/socket.js';
-import { BUTTON_OUTLINE, BUTTON_PRIMARY, LABEL, LINK } from '../lib/ui.js';
+import { BUTTON_OUTLINE, BUTTON_PRIMARY, BUTTON_SMALL, LABEL, LINK } from '../lib/ui.js';
 import {
   useHostCommand,
   useSendHost,
@@ -234,15 +233,15 @@ function HostRemote({ view, hostToken, send }: HostRemoteProps) {
       className={
         desktop
           ? ''
-          : // On the stock under the 4px ink bar, like the Screen's host bar (design.md Rules).
-            'sticky bottom-0 z-20 -mx-4 mt-auto border-t-4 border-ink bg-bg px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]'
+          : // On the ground under a 2px rule, like the Screen's host bar (design.md Controls).
+            'sticky bottom-0 z-20 -mx-4 mt-auto border-t-2 border-edge bg-bg px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))]'
       }
     >
       {view.phase === 'FINAL' ? (
         <button
           type="button"
           onClick={() => setPickingNewGame(true)}
-          className={`${BUTTON_PRIMARY} min-h-14 w-full text-xl`}
+          className={`${BUTTON_PRIMARY} w-full`}
         >
           New game
         </button>
@@ -255,7 +254,8 @@ function HostRemote({ view, hostToken, send }: HostRemoteProps) {
     <PairHostPhone
       code={view.code}
       hostToken={hostToken}
-      className="self-start text-lg"
+      className="w-full"
+      look={BUTTON_SMALL}
       dialogClassName="text-lg"
       qrSize="min(70vw, 20rem)"
     />
@@ -267,18 +267,20 @@ function HostRemote({ view, hostToken, send }: HostRemoteProps) {
     >
       {/* One line, so the tabs and the action bar leave the most room to the content (HST-02). */}
       <header className="flex items-center gap-2 pt-3 pb-2">
-        {/* Below 360px the word goes, so the room code, the pill and Read aloud still fit. */}
-        <h1 className="shrink-0 text-lg text-ink uppercase">
-          <span className="max-[359px]:sr-only">Host</span>
-          <span className={desktop ? '' : 'sr-only'}> controls</span>
-        </h1>
-        <p className="flex min-w-0 items-center gap-1.5 font-sans text-sm font-semibold text-muted">
-          <ConnectionDot />
-          <span className="shrink-0 text-ink">{view.code}</span>
-          <span className="hidden truncate min-[400px]:inline">
-            · {view.players.length} {view.players.length === 1 ? 'player' : 'players'}
-          </span>
-        </p>
+        {/* HOST in amber Antonio over the room line (design.md Rules, display lines). */}
+        <div className="flex min-w-0 flex-col">
+          <h1 className="text-[28px] leading-none text-accent uppercase">
+            Host
+            <span className={desktop ? '' : 'sr-only'}> controls</span>
+          </h1>
+          <p className="flex min-w-0 items-center gap-1.5 font-sans text-sm font-semibold text-muted">
+            <ConnectionDot />
+            <span className="shrink-0 text-ink">{view.code}</span>
+            <span className="truncate">
+              · {view.players.length} {view.players.length === 1 ? 'player' : 'players'}
+            </span>
+          </p>
+        </div>
         <div className="ml-auto flex shrink-0 items-center gap-2">
           {view.question && view.phase !== 'FINAL' && <QuestionPill view={view} />}
           <button
@@ -286,8 +288,8 @@ function HostRemote({ view, hostToken, send }: HostRemoteProps) {
             aria-pressed={readAloud}
             aria-describedby="read-aloud-hint"
             onClick={toggleReadAloud}
-            // A 2px ink outline; on, it floods the teal pass, a chosen control (design.md).
-            className={`min-h-11 border-2 border-ink px-3 font-display text-sm font-semibold whitespace-nowrap uppercase ${HOVER} ${readAloud ? 'bg-accent text-accent-ink' : 'text-ink'}`}
+            // The secondary at Size s; on, it is the chosen blue (design.md Controls, Chosen).
+            className={`${BUTTON_SMALL} min-h-11 px-3 whitespace-nowrap max-[359px]:text-base`}
           >
             Read aloud
           </button>
@@ -307,9 +309,12 @@ function HostRemote({ view, hostToken, send }: HostRemoteProps) {
         // adjust a score and change a setting with everything in view (HST-09).
         <div className="grid min-h-0 flex-1 grid-cols-5 gap-6 pt-2">
           <section
-            aria-label="Game"
+            aria-labelledby="game-heading"
             className={`col-span-3 flex min-h-0 flex-col gap-5 pb-6 ${PANE}`}
           >
+            <h2 id="game-heading" className="text-[28px] leading-none text-ink uppercase">
+              Game
+            </h2>
             {gameContent}
             {primary}
             <SecondaryActions view={view} command={command} />
@@ -338,8 +343,8 @@ function HostRemote({ view, hostToken, send }: HostRemoteProps) {
                 setTab(next);
                 tabRefs.current[next]?.focus();
               }}
-              // The nav under the 4px ink bar: square tabs, the open one on the teal pass (design.md Rules).
-              className="grid grid-cols-3 border-t-4 border-ink"
+              // Tabs on a 4px rule, the open one amber on the well with its amber bar (design.md, Tab).
+              className="grid grid-cols-3 border-b-4 border-edge"
             >
               {TABS.map((name) => (
                 <button
@@ -354,7 +359,7 @@ function HostRemote({ view, hostToken, send }: HostRemoteProps) {
                   tabIndex={tab === name ? 0 : -1}
                   aria-controls={`panel-${name}`}
                   onClick={() => setTab(name)}
-                  className={`min-h-11 border-2 border-transparent px-1 py-2 font-display text-base font-semibold whitespace-nowrap uppercase max-[359px]:text-sm ${HOVER} ${tab === name ? 'bg-accent text-accent-ink' : 'text-ink-2'}`}
+                  className={`min-h-11 px-1 py-2 font-sans text-base font-bold whitespace-nowrap hover:bg-surface max-[359px]:text-sm ${tab === name ? 'bg-surface text-accent underline decoration-accent decoration-3 underline-offset-8' : 'text-muted hover:text-ink'}`}
                 >
                   {name === 'Players' ? `Players (${view.players.length})` : name}
                 </button>
@@ -410,18 +415,19 @@ function SettingsDisclosure({ view, command }: { view: HostView; command: HostCo
   const open = chosen ?? view.phase === 'LOBBY';
   return (
     <div className={`flex min-h-0 flex-col gap-3 ${open ? 'shrink' : 'shrink-0'}`}>
-      <h2 className="text-xl text-ink uppercase">
+      <h2 className="text-[28px] leading-none text-ink uppercase">
         <button
           type="button"
           aria-expanded={open}
           aria-controls="settings-panel"
           onClick={() => setChosen(!open)}
-          className={`flex min-h-11 w-full items-center justify-between gap-2 border-2 border-transparent border-t-4 border-t-ink px-1 text-left font-sans font-semibold tracking-normal ${HOVER}`}
+          className="flex min-h-11 w-full items-center gap-2 border-t-2 border-edge px-1 pt-2 text-left uppercase hover:text-accent"
         >
           Settings
+          {/* Antonio has no ▾, so it is set in Sofia Sans (`12` § Open 2). */}
           <span
             aria-hidden
-            className={`text-base transition motion-reduce:transition-none ${open ? 'rotate-180' : ''}`}
+            className={`font-sans text-base transition motion-reduce:transition-none ${open ? 'rotate-180' : ''}`}
           >
             ▾
           </span>
@@ -476,9 +482,9 @@ function useVibrateOnTimeUp(): void {
 /** "Q3/10" in the header, or on a board set the tile's points: "200" (F90). */
 function QuestionPill({ view }: { view: HostView }) {
   const tile = tileOf(view.board, view.questionIndex);
-  // A figure boxed in ink, as the phone's score (F145).
+  // A round pill on a rule edge with the figure in amber Sofia Sans 800: under 40px, so not DotGothic.
   const pill =
-    'px-2 py-1.5 font-display text-base leading-none font-black font-stretch-150% tabular-nums inset-ring-2 inset-ring-ink';
+    'rounded-pill px-3 py-1.5 font-sans text-base leading-none font-extrabold text-accent tabular-nums inset-ring-2 inset-ring-edge';
   if (tile) {
     return (
       <p aria-label={`${tile.title} for ${tile.points}`} className={pill}>
@@ -489,7 +495,7 @@ function QuestionPill({ view }: { view: HostView }) {
   return (
     <p aria-label={`Question ${view.questionIndex + 1} of ${view.questionCount}`} className={pill}>
       Q{view.questionIndex + 1}
-      <span className="text-muted">/{view.questionCount}</span>
+      <span className="text-ink-2">/{view.questionCount}</span>
     </p>
   );
 }
@@ -507,17 +513,22 @@ function QuestionCard({ view }: { view: HostView }) {
 
   if (!question) return null;
   return (
-    // Under the 4px ink bar on the stock, no fill: the answer is the one paper surface (M32).
-    <section aria-label="Question" className="flex flex-col gap-3 border-t-4 border-ink pt-3">
+    // The well on a rule edge, the answer in a shade box inside it (design.md, `host.png`).
+    <section
+      aria-label="Question"
+      className="flex flex-col gap-3 rounded-card border-2 border-edge bg-surface p-3"
+    >
       <p className={`flex justify-between gap-2 ${LABEL}`}>
         <span>{label}</span>
-        <span className="shrink-0 whitespace-nowrap">{question.points} pts</span>
+        <span className="shrink-0 font-bold whitespace-nowrap text-accent">
+          {question.points} pts
+        </span>
       </p>
       {/* From `lg`, larger type with the image beside the text (HST-09). */}
       {(question.text || question.imageId) && (
         <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:gap-5">
           {question.text && (
-            <p className="text-lg font-semibold lg:flex-1 lg:text-2xl">{question.text}</p>
+            <p className="text-lg font-bold lg:flex-1 lg:text-2xl">{question.text}</p>
           )}
           {question.imageId && (
             <img
@@ -528,10 +539,10 @@ function QuestionCard({ view }: { view: HostView }) {
           )}
         </div>
       )}
-      <div aria-label="Answer" className="border-t-4 border-ink bg-card px-3.5 py-3 text-card-ink">
-        <p className="flex flex-wrap items-baseline gap-x-2">
+      <div aria-label="Answer" className="bg-shade px-3 py-2.5">
+        <p className="flex flex-col">
           <span className={LABEL}>Answer</span>
-          <span className="min-w-0 font-display text-xl font-black break-words uppercase font-stretch-140% lg:text-2xl">
+          <span className="min-w-0 font-display text-[28px] leading-tight break-words text-accent uppercase lg:text-4xl">
             {question.answer}
           </span>
         </p>
@@ -553,11 +564,11 @@ function GameOverCard({ view }: { view: HostView }) {
   return (
     <section aria-labelledby="game-over-heading" className="flex flex-col gap-3">
       <div className="flex items-baseline justify-between gap-3">
-        <h2 id="game-over-heading" className="text-3xl text-ink uppercase">
+        <h2 id="game-over-heading" className="text-[44px] leading-none text-accent uppercase">
           Game over
         </h2>
         {view.session && (
-          <p className="shrink-0 px-2 py-1 font-sans text-sm font-semibold inset-ring-2 inset-ring-ink">
+          <p className="shrink-0 rounded-pill px-3 py-1 font-sans text-sm font-semibold inset-ring-2 inset-ring-edge">
             Game {view.session.gameNumber}
           </p>
         )}
@@ -584,34 +595,36 @@ function GameOverCard({ view }: { view: HostView }) {
   );
 }
 
-/** Ranked rows of place, colour, name and points, the leaders in win: the game state with its word, "1st". */
+/** Ranked rows of place, colour, name and points, the leaders amber as on the Screen's scoreboard (design.md, F179), with the word "1st". */
 function RankRows({
   rows,
 }: {
   rows: { id: string; name: string; color: string; rank: number; points: number }[];
 }) {
   return (
-    // A ruled table under the 4px ink bar, a hairline under each row; the leaders on the teal pass.
-    <ol className="flex flex-col border-t-4 border-ink">
+    // A ruled table under a 2px rule, a hairline under each row; the leaders amber with ground type.
+    <ol className="flex flex-col border-t-2 border-edge">
       {rows.map((row) => (
         <li
           key={row.id}
           className={`flex items-baseline gap-3 border-b border-edge px-3.5 py-2.5 text-lg ${
-            row.rank === 1 ? 'bg-win text-win-ink' : ''
+            row.rank === 1 ? 'bg-accent text-accent-ink' : ''
           }`}
         >
           <span
-            className={`w-14 shrink-0 font-display font-black font-stretch-150% tabular-nums ${row.rank === 1 ? '' : 'text-muted'}`}
+            className={`w-14 shrink-0 font-sans font-extrabold tabular-nums ${row.rank === 1 ? '' : 'text-muted'}`}
           >
             {ordinal(row.rank)}
           </span>
           <ColourDot
             color={row.color}
-            square
-            className={`size-4 self-center ring-2 ${row.rank === 1 ? 'ring-win-ink' : 'ring-ink'}`}
+            className={`size-4 self-center ring-2 ${row.rank === 1 ? 'ring-accent-ink' : 'ring-ink'}`}
           />
           <span className="min-w-0 flex-1 truncate font-semibold">{row.name}</span>
-          <span className="font-display text-xl font-black font-stretch-150% tabular-nums">
+          {/* Under 40px, so Sofia Sans 800 rather than DotGothic (design.md Rules). */}
+          <span
+            className={`font-sans text-xl font-extrabold tabular-nums ${row.rank === 1 ? '' : 'text-accent'}`}
+          >
             {row.points}
           </span>
         </li>

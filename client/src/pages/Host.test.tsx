@@ -266,12 +266,24 @@ describe('Host remote', () => {
 
     afterEach(() => vi.unstubAllGlobals());
 
-    it('has no marquee bulbs, and types the PIN in Gabarito on the paper (M31)', () => {
+    it('shows the PIN in six DotGothic code tiles on the ground, the next one blue (M35)', () => {
       renderHost();
       expect(document.querySelector('[data-bulbs]')).toBeNull();
-      expect(pinInput().className).toContain('font-display');
-      expect(pinInput().className).not.toMatch(/(^| )font-sans( |$)/);
       expect(pinInput().closest('form')!.className).not.toContain('bg-surface');
+      const tiles = () => [
+        ...pinInput().parentElement!.querySelectorAll<HTMLElement>('[aria-hidden]'),
+      ];
+      expect(tiles()).toHaveLength(6);
+      for (const tile of tiles()) {
+        expect(tile.className).toContain('bg-shade');
+        expect(tile.className).toContain('font-outlier');
+        expect(tile.className).toContain('text-accent');
+      }
+      expect(tiles()[0]!.className).toContain('inset-ring-accent-2');
+      fireEvent.change(pinInput(), { target: { value: '48' } });
+      expect(tiles().map((tile) => tile.textContent)).toEqual(['4', '8', '', '', '', '']);
+      expect(tiles()[0]!.className).not.toContain('inset-ring-accent-2');
+      expect(tiles()[2]!.className).toContain('inset-ring-accent-2');
     });
 
     it('a message page has no marquee bulbs either (M31)', () => {
@@ -520,18 +532,18 @@ describe('Host remote', () => {
         ]);
       });
 
-      it('a ruled table under the ink bar: the leader’s row is win, the rest unfilled rows with ink-ringed squares (M32)', () => {
+      it('a ruled table under a 2px rule: the leader’s row is amber, the rest unfilled rows with round ink-ringed swatches (M35)', () => {
         remote(final([player(1, { score: 100, rank: 2 }), player(2, { score: 400, rank: 1 })]));
         const card = screen.getByRole('region', { name: 'Game over' });
         expect(card.className).not.toContain('bg-surface');
         const [first, second] = within(card).getAllByRole('listitem');
-        expect(first!.className).toContain('bg-win');
-        expect(first!.className).not.toContain('bg-accent');
+        expect(first!.className).toContain('bg-accent text-accent-ink');
+        expect(first!.className).not.toContain('bg-win');
         expect(second!.className).toContain('border-b border-edge');
         expect(second!.className).not.toContain('bg-');
-        expect(second!.parentElement!.className).toContain('border-t-4 border-ink');
+        expect(second!.parentElement!.className).toContain('border-t-2 border-edge');
         expect(second!.querySelector('[data-colour-dot]')!.className).toContain('ring-ink');
-        expect(second!.querySelector('[data-colour-dot]')!.className).not.toContain('rounded');
+        expect(second!.querySelector('[data-colour-dot]')!.className).toContain('rounded-full');
       });
 
       it('tied players share a rank and keep join order between them', () => {
@@ -901,7 +913,7 @@ describe('Host remote', () => {
       const buzzed = (canJudge: boolean) =>
         hostView({ ...inPhase('BUZZED'), winnerId: 'p1', players: [player(1)], canJudge });
 
-      it('judges on the buzz panel with no teal or orange pass but win: Correct win, Half a buzz-ink outline, Wrong buzz-ink (M32)', () => {
+      it('judges on the amber card: Correct blue, Half on the ground, Wrong stop on the ground, each with its icon in one line (M35)', () => {
         remote(buzzed(true));
         const panel = screen.getByRole('region', { name: 'Judging' });
         expect(panel.className).toContain('bg-buzz');
@@ -909,22 +921,27 @@ describe('Host remote', () => {
         expect(panel.querySelector('[data-colour-dot]')!.className).toContain('ring-buzz-ink');
         const judge = (name: string) => screen.getByRole('button', { name }).className;
         expect(judge('Correct')).toContain('bg-win');
-        expect(judge('Half')).toContain('border-buzz-ink');
+        expect(judge('Half')).toContain('bg-buzz-ink');
         expect(judge('Half')).not.toContain('bg-accent');
         expect(judge('Wrong')).toContain('bg-buzz-ink');
+        expect(judge('Wrong')).toContain('border-stop');
+        expect(judge('Wrong')).toContain('text-stop');
         for (const name of ['Correct', 'Half', 'Wrong']) {
           expect(judge(name)).toContain('font-display');
           expect(judge(name)).toContain('uppercase');
+          expect(judge(name)).toContain('min-h-[54px]');
+          expect(judge(name)).not.toContain('flex-col');
         }
       });
 
-      it('the primary action is the amber primary on its key edge, 56px, Antonio capitals (F174)', () => {
+      it('the primary action is the amber primary on its key edge, 54px, Antonio capitals at Size s (F174, F180)', () => {
         remote(inPhase('QUESTION'));
         const open = screen.getByRole('button', { name: 'Open buzzers' }).className;
         expect(open).toMatch(/(^| )bg-accent( |$)/);
         expect(open).toContain('text-accent-ink');
         expect(open).toContain('shadow-[0_var(--edge-key)_0_var(--color-lead-deep)]');
-        expect(open).toContain('min-h-14');
+        expect(open).toContain('min-h-[54px]');
+        expect(open).toContain('px-4 text-xl');
         expect(open).toContain('font-display');
         expect(open).toContain('uppercase');
         expect(open).not.toContain('bg-ink');
@@ -1663,19 +1680,19 @@ describe('Host remote: category board (F90)', () => {
     expect(sent(socket, 'host:pick')).toEqual([{ questionIndex: 4 }]);
   });
 
-  it('played tiles flood the orange pass with no visible points, and cannot be picked (F147, M32)', () => {
+  it('played tiles are shade with no visible points, and cannot be picked (F147, M35)', () => {
     const socket = remote(onBoard([0]));
     const played = within(grid()).getByRole<HTMLButtonElement>('button', {
       name: 'Animals, 100, played',
     });
     expect(played.disabled).toBe(true);
-    expect(played.className).toContain('bg-accent-2');
+    expect(played.className).toContain('bg-shade');
     expect(played.className).not.toContain('opacity');
     // The points stay for a screen reader only.
     expect(played.querySelector(':scope > :not(.sr-only)')).toBeNull();
-    expect(within(grid()).getByRole('button', { name: 'Animals, 200' }).className).toContain(
-      'bg-surface',
-    );
+    const open = within(grid()).getByRole('button', { name: 'Animals, 200' }).className;
+    expect(open).toContain('bg-surface');
+    expect(open).toContain('text-accent');
     fireEvent.click(played);
     expect(sent(socket, 'host:pick')).toEqual([]);
   });
@@ -1822,21 +1839,23 @@ describe('Host remote: phone layout (F98)', () => {
     expect(holder.className).toContain('bg-bg');
   });
 
-  it('the tabs are square under the ink bar, the open one on the teal pass, in narrow capitals (M32)', () => {
+  it('the tabs sit on a 4px rule, the open one amber on the well with its amber bar, in Sofia Sans (M35)', () => {
     remote(inPhase('QUESTION'));
-    expect(screen.getByRole('tablist').className).toContain('border-t-4 border-ink');
+    expect(screen.getByRole('tablist').className).toContain('border-b-4 border-edge');
     const open = screen.getByRole('tab', { name: 'Game' }).className;
     const closed = screen.getByRole('tab', { name: 'Settings' }).className;
-    expect(open).toContain('bg-accent');
-    expect(closed).not.toContain('bg-accent');
+    expect(open).toContain('bg-surface text-accent');
+    expect(open).toContain('decoration-accent');
+    expect(closed).not.toContain('text-accent');
+    expect(closed).toContain('text-muted');
     for (const tab of [open, closed]) {
-      expect(tab).toContain('font-display');
-      expect(tab).toContain('uppercase');
+      expect(tab).toContain('font-sans');
+      expect(tab).not.toContain('uppercase');
       expect(tab).not.toContain('rounded');
     }
   });
 
-  it('the header is one line: room, players count, question pill and Read aloud', () => {
+  it('the header holds HOST over the room and players count, then the question pill and Read aloud', () => {
     remote(inPhase('QUESTION'));
     const header = screen.getByRole('banner');
     expect(header.className).toContain('items-center');
@@ -1863,10 +1882,15 @@ describe('Host remote: phone layout (F98)', () => {
     expect(document.getElementById('read-aloud-hint')!.className).toBe('sr-only');
   });
 
-  it('the read-aloud room code shrinks with the screen, so it fits at 320px (HST-06)', () => {
+  it('the read-aloud room code is four DotGothic tiles that shrink with the screen, so they fit at 320px (HST-06, M35)', () => {
     remote(hostView(), `/host/WXYZ?read=1#t=${TOKEN}`);
     const code = within(screen.getByRole('region', { name: 'Join' })).getByText('WXYZ');
-    expect(code.className).toContain('text-[clamp(2.5rem,16vw,3.75rem)]');
+    const tiles = code.parentElement!.querySelectorAll<HTMLElement>('[aria-hidden]');
+    expect([...tiles].map((tile) => tile.textContent)).toEqual(['W', 'X', 'Y', 'Z']);
+    for (const tile of tiles) {
+      expect(tile.className).toContain('font-outlier');
+      expect(tile.className).toContain('size-[clamp(3.5rem,18vw,4.5rem)]');
+    }
   });
 });
 

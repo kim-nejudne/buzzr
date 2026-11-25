@@ -2,9 +2,8 @@ import type { HostView } from '../../../shared/types.js';
 import { canGoBack, inGame, UNREVEALED } from '../lib/hostControls.js';
 import { HOVER } from '../lib/hover.js';
 import type { HostCommand } from '../lib/useHostCommand.js';
-import { DANGER } from '../lib/ui.js';
+import { BUTTON_SMALL, DANGER } from '../lib/ui.js';
 import { ConfirmButton } from './ConfirmButton.js';
-import { Icon } from './Icon.js';
 
 interface SecondaryActionsProps {
   view: HostView;
@@ -12,19 +11,18 @@ interface SecondaryActionsProps {
 }
 
 /**
- * A tile in the one row of secondary actions: icon above a short 14px label, at least 64px tall,
- * the secondary's 2px ink outline. The label is a caption under its icon, so Sofia Sans 600 in
- * sentence case (design.md Rules): in capitals "Scoreboard" overflows a quarter of a 375px row. The
- * shares its width equally among the tiles there are, so no cell is ever left empty; below 360px
- * it wraps two to a line, and a lone last tile takes the whole line (HST-03).
+ * A secondary action: the secondary at Size s, its label in Antonio capitals (design.md Controls).
+ * Each tile starts at its label's width and grows to fill its line, so the row wraps where it must
+ * and no gap is left at its end: at 375px Skip, Undo and Previous share a line and Scoreboard
+ * takes the next (`host.png`, HST-03). Chosen, Scoreboard turns blue (`aria-pressed`).
  */
-const TILE =
-  'flex min-h-16 min-w-0 flex-1 basis-0 max-[359px]:basis-[40%] flex-col items-center justify-center gap-1 rounded-control border-2 border-ink px-1.5 py-2 font-sans text-sm leading-tight font-semibold transition not-disabled:active:bg-bg-deep disabled:opacity-40';
-const small = `${TILE} ${HOVER}`;
+const small = `${BUTTON_SMALL} min-w-0 flex-auto`;
 
-/** End game's own row: full width, under the tiles, so arming it moves nothing above. */
-/** A 2px outline on the paper: buzz for End game (design.md Danger), ink for Cancel; ink type on both. */
-const END = `flex min-h-12 w-full items-center justify-center gap-2 rounded-control border-2 px-4 py-2 font-display font-semibold uppercase transition not-disabled:active:bg-bg-deep disabled:opacity-40`;
+/**
+ * End game's own row: full width, under the tiles, so arming it moves nothing above. Danger is a 2px
+ * stop outline with stop type; armed, Confirm end fills stop with ground type (design.md Controls).
+ */
+const END = `flex min-h-[54px] w-full items-center justify-center gap-2 rounded-control border-2 px-4 py-2 font-display text-xl uppercase not-disabled:active:translate-y-px disabled:opacity-40`;
 
 /**
  * The remote's secondary actions (UI spec, Host remote): Skip question, Show/hide scoreboard,
@@ -50,7 +48,6 @@ export function SecondaryActions({ view, command }: SecondaryActionsProps) {
             aria-label="Skip question"
             className={small}
           >
-            <Icon name="skip" className="size-5" />
             Skip
           </button>
         )}
@@ -62,7 +59,6 @@ export function SecondaryActions({ view, command }: SecondaryActionsProps) {
             aria-label="Undo last judgement"
             className={small}
           >
-            <Icon name="undo" className="size-5" />
             Undo
           </button>
         )}
@@ -75,7 +71,6 @@ export function SecondaryActions({ view, command }: SecondaryActionsProps) {
             aria-label="Previous question"
             className={small}
           >
-            <Icon name="arrow-left" className="size-5" />
             Previous
           </button>
         )}
@@ -85,10 +80,8 @@ export function SecondaryActions({ view, command }: SecondaryActionsProps) {
           aria-label={view.showScoreboard ? 'Hide scoreboard' : 'Show scoreboard'}
           onClick={() => run('host:scoreboard', { show: !view.showScoreboard })}
           disabled={busy}
-          // On, it floods the teal pass: a chosen tile (design.md).
-          className={`${small} ${view.showScoreboard ? 'bg-accent text-accent-ink' : ''}`}
+          className={small}
         >
-          <Icon name="trophy" className="size-5" />
           Scoreboard
         </button>
       </div>
@@ -100,11 +93,10 @@ export function SecondaryActions({ view, command }: SecondaryActionsProps) {
           confirmLabel="Confirm end"
           onConfirm={() => run('host:end', {})}
           disabled={busy}
-          // Red before it is armed, so it doesn't pass for a safe tile (FND-07). The red is the outline
-          // only (design.md Danger): red type on paper is 4.03:1, so the label is ink (F157).
-          className={`${END} border-stop ${DANGER} text-ink!`}
-          cancelClassName={`${END} border-ink ${HOVER}`}
-          icon={<Icon name="flag" className="size-5" />}
+          // Red before it is armed, so it doesn't pass for a safe tile (FND-07). Stop type on the
+          // ground is 5.40:1 (design.md Contrast).
+          className={`${END} border-stop ${DANGER}`}
+          cancelClassName={`${END} border-accent text-accent ${HOVER}`}
           armedClassName="grid grid-cols-2 gap-2"
         />
       )}

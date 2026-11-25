@@ -2,6 +2,7 @@
 import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { resetRoomStore, useRoomStore } from '../lib/roomStore.js';
+import { BUTTON_SMALL } from '../lib/ui.js';
 import { PairHostPhone } from './PairHostPhone.js';
 
 vi.mock('qrcode.react', () => ({
@@ -23,6 +24,7 @@ function renderPairing() {
       code="WXYZ"
       hostToken={'h'.repeat(43)}
       className="text-lg"
+      look={BUTTON_SMALL}
       dialogClassName="text-lg"
       qrSize="200px"
     />,
@@ -119,9 +121,9 @@ describe('PairHostPhone', () => {
       expect(pinText()).toBe('··· ···');
       await act(async () => {});
       expect(pinText()).toBe('012 345');
-      // A figure: Gabarito, not the monospace face (M31).
+      // A figure: amber DotGothic, not the monospace face (M35).
       const pin = within(dialog()!).getByTestId('pairing-pin');
-      expect(pin.className).toContain('font-display');
+      expect(pin.className).toContain('font-outlier');
       expect(pin.className).not.toContain('font-mono');
       expect(within(dialog()!).getByText(`${window.location.host}/host/WXYZ`)).toBeTruthy();
       const call = fetch.mock.calls.find(([url]) => url === '/api/rooms/WXYZ/pairing')!;

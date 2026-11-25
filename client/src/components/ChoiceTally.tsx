@@ -36,9 +36,9 @@ export function ChoiceTally({ choice, phase, showCorrect }: ChoiceTallyProps) {
             <li
               key={index}
               data-correct={correct || undefined}
-              // The correct choice takes an ink ring, as on the Screen (F137).
+              // The correct choice takes a blue ring, the answer ink (design.md Rules).
               className={`relative flex items-center gap-3 overflow-hidden rounded-control bg-surface px-3 py-2 ${
-                correct ? 'ring-3 ring-ink' : ''
+                correct ? 'ring-3 ring-accent-2' : ''
               }`}
             >
               {/* The share of answers, behind the row. */}
@@ -53,7 +53,7 @@ export function ChoiceTally({ choice, phase, showCorrect }: ChoiceTallyProps) {
               />
               <span
                 style={{ backgroundColor: CHOICE_COLORS[index] }}
-                className="relative grid size-8 shrink-0 place-items-center font-display text-lg font-black text-bg"
+                className="relative grid size-8 shrink-0 place-items-center font-display text-lg text-bg"
               >
                 {CHOICE_LETTERS[index]}
               </span>
@@ -61,12 +61,12 @@ export function ChoiceTally({ choice, phase, showCorrect }: ChoiceTallyProps) {
               {correct && (
                 <>
                   <span className="sr-only">, correct</span>
-                  <Icon name="check" className="relative size-5 shrink-0 text-ink" />
+                  <Icon name="check" className="relative size-5 shrink-0 text-accent-2" />
                 </>
               )}
               <span
                 data-count
-                className="relative min-w-6 shrink-0 text-right font-display text-xl font-black font-stretch-150% tabular-nums"
+                className="relative min-w-6 shrink-0 text-right font-sans text-xl font-extrabold tabular-nums"
               >
                 {count}
               </span>

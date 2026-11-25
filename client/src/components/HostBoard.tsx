@@ -1,8 +1,6 @@
 import { Fragment } from 'react';
 import type { BoardView } from '../../../shared/types.js';
 import { boardDone } from '../lib/boardCursor.js';
-import { HOVER } from '../lib/hover.js';
-import { LABEL } from '../lib/ui.js';
 import type { HostCommand } from '../lib/useHostCommand.js';
 
 interface HostBoardProps {
@@ -13,24 +11,28 @@ interface HostBoardProps {
 /**
  * The category board on the remote in BOARD (F90): the Screen's grid on its side, a row per
  * category with its title, then its tiles from Easy to Hard, each open tile a button that picks it.
- * Six columns across a phone would leave a title 48 px to wrap in. Tiles are paper-2 with their
- * points as figures; a played tile stays in place, disabled, flooded with the orange pass and its
- * points for a screen reader only, as on the Screen (F147). The server refuses it anyway.
+ * Six columns across a phone would leave a title 48 px to wrap in. Open tiles are the well with
+ * amber figures (Sofia Sans 800: under 40px, so not DotGothic); a played tile stays in place,
+ * disabled, as shade with its points for a screen reader only, as on the Screen (design.md Board
+ * tile, F178). The server refuses it anyway.
  */
 export function HostBoard({ board, command }: HostBoardProps) {
   const done = boardDone(board);
   const rows = Math.max(0, ...board.columns.map((column) => column.tiles.length));
   return (
     <section aria-label="Category board" className="flex flex-col gap-3">
-      <p className={LABEL}>{done ? 'Board finished' : 'Pick a tile'}</p>
+      {/* A section head in Antonio capitals (design.md Rules). */}
+      <p className="font-display text-[28px] leading-none text-ink uppercase">
+        {done ? 'Board finished' : 'Pick a tile'}
+      </p>
       <div
         style={{ gridTemplateColumns: `minmax(0, 1fr) repeat(${rows}, 4rem)` }}
         className="grid items-stretch gap-1.5"
       >
         {board.columns.map((column, c) => (
           <Fragment key={c}>
-            {/* A table head: Sofia Sans 600 on a hairline (design.md Rules), as on the Screen. */}
-            <h3 className="flex min-w-0 items-center border-b border-edge font-sans text-base leading-tight font-semibold tracking-normal break-words text-ink font-stretch-normal">
+            {/* A row head in Sofia Sans 700 (design.md Rules: labels and table heads). */}
+            <h3 className="flex min-w-0 items-center font-sans text-base leading-tight font-bold break-words text-ink">
               {column.title}
             </h3>
             {column.tiles.map((tile, r) => (
@@ -39,8 +41,8 @@ export function HostBoard({ board, command }: HostBoardProps) {
                 type="button"
                 onClick={() => command.run('host:pick', { questionIndex: tile.questionIndex })}
                 disabled={tile.used || command.busy}
-                className={`min-h-12 rounded-control border-2 border-transparent font-display text-lg font-black font-stretch-150% tabular-nums transition not-disabled:active:bg-ink-2 not-disabled:active:text-paper ${HOVER} ${
-                  tile.used ? 'bg-accent-2' : 'bg-surface text-ink'
+                className={`min-h-12 rounded-control font-sans text-2xl font-extrabold tabular-nums inset-ring-2 inset-ring-edge not-disabled:hover:inset-ring-accent not-disabled:active:translate-y-px ${
+                  tile.used ? 'bg-shade' : 'bg-surface text-accent'
                 }`}
               >
                 <span className="sr-only">{column.title},</span>{' '}

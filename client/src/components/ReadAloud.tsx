@@ -19,23 +19,36 @@ export function ReadAloudJoin({ code }: { code: string }) {
   const unreachable = joinOrigin === null && isLoopbackHost(window.location.hostname);
   return (
     <section aria-label="Join" className="flex flex-col items-center gap-3 text-center">
-      {/* The screen's one paper surface, as on the Screen lobby: the address and the QR on paper-2
-          under the 4px ink bar, so every phone camera reads it. */}
-      <div className="flex flex-col items-center gap-3 border-t-4 border-ink bg-card p-5 text-card-ink shadow-card">
-        <p className="font-sans text-sm font-semibold">Join at</p>
-        <p className="text-xl font-semibold break-all">{displayUrl(url)}</p>
-        <QRCodeSVG
-          value={url}
-          title={`Join at ${url}`}
-          marginSize={0}
-          bgColor="transparent"
-          style={{ width: 'min(60vw, 16rem)', height: 'min(60vw, 16rem)' }}
-        />
+      {/* The well on a rule edge, as the Screen's room board: the address, then the QR as ground
+          modules on an ink card, so every phone camera reads it (design.md Controls, QR). */}
+      <div className="flex flex-col items-center gap-3 rounded-card border-2 border-edge bg-card p-5 text-card-ink shadow-card">
+        <p className={LABEL}>Join at</p>
+        <p className="text-xl font-bold break-all">{displayUrl(url)}</p>
+        <div className="bg-ink p-3 text-paper">
+          <QRCodeSVG
+            value={url}
+            title={`Join at ${url}`}
+            marginSize={0}
+            bgColor="transparent"
+            fgColor="currentColor"
+            style={{ width: 'min(60vw, 16rem)', height: 'min(60vw, 16rem)', display: 'block' }}
+          />
+        </div>
       </div>
       <p className={LABEL}>Room code</p>
-      {/* Shrinks with the phone, so four wide display letters fit a 320px screen (HST-06). */}
-      <p className="font-display text-[clamp(2.5rem,16vw,3.75rem)] font-black tracking-[0.1em] text-ink font-stretch-140%">
-        {code}
+      {/* Four code tiles (design.md Controls, Room code); the text is still the code. They shrink
+          with the phone, so they fit a 320px screen (HST-06). */}
+      <p className="grid grid-cols-4 gap-2">
+        <span className="sr-only">{code}</span>
+        {[...code].map((letter, i) => (
+          <span
+            key={i}
+            aria-hidden
+            className="flex size-[clamp(3.5rem,18vw,4.5rem)] items-center justify-center rounded-control bg-shade font-outlier text-[clamp(2.5rem,13vw,3.25rem)] leading-none text-accent inset-ring-2 inset-ring-edge"
+          >
+            {letter}
+          </span>
+        ))}
       </p>
       {unreachable && (
         <p role="note" className="text-ink-2">
@@ -54,14 +67,19 @@ export function ReadAloudQuestion({ view }: { view: HostView }) {
   const { question } = view;
   if (!question) return null;
   return (
-    // Under the 4px ink bar on the stock, no fill: the answer is the one paper surface (M32).
-    <section aria-label="Question" className="flex flex-col gap-4 border-t-4 border-ink pt-3">
+    // The well on a rule edge, as the question card (`host.png`).
+    <section
+      aria-label="Question"
+      className="flex flex-col gap-4 rounded-card border-2 border-edge bg-surface p-3"
+    >
       <p className={`flex justify-between gap-2 ${LABEL}`}>
         <span>{questionHeading(view.board, view.questionIndex, view.questionCount)}</span>
-        <span className="shrink-0 whitespace-nowrap">{question.points} pts</span>
+        <span className="shrink-0 font-bold whitespace-nowrap text-accent">
+          {question.points} pts
+        </span>
       </p>
       {question.text && (
-        <p className="text-[28px] leading-snug font-semibold break-words">{question.text}</p>
+        <p className="text-[28px] leading-snug font-bold break-words">{question.text}</p>
       )}
       {question.imageId && (
         <img
@@ -96,21 +114,18 @@ function AnswerCover({ answer, hostNotes, revealed }: AnswerCoverProps) {
       <button
         type="button"
         onClick={() => setShown(true)}
-        // A cover, not a field: a dashed 2px ink edge, Sofia Sans 600 (design.md).
-        className="min-h-14 rounded-control border-2 border-dashed border-ink bg-bg px-3.5 py-3 font-sans text-lg font-semibold text-ink-2"
+        // A cover, not a field: shade with a dashed 2px muted edge, Sofia Sans 700 (design.md).
+        className="min-h-14 rounded-control border-2 border-dashed border-muted bg-shade px-3.5 py-3 font-sans text-lg font-bold text-ink-2"
       >
         {pointerFine ? 'Click to show answer' : 'Tap to show answer'}
       </button>
     );
   }
   return (
-    <div
-      aria-label="Answer"
-      className="flex flex-col gap-1.5 border-t-4 border-ink bg-card px-3.5 py-3 text-card-ink"
-    >
-      <p className="flex flex-wrap items-baseline gap-x-2">
+    <div aria-label="Answer" className="flex flex-col gap-1.5 bg-shade px-3.5 py-3">
+      <p className="flex flex-col">
         <span className={LABEL}>Answer</span>
-        <span className="min-w-0 font-display text-2xl font-black break-words uppercase font-stretch-140%">
+        <span className="min-w-0 font-display text-4xl leading-tight break-words text-accent uppercase">
           {answer}
         </span>
       </p>

@@ -9,6 +9,7 @@
 /* Hallmark · dropped x · the phone's locked-out status loses its X icon: the buzzer draws the 6px ink X over its face (12 § The buzzer, out), and the status reads muted (F176) */
 /* Hallmark · dropped arrow-right · the lobby's Start game reads "Start game Space" as the approved mock's Screen lobby, with no icon (F146) */
 /* Hallmark · dropped onClick={() => change({ copy })} · F156 keeps the chosen language pressable but has a re-press send nothing, so the handler reads onClick={() => !active && change({ copy })} */
+/* Hallmark · dropped arrow-left, flag, skip, trophy, undo, eye · the remote's Skip, Undo, Previous, Scoreboard and End game, and its primary, are Antonio capitals at Size s with no icon, as the approved `host.png`; the judging card keeps its ✓, ½ and ✕, which carry the verdict (F180) */
 /* Hallmark · dropped buzz-pulse · the Screen's Buzzers open block no longer pulses: design.md Motion keeps one loop, the phone's bulb ring; the block's draining bar carries the time instead (F178) */
 /* Hallmark · kept motion · bulb-flare (F145, F176) · answers one lobby test press: the buzzer's whole ring lights and fades once, and never under reduced motion */
 /* Hallmark · kept motion · tile-zoom (F137) · a picked board tile grows into its question, so the room sees which tile was played; it plays once per pick and never under reduced motion */
