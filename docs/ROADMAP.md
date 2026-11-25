@@ -467,13 +467,7 @@ Source: `docs/ux/10-live-review-fixes.md` (every finding from the 2026-11-17 UI/
 
 - [x] F181 Set library and pickers
 
-- [ ] F182 Set editor and answer sheet
-  - Spec: `12` § Surfaces F182; mock `sets-pickers-editor.png`
-  - Depends: F174
-  - Done when:
-    - The editor is restyled.
-    - The answer sheet prints ground ink on white, with no bulbs, edges or dark fills (print preview checked).
-  - Tests: `SetEditor.test.tsx` and `AnswerSheet.test.tsx` green.
+- [x] F182 Set editor and answer sheet
 
 - [ ] F183 Admin
   - Spec: `12` § Surfaces F183; mock `admin.png`

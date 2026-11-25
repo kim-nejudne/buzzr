@@ -14,10 +14,10 @@ type Load =
 
 /**
  * **Print answer sheet** `/sets/:setId/print`: number, question, answer and notes for every
- * question, for a host running the game from the Screen without a phone. Card-ink on white, with
- * no pass (design.md Variants), so it prints the same with or without background graphics: the
- * title under the 4px ink bar, heads and labels in Sofia Sans, numbers as display figures. The
- * buttons are left off the paper.
+ * question, for a host running the game from the Screen without a phone. Ground ink on white, with
+ * no bulbs, edges or dark fills (design.md Variants): on screen it sits on the cream ink, and on
+ * paper nothing is painted, so it prints the same with or without background graphics. The title
+ * is Antonio capitals; heads, labels and numbers are Sofia Sans. The buttons are left off the paper.
  */
 export function AnswerSheet() {
   const { setId = '' } = useParams();
@@ -46,10 +46,10 @@ export function AnswerSheet() {
   }, [set]);
 
   return (
-    <main className="min-h-dvh bg-white px-4 py-8 text-card-ink print:p-0">
+    <main className="min-h-dvh bg-ink px-4 py-8 text-paper print:bg-transparent print:p-0">
       <div className="mx-auto flex max-w-4xl flex-col gap-6">
         <div className="flex flex-wrap items-center justify-between gap-4 print:hidden">
-          <Link to={`/sets/${encodeURIComponent(setId)}`} className={`${LINK} text-lg`}>
+          <Link to={`/sets/${encodeURIComponent(setId)}`} className={`${LINK} text-lg text-paper!`}>
             Back to the editor
           </Link>
           {set && (
@@ -76,9 +76,9 @@ function Sheet({ set }: { set: QuestionSet }) {
   const count = set.questions.length;
   return (
     <>
-      <header className="flex flex-col gap-1 border-t-4 border-card-ink pt-3">
-        <h1 className="text-3xl break-words">{set.title}</h1>
-        <p className="font-sans font-semibold">
+      <header className="flex flex-col gap-2">
+        <h1 className="text-5xl break-words uppercase sm:text-7xl">{set.title}</h1>
+        <p className="font-sans">
           {count} {count === 1 ? 'question' : 'questions'}
         </p>
       </header>
@@ -89,7 +89,7 @@ function Sheet({ set }: { set: QuestionSet }) {
           {/* A table from `sm`, and always on paper, so the printout is unchanged (LIB-07). */}
           <table className="hidden w-full border-collapse text-left align-top sm:table print:table">
             <thead>
-              <tr className="border-b-2 border-card-ink font-sans font-semibold">
+              <tr className="border-b-2 border-paper font-sans font-bold">
                 <th scope="col" className="w-12 py-2 pr-3">
                   #
                 </th>
@@ -106,10 +106,8 @@ function Sheet({ set }: { set: QuestionSet }) {
             </thead>
             <tbody>
               {set.questions.map((question, index) => (
-                <tr key={question.id} className="break-inside-avoid border-b border-card-ink/40">
-                  <td className="py-2 pr-3 align-top font-display font-black tabular-nums font-stretch-150%">
-                    {index + 1}
-                  </td>
+                <tr key={question.id} className="break-inside-avoid border-b border-paper">
+                  <td className="py-2 pr-3 align-top tabular-nums">{index + 1}</td>
                   <td className="py-2 pr-3 align-top break-words whitespace-pre-line">
                     <QuestionText question={question} />
                   </td>
@@ -131,21 +129,19 @@ function Sheet({ set }: { set: QuestionSet }) {
                 <li
                   key={question.id}
                   aria-label={`Question ${index + 1}`}
-                  className="flex flex-col gap-1 border-b border-card-ink/40 py-3"
+                  className="flex flex-col gap-1 border-b border-paper py-3"
                 >
                   <p className="break-words whitespace-pre-line">
-                    <span className="font-display font-black tabular-nums font-stretch-150%">
-                      {index + 1}.
-                    </span>{' '}
+                    <span className="font-bold tabular-nums">{index + 1}.</span>{' '}
                     <QuestionText question={question} />
                   </p>
                   <p className="break-words">
-                    <span className="font-sans text-sm font-semibold">Answer</span>{' '}
+                    <span className="font-sans text-sm font-bold">Answer</span>{' '}
                     <strong className="font-semibold">{question.answer}</strong>
                   </p>
                   {notes !== '' && (
                     <p className="break-words whitespace-pre-line">
-                      <span className="font-sans text-sm font-semibold">Notes</span> {notes}
+                      <span className="font-sans text-sm font-bold">Notes</span> {notes}
                     </p>
                   )}
                 </li>

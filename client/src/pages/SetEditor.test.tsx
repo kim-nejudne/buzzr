@@ -597,9 +597,9 @@ describe('Set editor toolbar and outline (F95)', () => {
     await seed([q('a')]);
     await renderEditor();
     expect(screen.getByRole('region', { name: 'Set toolbar' }).className).toContain('sticky');
-    // F150: the 4px ink bar under the toolbar.
+    // F182: the toolbar is the well over a hairline, not an ink bar.
     expect(screen.getByRole('region', { name: 'Set toolbar' }).className).toContain(
-      'border-b-4 border-ink',
+      'border-b border-edge bg-surface',
     );
     expect(toolbar().getByRole('status', { name: 'Save status' })).toBeTruthy();
     expect(toolbar().getByRole('button', { name: 'Add question' })).toBeTruthy();
@@ -732,9 +732,11 @@ describe('Set editor toolbar and outline (F95)', () => {
       'true',
       null,
     ]);
-    // F150: the entry in view is amber with ground type, in a ruled list.
-    expect(entries[1]!.className).toContain('aria-[current]:bg-accent');
-    expect(entries[1]!.className).toContain('aria-[current]:text-accent-ink');
+    // F182: the entry in view is the blue cursor row with ground type, in a ruled list.
+    const classes = entries[1]!.className.split(/\s+/);
+    expect(classes).toContain('aria-[current]:bg-accent-2');
+    expect(classes).toContain('aria-[current]:text-accent-2-ink');
+    expect(classes).not.toContain('aria-[current]:bg-accent');
     expect(entries[1]!.className).not.toMatch(/ring|rounded/);
     expect(outline().getByRole('list').className).toBe(RULED);
     vi.unstubAllGlobals();
@@ -767,16 +769,16 @@ describe('Set editor toolbar and outline (F95)', () => {
     expect(grip.className).toContain('min-w-11');
   });
 
-  it('a question is a row on the stock under the ruled list, and a file over it rings it in teal (F150)', async () => {
+  it('a question is a well tile on a rule edge, and a file over it rings it in amber (F182)', async () => {
     await seed([q('a')]);
     await renderEditor();
     const target = screen.getByRole('listitem', { name: 'Question 1' });
     const classes = () => target.className.split(/\s+/);
-    expect(target.parentElement!.className).toBe(RULED);
-    // Opaque stock, so a dragged row covers the ones it passes; no tile, no radius.
-    expect(classes()).toContain('bg-bg');
-    expect(target.className).not.toMatch(/rounded|bg-surface/);
-    expect(target.className).not.toMatch(/(^|\s)border(-|\s|$)/);
+    expect(target.parentElement!.className).not.toContain('divide-y');
+    // An opaque well, so a dragged card covers the ones it passes (design.md Shapes).
+    expect(classes()).toEqual(
+      expect.arrayContaining(['bg-surface', 'rounded-card', 'border-2', 'border-edge']),
+    );
     expect(classes()).not.toContain('ring-accent');
     fireEvent.dragOver(target, {
       dataTransfer: { files: [], types: ['Files'], dropEffect: 'none' },

@@ -34,7 +34,7 @@ export function PasteQuestions({ count, onAdd, onCancel }: PasteQuestionsProps) 
     <section
       ref={ref}
       aria-labelledby="paste-heading"
-      className={`${CARD} flex scroll-mt-28 flex-col gap-3 border-t-4 border-ink p-4 md:p-5`}
+      className={`${CARD} flex scroll-mt-28 flex-col gap-3 border-2 border-edge p-4 md:p-5`}
     >
       <h2 id="paste-heading" className="text-2xl uppercase">
         Paste questions

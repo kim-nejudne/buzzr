@@ -389,7 +389,7 @@ function Editor({
               blurred: a backdrop filter would pin the phone's fixed Add button inside the bar. */}
           <section
             aria-label="Set toolbar"
-            className="sticky top-0 z-20 -mx-4 -mt-6 flex flex-col border-b-4 border-ink bg-bg px-4 py-2 short:-mt-3 md:-mx-8 md:-mt-10 md:px-8"
+            className="sticky top-0 z-20 -mx-4 -mt-6 flex flex-col border-b border-edge bg-surface px-4 py-2 short:-mt-3 md:-mx-8 md:-mt-10 md:px-8"
           >
             <div className="flex items-center gap-2 md:gap-3">
               <Link
@@ -397,9 +397,13 @@ function Editor({
                 // A built-in's editor goes back to the Built-in tab, where it is listed (F108).
                 state={admin ? BUILT_IN_TAB : undefined}
                 aria-label="Question sets"
-                className={`${BUTTON_ICON} text-xl`}
+                className={`${LINK} min-w-11 shrink-0 justify-center gap-1 text-lg`}
               >
                 <span aria-hidden="true">←</span>
+                {/* An arrow on a phone, so the title keeps the room; the words from `md`. */}
+                <span aria-hidden="true" className="hidden md:inline">
+                  Question sets
+                </span>
               </Link>
               <button
                 type="button"
@@ -408,7 +412,7 @@ function Editor({
                   field?.scrollIntoView?.({ block: 'center' });
                   field?.focus({ preventScroll: true });
                 }}
-                className={`flex min-h-11 min-w-0 flex-1 items-center border-2 border-transparent px-2 text-left font-display text-lg md:text-xl md:font-black md:uppercase md:font-stretch-140% ${HOVER}`}
+                className={`flex min-h-11 min-w-0 flex-1 items-center border-2 border-transparent px-2 text-left font-display text-xl uppercase md:text-2xl ${HOVER}`}
               >
                 <span className="truncate">{set.title.trim() || 'Untitled set'}</span>
                 <span className="sr-only">, go to the set title</span>
@@ -445,7 +449,11 @@ function Editor({
                 </button>
                 {/* The answer sheet reads this browser's sets, which a built-in is not. */}
                 {!admin && (
-                  <Link to={printTo} aria-label="Print answer sheet" className={BUTTON_SMALL}>
+                  <Link
+                    to={printTo}
+                    aria-label="Print answer sheet"
+                    className={`${BUTTON_SMALL} inline-flex items-center`}
+                  >
                     Print
                   </Link>
                 )}
@@ -493,7 +501,7 @@ function Editor({
                 onClick={() => jumpTo(attention[0]!.id)}
                 className={`flex min-h-11 items-center gap-2 self-start border-2 border-transparent px-2 text-stop ${HOVER}`}
               >
-                <span aria-hidden="true" className="size-2.5 bg-buzz" />
+                <span aria-hidden="true" className="size-2.5 rounded-pill bg-stop" />
                 {attention.length === 1
                   ? '1 question needs attention'
                   : `${attention.length} questions need attention`}
@@ -582,7 +590,7 @@ function Editor({
               </div>
 
               {set.questions.length === 0 ? (
-                <p className="border-t-4 border-ink bg-surface p-8 text-center text-lg text-muted">
+                <p className="rounded-card border-2 border-edge bg-surface p-8 text-center text-lg text-muted">
                   No questions yet. Use <strong className="text-ink">Add question</strong> to write
                   the first, or <strong className="text-ink">Paste questions</strong> to bring in
                   many.
@@ -595,7 +603,7 @@ function Editor({
                   accessibility={{ announcements, screenReaderInstructions: DRAG_INSTRUCTIONS }}
                 >
                   <SortableContext items={set.questions} strategy={verticalListSortingStrategy}>
-                    <ol className={RULED}>
+                    <ol className="flex flex-col gap-6">
                       {set.questions.map((question, index) => (
                         <QuestionCard
                           key={question.id}
@@ -731,7 +739,7 @@ function QuestionOutline({ questions, currentId, onJump }: QuestionOutlineProps)
   return (
     <nav
       aria-label="Question outline"
-      className="hidden lg:sticky lg:top-24 lg:block lg:max-h-[calc(100dvh-7rem)] lg:overflow-y-auto"
+      className="hidden lg:sticky lg:top-24 lg:block lg:max-h-[calc(100dvh-7rem)] lg:overflow-y-auto lg:bg-surface"
     >
       <ol className={RULED}>
         {questions.map((question, index) => {
@@ -742,13 +750,13 @@ function QuestionOutline({ questions, currentId, onJump }: QuestionOutlineProps)
                 type="button"
                 aria-current={question.id === currentId ? 'true' : undefined}
                 onClick={() => onJump(question.id)}
-                className={`flex min-h-11 w-full items-center gap-2 px-2 text-left aria-[current]:bg-accent aria-[current]:text-accent-ink ${HOVER}`}
+                className={`flex min-h-11 w-full items-center gap-2 px-2 text-left group aria-[current]:bg-accent-2 aria-[current]:text-accent-2-ink ${HOVER}`}
               >
-                <span className="w-8 shrink-0 text-right font-display font-black tabular-nums font-stretch-150%">
+                <span className="w-8 shrink-0 text-right font-display text-xl text-accent tabular-nums group-aria-[current]:text-accent-2-ink">
                   {index + 1}
                 </span>
                 {flagged && (
-                  <span className="size-2.5 shrink-0 bg-buzz">
+                  <span className="size-2.5 shrink-0 rounded-pill bg-stop">
                     <span className="sr-only">Needs attention:</span>
                   </span>
                 )}
@@ -909,8 +917,9 @@ function QuestionCard({
       onDragLeave={onDragLeave}
       onDrop={onDrop}
       onPaste={onPaste}
-      // A paper-2 tile with no border (design.md); a dragged card or a file over it takes the teal ring.
-      className={`relative flex scroll-mt-32 flex-col gap-3 bg-bg py-4 md:gap-4 md:py-5 ${
+      // A well tile on a 2px rule edge (design.md Shapes), opaque so a dragged card covers the ones it
+      // passes; a dragged card or a file over it takes the amber ring.
+      className={`relative flex scroll-mt-32 flex-col gap-3 rounded-card border-2 border-edge bg-surface p-4 md:gap-4 md:p-6 ${
         isDragging ? 'z-10 ' : ''
       }${isDragging || dropping ? 'ring-3 ring-accent' : ''}`}
     >
@@ -1118,10 +1127,7 @@ function ChoicesField({
                   aria-label={`Choice ${letter} is correct`}
                   className="size-5 shrink-0 accent-accent"
                 />
-                <span
-                  aria-hidden="true"
-                  className="w-5 font-display text-xl font-black font-stretch-150%"
-                >
+                <span aria-hidden="true" className="w-5 font-display text-xl">
                   {letter}
                 </span>
                 <span aria-hidden="true" className={`hidden pr-1 sm:inline ${LABEL}`}>

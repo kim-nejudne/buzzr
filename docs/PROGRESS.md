@@ -10,6 +10,40 @@ Handoff log, one entry per feature or bug. Newest first. Template:
 **How to try it:** exact commands / URLs / which devices
 ```
 
+## F182 — Set editor and answer sheet (2026-11-26)
+**What changed:**
+- **Editor** (`SetEditor.tsx`):
+  - The toolbar is the well over a rule hairline (was a 4px ink bar). Back reads "← Question sets" from `md` and is an arrow alone on a phone. The set title is Antonio capitals at every width. Print is centred like its neighbours, and the attention marker is a round stop dot.
+  - The outline sits on the well. The current row is blue with ground type (was amber), numbers are amber Antonio, and a problem is a round stop dot.
+  - Question cards are well tiles on a 2px rule edge, 24px apart (was a ruled list on the ground). Choice letters are Antonio.
+  - The empty state, `PasteQuestions` and `SetPreview` have the 2px rule edge in place of the ink bar, and `QuestionPreview`'s bar is the well over a hairline.
+- **Answer sheet** (`AnswerSheet.tsx`):
+  - Since F174 it was light ink on white and unreadable. It is now ground ink on the cream ink on screen, and on paper nothing is painted.
+  - The title is Antonio capitals at 48/72px. Heads are Sofia Sans 700 over a 2px rule, then 1px hairlines and Sofia figures. The 4px bar and the Anybody figures are gone.
+- **Print fix** (`index.css`): a new unlayered `@media print { :root { color-scheme: light } }`. tokens.css's dark scheme painted the PDF's canvas warm black under the transparent body whenever background graphics were on.
+- **Tests:**
+  - `SetEditor.test.tsx`: the toolbar's well and hairline, the outline's blue row (and not amber), and the card as a well tile.
+  - `AnswerSheet.test.tsx`: ground ink, `print:bg-transparent`, only the title in capitals, no accent, bulb, shadow or dark fill on the paper, no bar and no display figures. A new test checks the print colour-scheme rule.
+  - 3491 tests. No new dependency.
+
+**Decisions:** two DECISIONS rows dated 2026-11-26 for F182 (editor; answer sheet and the print scheme).
+
+**Notes for next session:**
+- Kept on purpose, and different from the mock:
+  - The outline shows each question's first words beside the mode badge.
+  - The image field stays a button beside Mode and Points (EDT-03), not the mock's full-width drop well.
+  - Answers on the sheet stay semibold (F27).
+- **sloplint `--kept`** (render tier, `/sets`; the editor route needs a set in the lint browser's IndexedDB, so the editor files were linted statically; `.playtest/F182/sloplint.txt`): 0 FAIL, 0 REFLEX, 2 WAIVED (accent area, the 56px field), 2 WARN ("not compared"). kept: links 6/6, fields 29/29, handlers 63/63, test hooks 1/1, headings 22/22.
+- Main `index` chunk 522.49 → 522.50 kB.
+
+**Playtest:**
+- **Puppeteer** (`.playtest/F182/shots.mjs`; `before`, `after3` files, viewed):
+  - Editor at 1440, scrolled and with Paste open, plus 375 and 820 (no horizontal scroll). The answer sheet at 1440 and 375 matches `sets-pickers-editor.png`.
+  - `sheet-after3.pdf` (printBackground on, rendered to `sheet-pdf-after3-1.png`): ground type and hairlines on white. Before the colour-scheme fix it was dark.
+- **Playwright** (playtester agent, 390×844): New set, add a question, open the sheet. Under print emulation the page is white with near-black ink. The only console error is the expected `/api/admin/session` 404.
+
+**How to try it:** `npm run dev`. At `http://localhost:5173/sets` press **New set**, add a few questions, then **Print**. In Chrome, open print preview (Ctrl+P) with and without "Background graphics": both are black on white.
+
 ## F181 — Set library and pickers (2026-11-26)
 **What changed:**
 - **Shared classes** (`lib/ui.ts`): new `LEVEL_PILL` (a round 44px pill, a 2px rule ring on the ground, chosen blue), `SET_CARD` (the well on a 2px rule edge) and `HEADING` (amber Antonio capitals). `CHOICE_TILE` moved to the well. `RULED` is now rule hairlines above, between and under the rows (no 4px ink bar).

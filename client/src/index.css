@@ -193,11 +193,19 @@
     cursor: pointer;
   }
 
-  /* The answer sheet is the only printed page: no newsprint is painted, so the paper stays white even with background graphics on. */
+  /* The answer sheet is the only printed page: no ground is painted, so the paper stays white even with background graphics on. */
   @media print {
     body {
       background-color: transparent;
     }
+  }
+}
+
+/* Outside the base layer, to beat tokens.css's dark scheme, which would paint the printed page's
+   canvas warm black under the transparent body (F182). */
+@media print {
+  :root {
+    color-scheme: light;
   }
 }
 

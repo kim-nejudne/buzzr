@@ -6,6 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { Question } from '../../../shared/types.js';
 import { db } from '../lib/db.js';
 import { AnswerSheet } from './AnswerSheet.js';
+import css from '../index.css?raw';
 
 beforeEach(async () => {
   await db.delete();
@@ -60,23 +61,28 @@ describe('Print answer sheet /sets/:setId/print', () => {
     ]);
   });
 
-  it('prints card-ink on white, with no eyebrow and the labels in sentence case (F140)', async () => {
+  it('prints ground ink on white, with no bulbs, edges or dark fills, and the labels in sentence case (F182)', async () => {
     await seed([{ id: 'a', text: 'Q', answer: 'A', hostNotes: 'N', points: 100 }]);
     renderSheet();
     const title = await screen.findByRole('heading', { level: 1 });
     const page = title.closest('main')!;
     expect(page.className.split(' ')).toEqual(
-      expect.arrayContaining(['bg-white', 'text-card-ink']),
+      expect.arrayContaining(['text-paper', 'print:bg-transparent']),
     );
     // What prints: the screen-only bar (Back, the Print button in the capitals of every primary) is left out.
     const printed = page.cloneNode(true) as HTMLElement;
     printed.querySelectorAll('.print\\:hidden').forEach((el) => el.remove());
+    // Only the title is in capitals (Antonio, design.md Rules); nothing is tracked.
+    expect(title.className).toContain('uppercase');
+    printed.querySelector('h1')!.classList.remove('uppercase');
     expect(printed.innerHTML).not.toMatch(/uppercase|tracking-|text-black|bg-black/);
-    // F150: ink on white with no pass: nothing teal, orange or multiplied, and no newsprint fill.
-    expect(printed.innerHTML).not.toMatch(/accent|mix-blend|bg-(bg|surface|paper)|text-muted/);
-    // The title under the 4px ink bar; the numbers are Anybody figures.
-    expect(title.parentElement!.className).toContain('border-t-4');
-    expect(screen.getAllByRole('cell')[0]!.className).toContain('font-display');
+    // design.md Variants: no amber or blue, no bulbs, no key edges and no dark fill on the paper.
+    expect(printed.innerHTML).not.toMatch(
+      /accent|mix-blend|bulb|shadow|bg-(bg|surface|paper|shade|ink)|text-muted|text-ink|card-ink/,
+    );
+    // No bar over the title; the numbers are Sofia Sans figures, not a display face.
+    expect(title.parentElement!.className).not.toMatch(/border/);
+    expect(screen.getAllByRole('cell')[0]!.className).not.toContain('font-display');
     expect(screen.queryByText(/host only/i)).toBeNull();
     // The header is the set's title, then its count: nothing small stands over the title.
     expect(title.previousElementSibling).toBeNull();
@@ -86,6 +92,11 @@ describe('Print answer sheet /sets/:setId/print', () => {
       'Answer',
       'Notes',
     ]);
+  });
+
+  it('prints on a light scheme, so the dark tokens never paint the paper warm black (F182)', () => {
+    // Unlayered, to beat tokens.css's `:root { color-scheme: dark }`.
+    expect(css).toMatch(/^@media print \{\s*:root \{\s*color-scheme: light;/m);
   });
 
   it('marks a picture-only question, whose text is empty', async () => {

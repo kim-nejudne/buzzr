@@ -77,7 +77,7 @@ export function SetPreview({
         role="dialog"
         aria-modal="true"
         aria-labelledby="set-preview-heading"
-        className="flex max-h-full w-full max-w-2xl flex-col gap-4 border-t-4 border-ink bg-surface p-6 text-lg short:gap-2 short:overflow-y-auto short:p-3 short:text-base lg:max-w-5xl"
+        className="flex max-h-full w-full max-w-2xl flex-col gap-4 rounded-card border-2 border-edge bg-surface p-6 text-lg short:gap-2 short:overflow-y-auto short:p-3 short:text-base lg:max-w-5xl"
       >
         <div className="shrink-0">
           <h2

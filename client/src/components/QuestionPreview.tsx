@@ -90,7 +90,7 @@ export function QuestionPreview({ set, index, onIndex, onClose }: QuestionPrevie
           <ScreenQuestion view={withoutMissingImage(view, imageSrc)} imageSrc={imageSrc} />
         </div>
       </div>
-      <div className="flex shrink-0 items-center justify-between gap-3 border-t-4 border-ink bg-bg px-4 py-3">
+      <div className="flex shrink-0 items-center justify-between gap-3 border-t border-edge bg-surface px-4 py-3">
         <p className={`hidden lg:block ${LABEL}`}>Preview: how the Screen shows this question</p>
         <div className="flex flex-1 flex-wrap items-center justify-end gap-2 sm:flex-nowrap lg:flex-none">
           <button
@@ -98,7 +98,7 @@ export function QuestionPreview({ set, index, onIndex, onClose }: QuestionPrevie
             aria-pressed={showAnswer}
             onClick={() => setAnswerOn((on) => !on)}
             disabled={!hasAnswer}
-            // On, it stays pressed: down 1px on the orange pass (design.md Controls).
+            // On, it stays pressed: down 1px and blue, the chosen state (design.md Controls).
             className={`${BUTTON_PRIMARY_SMALL} text-base ${showAnswer ? 'translate-y-px bg-accent-2! text-accent-2-ink!' : ''}`}
           >
             Show answer
