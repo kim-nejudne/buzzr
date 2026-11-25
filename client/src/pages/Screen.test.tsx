@@ -262,7 +262,7 @@ describe('Screen', () => {
     });
   });
 
-  it('players appear live as ruled rows, each with a ringed square in the player’s colour', () => {
+  it('players appear live as boxed chips, each with a ringed round swatch in the player’s colour', () => {
     const { socket } = renderScreen();
     socket.fire('state', lobbyView([player(1)]));
     expect(screen.getAllByRole('listitem').map((li) => li.textContent)).toEqual(['Player 1']);
@@ -271,13 +271,13 @@ describe('Screen', () => {
     const chips = screen.getAllByRole('listitem');
     expect(chips.map((li) => li.textContent)).toEqual(['Player 1', 'Player 2']);
     const dot = (chip: HTMLElement) => chip.querySelector<HTMLElement>('[data-colour-dot]')!;
-    // Ink hairlines on the orange pass (F146).
-    expect(chips[1]!.className).toContain('border-t border-ink');
+    // The well on a 2px rule edge (F177).
+    expect(chips[1]!.className).toContain('border-2 border-edge bg-surface');
     expect(chips[1]!.closest('section')!.className).toContain('lobby-players');
     expect(dot(chips[1]!).className).toContain('ring-ink');
-    // A paper gap inside the ring, so an orange player's fill shows on the orange pass (F155).
+    // A ground gap inside the ring, so a fill reads as a fill (F155).
     expect(dot(chips[1]!).className).toContain('border-[0.1em] border-paper');
-    expect(dot(chips[1]!).className).not.toContain('rounded-full');
+    expect(dot(chips[1]!).className).toContain('rounded-full');
     expect(dot(chips[1]!).style.backgroundColor).not.toBe('');
     expect(dot(chips[0]!).style.backgroundColor).not.toBe(dot(chips[1]!).style.backgroundColor);
     expect(screen.getByText('2 players')).toBeTruthy();
@@ -336,11 +336,11 @@ describe('Screen', () => {
     expect(rows.map((row) => row.className.includes('opacity-40'))).toEqual([false, true]);
   });
 
-  it('the lobby shows the join address once, in its QR block, not in the header', () => {
+  it('the lobby shows the join address once, on its room board, with no header', () => {
     const { socket } = renderScreen();
     socket.fire('state', lobbyView());
     expect(screen.queryByRole('group', { name: 'How to join' })).toBeNull();
-    expect(within(screen.getByRole('banner')).queryByText(joinUrl)).toBeNull();
+    expect(screen.queryByRole('banner')).toBeNull();
     expect(within(screen.getByRole('main')).getAllByText(joinUrl)).toHaveLength(1);
     expect(screen.getByTitle(`Join at http://${joinUrl}`)).toBeTruthy();
   });
@@ -353,31 +353,28 @@ describe('Screen', () => {
     }
   });
 
-  it('shows no marquee bulbs, in the lobby or in a game: the header comes first (M31)', () => {
+  it('bulbs run round the lobby’s room board only; in a game the header comes first (F177)', () => {
     const { socket } = renderScreen();
     socket.fire('state', lobbyView());
     const main = screen.getByRole('main');
-    expect(main.querySelector('[data-bulbs]')).toBeNull();
-    expect(main.firstElementChild?.tagName).toBe('HEADER');
+    expect([...main.querySelectorAll('.bulbs')].map((el) => el.className)).toEqual([
+      'lobby-board bulbs',
+    ]);
     socket.fire('state', lobbyView([], { phase: 'REVEAL', questionIndex: 1 }));
-    expect(main.querySelector('[data-bulbs]')).toBeNull();
+    expect(main.querySelector('.bulbs')).toBeNull();
+    expect(main.firstElementChild?.tagName).toBe('HEADER');
   });
 
-  it('puts the QR and the join address together on the stock under the ink bar, the code on the teal pass', () => {
+  it('heads the lobby with the set’s title in Antonio capitals, the code under it on the board (F177)', () => {
     const { socket } = renderScreen();
-    socket.fire('state', lobbyView());
-    // The bar tops the QR's own box, so it is as wide as the QR (F155).
-    const card = screen.getByTestId('qr').parentElement!.parentElement!;
-    expect(card.className).toContain('lobby-qr');
-    expect(card.firstElementChild).toBe(screen.getByTestId('qr').parentElement);
-    expect(css).toMatch(
-      /\.lobby-qr > :first-child \{[^}]*border-top: var\(--rule-bar\) solid var\(--color-ink\);/,
+    socket.fire('state', lobbyView([], { title: 'Movies - Medium' }));
+    const title = screen.getByText('Movies - Medium');
+    expect(title.className).toContain('font-display');
+    expect(title.className).toContain('uppercase');
+    expect(title.compareDocumentPosition(screen.getByRole('heading', { level: 1 }))).toBe(
+      Node.DOCUMENT_POSITION_FOLLOWING,
     );
-    expect(screen.getByRole('heading', { level: 1 }).parentElement!.className).toContain(
-      'lobby-code',
-    );
-    expect(within(card).getByText(joinUrl)).toBeTruthy();
-    expect(screen.getByRole('heading', { level: 1 }).className).toContain('tabular-nums');
+    expect(screen.getByText('Room code').className).toContain('text-muted');
   });
 
   it('shows the join error, such as an unknown room, with a link home', () => {
@@ -1097,22 +1094,24 @@ describe('Screen', () => {
       expect(sent(socket)).toEqual([['host:judge', { result: 'half' }]]);
     });
 
-    it('the bar’s judge buttons wear their game state; the rest are ink outlines (F137)', () => {
+    it('the bar’s judge buttons wear their game state; the rest are amber outlines (F137, F177)', () => {
       hostScreen(inPhase('BUZZED', { winnerId: 'p1', canJudge: true }));
       const button = (name: string) => within(bar()!).getByRole('button', { name });
       expect(button('Correct').className).toContain('bg-win');
       expect(button('Wrong').className).toContain('bg-buzz');
-      expect(button('Half').className).toContain('border-ink');
-      expect(button('Half').className).not.toContain('bg-accent');
-      expect(button('Skip question').className).toContain('border-ink');
+      expect(button('Half').className).toContain('border-accent bg-surface text-accent');
+      expect(button('Half').className).not.toContain(' bg-accent ');
+      expect(button('Skip question').className).toContain('border-accent bg-surface text-accent');
     });
 
-    it('the primary action is the bar’s one ink block (F147)', () => {
+    it('the primary action is the bar’s one amber block, on the well under a 4px rule (F147, F177)', () => {
       hostScreen(inPhase('QUESTION'));
-      const ink = within(bar()!)
+      const amber = within(bar()!)
         .getAllByRole('button')
-        .filter((b) => b.className.split(/\s+/).includes('bg-ink'));
-      expect(ink.map((b) => b.textContent)).toEqual(['Open buzzersSpace']);
+        .filter((b) => b.className.split(/\s+/).includes('bg-accent'));
+      expect(amber.map((b) => b.textContent)).toEqual(['Open buzzersSpace']);
+      expect(amber[0]!.className).toContain('shadow-[0_var(--edge-key)_0_var(--color-lead-deep)]');
+      expect(bar()!.className).toContain('border-t-4 border-edge bg-surface');
     });
 
     it('keeps the game clear of the Shortcuts hint: the stage reserves its height (F137)', () => {
@@ -1238,11 +1237,44 @@ describe('Screen', () => {
         const socket = hostScreen(inPhase('LOBBY'));
         const starts = screen.getAllByRole('button', { name: /Start game/ });
         expect(starts).toHaveLength(1);
-        expect(starts[0]!.parentElement!.className).toContain('lobby-host');
+        expect(starts[0]!.closest('.lobby-host')).toBeTruthy();
         expect(starts[0]!.getAttribute('aria-keyshortcuts')).toBe('Space');
         expect(within(bar()!).queryByRole('button', { name: /Start game/ })).toBeNull();
         press(' ');
         expect(sent(socket)).toEqual([['host:start', {}]]);
+      });
+
+      it('the lobby’s host row fills the bar’s band, so the bar draws its strip round Start game (F177)', () => {
+        vi.useFakeTimers();
+        hostScreen(inPhase('LOBBY'));
+        const row = screen
+          .getByRole('button', { name: /Start game/ })
+          .closest<HTMLElement>('.lobby-host')!;
+        // In the band under the content, the band's height, the bar's strip; static on a narrow stage.
+        expect(row.className).toContain('absolute inset-x-0 top-full h-(--bar-reserve)');
+        expect(row.className).toContain('border-t-4 border-edge bg-surface');
+        expect(row.className).toContain('stage-narrow:static');
+        // The buttons stand above the bar, which is drawn later.
+        expect(row.firstElementChild!.className).toContain('relative z-10');
+        // The bar is at least the band's estimate in the lobby, and only there.
+        expect(bar()!.className).toContain('min-h-(--bar-min)');
+        const stage = screen
+          .getByRole('main')
+          .querySelector<HTMLElement>('[style*="--bar-reserve"]')!;
+        expect(stage.style.getPropertyValue('--bar-min')).toMatch(/^calc\(/);
+        // No Shortcuts hint over the row once the bar hides.
+        act(() => vi.advanceTimersByTime(3_000));
+        expect(bar()).toBeNull();
+        expect(screen.queryByRole('button', { name: 'Keyboard shortcuts' })).toBeNull();
+        expect(screen.getByRole('button', { name: /Start game/ }).closest('.lobby-host')).toBe(row);
+      });
+
+      it('sets no band height outside the lobby', () => {
+        hostScreen(inPhase('QUESTION'));
+        const stage = screen
+          .getByRole('main')
+          .querySelector<HTMLElement>('[style*="--bar-reserve"]')!;
+        expect(stage.style.getPropertyValue('--bar-min')).toBe('');
       });
 
       it('the content keeps the bar’s measured height clear only while the bar shows', () => {
@@ -3221,6 +3253,9 @@ describe('Screen in Taglish (F91)', () => {
 
 describe('legibility on any display (F100)', () => {
   const hostToken = 'h'.repeat(43);
+  /** The body of one top-level rule in `index.css`'s components layer. */
+  const rule = (selector: string) =>
+    new RegExp(`\\n  ${selector.replace(/[.>]/g, '\\$&')} \\{([^}]*)\\}`).exec(css)?.[1] ?? '';
   // With an avatar, so the em-sized avatars in chips, rows and steps are checked too.
   const ana = player(1, { name: 'Ana', avatar: AVATARS[0] });
   const ben = player(2, { name: 'Ben' });
@@ -3439,15 +3474,18 @@ describe('legibility on any display (F100)', () => {
       expect(plain.parentElement!.className).not.toContain('overflow-y-auto');
     });
 
-    it('put the join QR under the code in a narrow lobby column, larger', () => {
+    it('put the join QR under the code in a narrow lobby column, larger, and the players in two columns', () => {
       const { socket } = renderScreen();
       socket.fire('state', lobbyView([ana]));
-      const qr = screen.getByTestId('qr').parentElement!;
-      expect(qr.className).toContain('@max-[37.5rem]:w-[min(24vh,60cqw)]');
-      // Under 600px the lobby is one column, the players last, with no crossing.
+      expect(screen.getByTestId('qr').parentElement!.className).toContain('lobby-qr-card');
+      // Under 600px the board stacks, and the tiles and the QR take a larger share of the width.
       expect(css).toMatch(
-        /@container \(width < 37\.5rem\) \{\s*\.lobby-stage \{\s*grid-template-columns: minmax\(0, 1fr\);/,
+        /@container \(width < 37\.5rem\) \{\s*\.lobby-stage \{\s*--tile: min\(18cqw, 17vh\);\s*--qr: min\(50cqw, 24vh\);\s*\}\s*\.lobby-board \{\s*flex-direction: column;/,
       );
+      const list = screen
+        .getByRole('region', { name: 'Players' })
+        .querySelector('[data-fit-group]')!;
+      expect(list.className).toContain('@max-[37.5rem]:grid-cols-2');
     });
 
     it('put an image under the question text, but leave a text-only question as it is', () => {
@@ -3472,18 +3510,28 @@ describe('legibility on any display (F100)', () => {
     });
   });
 
-  it('caps the room code and QR by height, so an ultrawide display leaves the players room', () => {
+  it('caps the code tiles and QR by height, so an ultrawide display leaves the players room', () => {
     const { socket } = renderScreen();
     socket.fire('state', lobbyView([ana]));
-    const code = screen.getByRole('heading', { level: 1, name: 'WXYZ' });
-    expect(code.className).toContain('text-[clamp(3rem,11.5cqw,18vh)]');
-    expect(screen.getByTestId('qr').parentElement!.className).toContain('w-[min(20cqw,36vh)]');
+    expect(rule('.lobby-stage')).toContain('--tile: min(10.6cqw, 17vh);');
+    expect(rule('.lobby-stage')).toContain('--qr: min(20.4cqw, 32.6vh);');
+    expect(rule('.lobby-tile')).toContain('width: var(--tile);');
+    expect(rule('.lobby-qr-card')).toContain('width: var(--qr);');
+    // Past 20 players they step down, so the rows keep their height.
+    expect(
+      screen.getByRole('heading', { level: 1 }).closest('.lobby-stage')!.className,
+    ).not.toContain('lobby-many');
+    socket.fire('state', lobbyView(Array.from({ length: 21 }, (_, i) => player(i + 1))));
+    expect(screen.getByRole('heading', { level: 1 }).closest('.lobby-stage')!.className).toContain(
+      'lobby-many',
+    );
+    expect(rule('.lobby-many')).toContain('--tile: min(8cqw, 12.8vh);');
   });
 
   it('breaks the join address only before a slash, sized to fit its longest part (F155)', () => {
     const { socket } = renderScreen();
     socket.fire('state', lobbyView());
-    const address = within(screen.getByTestId('qr').closest('.lobby-qr')!).getByText(joinUrl);
+    const address = within(screen.getByTestId('qr').closest('.lobby-board')!).getByText(joinUrl);
     // A break opportunity before each "/" and nowhere else.
     expect(address.querySelectorAll('wbr')).toHaveLength(joinUrl.split('/').length - 1);
     expect(address.innerHTML).toBe(joinUrl.split('/').join('<wbr>/'));
@@ -3497,44 +3545,57 @@ describe('legibility on any display (F100)', () => {
     );
   });
 
-  it('makes the players’ pass as tall as its rows, up to the room left (F155)', () => {
-    const rule = (selector: string) =>
-      new RegExp(`\\n  ${selector.replace(/[.>]/g, '\\$&')} \\{([^}]*)\\}`).exec(css)?.[1] ?? '';
-    expect(rule('.lobby-stage')).toContain('grid-template-rows: auto minmax(0, auto);');
-    expect(rule('.lobby-stage')).toContain('align-content: start;');
-  });
-
-  it('crosses the players’ orange pass over the code’s teal pass, the count clear of the moss (F146)', () => {
-    const rule = (selector: string) =>
-      new RegExp(`\\n  ${selector.replace(/[.>]/g, '\\$&')} \\{([^}]*)\\}`).exec(css)?.[1] ?? '';
-    // The code (columns 1 to 8) hangs 5 cqw into the players' row; the players (6 to 13) start
-    // 1.6 cqw into it: the multiply prints moss in columns 6 to 8, below the QR (9 to 13).
-    expect(rule('.lobby-head')).toContain('grid-column: 1 / 9;');
-    expect(rule('.lobby-head')).toContain('margin-bottom: calc(-1 * min(5cqw, 9vh));');
-    expect(rule('.lobby-qr')).toContain('grid-column: 9 / 13;');
-    expect(rule('.lobby-players')).toContain('grid-column: 6 / 13;');
-    expect(rule('.lobby-players')).toContain('margin-top: min(1.6cqw, 2.9vh);');
-    for (const pass of ['.lobby-code', '.lobby-players']) {
-      expect(rule(pass)).toContain('mix-blend-mode: var(--blend);');
-    }
-    // The count pads past the three sevenths of the pass that the code covers.
-    expect(rule('.lobby-players > :first-child')).toContain(
-      'padding-left: calc((100% + 2 * var(--lobby-pad)) * 3 / 7);',
-    );
-  });
-
-  it('sets the players in up to four columns of three rows, so the names stay large', () => {
+  it('lets the players take the room left under the board, so their rows shrink to fit it (F155)', () => {
     const { socket } = renderScreen();
-    const columns = () =>
+    socket.fire('state', lobbyView([ana]));
+    const players = screen.getByRole('region', { name: 'Players' });
+    expect(players.className).toContain('flex-1');
+    expect(players.className).toContain('min-h-0');
+    expect(rule('.lobby-board')).toContain('flex-shrink: 0;');
+    expect(rule('.lobby-stage')).toContain('flex-direction: column;');
+  });
+
+  it('sets the code in four DotGothic tiles on the bulb-bordered room board, with no pass (F177)', () => {
+    const { socket } = renderScreen();
+    socket.fire('state', lobbyView([ana]));
+    const code = screen.getByRole('heading', { level: 1 });
+    expect([...code.children].map((tile) => [tile.className, tile.textContent])).toEqual(
+      [...'WXYZ'].map((letter) => ['lobby-tile', letter]),
+    );
+    const board = code.closest('.lobby-board')!;
+    expect(board.className.split(' ')).toContain('bulbs');
+    expect(within(board as HTMLElement).getByTestId('qr')).toBeTruthy();
+    expect(rule('.lobby-tile')).toContain('font-family: var(--font-outlier);');
+    expect(rule('.lobby-tile')).toContain('background: var(--color-shade);');
+    expect(rule('.lobby-tile')).toContain('color: var(--color-accent);');
+    // The board's padding clears the bulbs' 28px band, so no letter sits under a bulb.
+    expect(rule('.lobby-board')).toContain('padding: max(2rem, min(2.5cqw, 4vh)) max(2.25rem');
+    expect(css).not.toContain('mix-blend-mode: var(--blend)');
+    // Ground modules on the ink card.
+    expect(rule('.lobby-qr-card')).toContain('background: var(--color-ink);');
+    expect(rule('.lobby-qr-card')).toContain('color: var(--color-paper);');
+  });
+
+  it('sets the players in four columns of three rows, then "+N more" in the twelfth cell (F177)', () => {
+    const { socket } = renderScreen();
+    const list = () =>
       screen
         .getByRole('region', { name: 'Players' })
-        .querySelector<HTMLElement>('[data-fit-group]')!.style.gridTemplateColumns;
-    socket.fire('state', lobbyView([player(1), player(2), player(3)]));
-    expect(columns()).toBe('repeat(1, minmax(0, 1fr))');
-    socket.fire('state', lobbyView([1, 2, 3, 4, 5].map((n) => player(n))));
-    expect(columns()).toBe('repeat(2, minmax(0, 1fr))');
+        .querySelector<HTMLElement>('[data-fit-group]')!;
+    socket.fire('state', lobbyView([player(1), player(2)]));
+    expect(list().className).toContain('grid-cols-4');
+    socket.fire('state', lobbyView(Array.from({ length: 12 }, (_, i) => player(i + 1))));
+    expect(within(list()).getAllByRole('listitem')).toHaveLength(12);
+    expect(list().querySelector('[data-more]')).toBeNull();
     socket.fire('state', lobbyView(Array.from({ length: 20 }, (_, i) => player(i + 1))));
-    expect(columns()).toBe('repeat(4, minmax(0, 1fr))');
+    const items = within(list()).getAllByRole('listitem');
+    expect(items).toHaveLength(12);
+    expect(items.slice(0, 11).map((li) => li.textContent)).toEqual(
+      Array.from({ length: 11 }, (_, i) => `Player ${i + 1}`),
+    );
+    expect(items[11]!.textContent).toBe('+9 more');
+    expect(items[11]!.className).toContain('text-muted');
+    expect(screen.getByText('20 players').className).toContain('text-accent');
   });
 
   it('doubles the rem-sized Game setup only on a display 2560 wide and 1440 tall', () => {

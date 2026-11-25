@@ -5,7 +5,7 @@
 /* Hallmark · exception (Kim, 2026-11-25) · buttons and display lines are Antonio 700 capitals, untracked, the material of a marquee sign (design.md System, Exceptions): the label gate is waived for buttons only. Labels, captions and table heads stay sentence case in Sofia Sans */
 /* Hallmark · exception (Kim, 2026-11-25) · the buzzer's bulb ring is the one looping animation (design.md Motion): alternate bulbs chase at 0.5s steps(1) only while the phone takes a buzz, and hold still under reduced motion (F176, bulb-chase) */
 /* Hallmark · waive 39b · design.md Controls sets every button at 54px and every field at 56px, and the Screen's controls in cqw for the sofa · the tall ones are the Join field and button, the room code and the answer tiles on a phone, and the remote's PIN field and Pair button, which are the host's join on a phone as the Join field is the player's (F157) */
-/* Hallmark · waive 23 · the Screen lobby's code and players blocks are Overprint's passes, now flat amber and blue fields until F177 recomposes them · Landing's amber is the BUZZR wordmark on its sign (F175), and nowhere else does a lead fill a third of the window */
+/* Hallmark · waive 23 · Landing's amber is the BUZZR wordmark on its sign (F175), and the Screen's start gate is one amber primary alone on the ground, the only thing to press before the lobby (F177) · the Screen lobby's passes are gone: its code sits in shade tiles on the well (F177) */
 /* Hallmark · dropped x · the phone's locked-out status loses its X icon: the buzzer draws the 6px ink X over its face (12 § The buzzer, out), and the status reads muted (F176) */
 /* Hallmark · dropped arrow-right · the lobby's Start game reads "Start game Space" as the approved mock's Screen lobby, with no icon (F146) */
 /* Hallmark · dropped onClick={() => change({ copy })} · F156 keeps the chosen language pressable but has a re-press send nothing, so the handler reads onClick={() => !active && change({ copy })} */
@@ -298,109 +298,85 @@
 
 @layer components {
   /*
-   * The Screen lobby (F146, the mock's `.tv-in`): 12 columns in the lobby's `@container`. The set's
-   * title and the join QR sit under the ink bar; the code is a figure on the amber block; the players'
-   * blue block crosses the code's lower edge, so the overlap falls in columns 6 to 8, under the QR
-   * column. No letter sits in the overlap: the code's padding clears it, and so does the count. Every cqw
-   * is capped by the height (about 1.8vh per cqw at 16:9) for ultrawide displays.
+   * The Screen lobby (F177, `screen-lobby-*.png`): the title, the room board, then the players, in
+   * the lobby's `@container`. Sizes are the 1920×1080 mock's px over its 1728px lobby (1cqw = 17.28px),
+   * each capped by the height (about 1.6vh a cqw at 16:9) for ultrawide displays.
    */
   .lobby-stage {
-    --lobby-pad: min(2.4cqw, 4.3vh);
+    --tile: min(10.6cqw, 17vh);
+    --qr: min(20.4cqw, 32.6vh);
     flex: 1;
     min-height: 0;
-    display: grid;
-    grid-template-columns: repeat(12, minmax(0, 1fr));
-    /* The players' row is as tall as its content, up to what is left, as the mock's auto row: the
-       pass ends under its last name, and the host's buttons stand at its foot (F155). */
-    grid-template-rows: auto minmax(0, auto);
-    align-content: start;
-    column-gap: min(1.6cqw, 2.9vh);
-  }
-  /* The title over the code, one item: when the QR column is the taller, the code takes the extra. */
-  .lobby-head {
-    grid-column: 1 / 9;
-    grid-row: 1;
     display: flex;
     flex-direction: column;
-    margin-bottom: calc(-1 * min(5cqw, 9vh));
+    gap: min(1.7cqw, 2.8vh);
+  }
+  /* A full room: smaller tiles and QR, so the rows keep their height. */
+  .lobby-many {
+    --tile: min(8cqw, 12.8vh);
+    --qr: min(14cqw, 22.4vh);
   }
   .lobby-title {
-    border-top: var(--rule-bar) solid var(--color-ink);
-    padding-block: min(0.6cqw, 1.1vh) min(1.2cqw, 2.2vh);
+    overflow-wrap: anywhere;
+  }
+  /* The room board: the well on a 2px rule edge, a bulb border, the code left and the QR card right.
+     Its padding clears the bulbs' 28px band, so no letter sits under a bulb. */
+  .lobby-board {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: min(2cqw, 3.2vh);
+    padding: max(2rem, min(2.5cqw, 4vh)) max(2.25rem, min(3.7cqw, 5.9vh));
+    border: var(--rule-bar) solid var(--color-rule);
+    border-radius: var(--radius-card);
+    background: var(--color-paper-2);
   }
   .lobby-code {
-    flex: 1;
+    min-width: 0;
     display: flex;
     flex-direction: column;
-    gap: min(0.6cqw, 1.1vh);
-    padding: var(--lobby-pad) var(--lobby-pad) min(6cqw, 10.8vh);
-    background: var(--color-accent);
-    color: var(--color-accent-ink);
-    mix-blend-mode: var(--blend);
+    gap: min(1.2cqw, 1.9vh);
   }
-  /* The ink bar is as wide as the QR; the address under it takes the column's width (F155). */
-  .lobby-qr {
-    grid-column: 9 / 13;
-    grid-row: 1;
-    align-self: start;
-    display: grid;
-    justify-items: start;
-    gap: min(1cqw, 1.8vh);
-  }
-  .lobby-qr > :first-child {
-    padding-top: min(1cqw, 1.8vh);
-    border-top: var(--rule-bar) solid var(--color-ink);
-  }
-  .lobby-qr > p {
-    justify-self: stretch;
-  }
-  .lobby-players {
-    grid-column: 6 / 13;
-    grid-row: 2;
-    min-height: 0;
-    margin-top: min(1.6cqw, 2.9vh);
-    padding: var(--lobby-pad);
-    background: var(--color-accent-2);
-    color: var(--color-accent-2-ink);
-    mix-blend-mode: var(--blend);
-  }
-  /* The count pads past the overlap's three sevenths of the pass. The rows start under it, below the
-     overlap, so they take the pass's full width. */
-  .lobby-players > :first-child {
-    padding-left: calc((100% + 2 * var(--lobby-pad)) * 3 / 7);
-  }
-  .lobby-host {
-    grid-column: 1 / 6;
-    grid-row: 2;
-    align-self: end;
+  .lobby-tiles {
     display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: min(1.2cqw, 2.2vh);
+    gap: min(1.15cqw, 1.85vh);
   }
-  /* The focus blue is under 3:1 on either block; the ground is far past it. */
-  .lobby-code :focus-visible,
-  .lobby-players :focus-visible {
-    outline-color: var(--color-accent-ink);
+  /* A code tile (design.md Controls, Room code): shade, a 2px rule edge, a DotGothic amber letter. */
+  .lobby-tile {
+    display: grid;
+    place-items: center;
+    width: var(--tile);
+    aspect-ratio: 184 / 210;
+    border: var(--rule-bar) solid var(--color-rule);
+    border-radius: var(--radius-control);
+    background: var(--color-shade);
+    color: var(--color-accent);
+    font-family: var(--font-outlier);
+    font-size: calc(var(--tile) * 0.78);
+    font-weight: 400;
+    line-height: 1;
   }
-  /* A column under 600px (a phone, a narrow window beside Game setup): one column, no crossing. */
+  .lobby-qr {
+    flex-shrink: 0;
+  }
+  /* The ink card: ground modules on ink. */
+  .lobby-qr-card {
+    width: var(--qr);
+    padding: min(0.95cqw, 1.5vh);
+    border-radius: var(--radius-card);
+    background: var(--color-ink);
+    color: var(--color-paper);
+  }
+  /* A column under 600px (a phone, a narrow window beside Game setup): the QR goes under the code. */
   @container (width < 37.5rem) {
     .lobby-stage {
-      grid-template-columns: minmax(0, 1fr);
-      /* The players come last and take what is left, so their rows still shrink to fit. */
-      grid-template-rows: repeat(3, auto) minmax(0, auto);
-      row-gap: 1.5vh;
+      --tile: min(18cqw, 17vh);
+      --qr: min(50cqw, 24vh);
     }
-    .lobby-stage > * {
-      grid-column: 1;
-      grid-row: auto;
-      margin: 0;
-    }
-    .lobby-stage > .lobby-players {
-      order: 1;
-    }
-    .lobby-players > :first-child {
-      padding-left: 0;
+    .lobby-board {
+      flex-direction: column;
+      align-items: start;
     }
   }
 

@@ -26,7 +26,7 @@ describe('StartOverlay', () => {
     expect(screen.getByRole('dialog', { name: 'Click to start' })).toBeTruthy();
   });
 
-  it('prints the word in wide capitals on the teal pass, the small print under the ink bar (F146)', () => {
+  it('prints the word in Antonio capitals on amber with its key edge, the small print under the rule bar (F177)', () => {
     stubCoarse(false);
     render(<StartOverlay onStart={() => {}} />);
     const word = screen.getByText('Click to start');
@@ -40,8 +40,10 @@ describe('StartOverlay', () => {
     // Ground type on the amber, never blended (design.md Tokens, F174).
     expect(word.className).toContain('text-accent-ink');
     expect(word.className).not.toContain('mix-blend');
+    expect(word.className).toContain('font-display');
+    expect(word.className).toContain('shadow-[0_var(--edge-key)_0_var(--color-lead-deep)]');
     expect(screen.getByText('Turns on sound and fullscreen').className).toContain(
-      'border-t-4 border-ink',
+      'border-t-4 border-edge',
     );
   });
 

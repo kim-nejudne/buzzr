@@ -457,15 +457,7 @@ Source: `docs/ux/10-live-review-fixes.md` (every finding from the 2026-11-17 UI/
 
 - [x] F176 Player phone and the bulb-ring buzzer
 
-- [ ] F177 Screen lobby and chrome
-  - Spec: `12` § Surfaces F177, § Open 3; mocks `screen-lobby-*.png`, `components-screen.png`
-  - Depends: F174
-  - Done when:
-    - The lobby matches the mocks at 1280×720 and 1920×1080, and holds at 3840×2160, with and without a host token, and with 2, 5 and 20 players.
-    - M33's lobby fit holds: the join URL breaks only at "/", and Start game does not move when the host bar shows.
-    - No text sits under another element, and the text floors hold.
-    - The start gate, start overlay and ScreenChrome are restyled.
-  - Tests: `Screen.test.tsx` green.
+- [x] F177 Screen lobby and chrome
 
 - [ ] F178 Screen game
   - Spec: `12` § Surfaces F178; mocks `screen-title-card-1080.png`, `screen-board-1080.png`, `screen-question-open-*.png`, `screen-buzz-banner-*.png`, `screen-buzz-wrong-1080.png`, `screen-choice-1080.png`, `screen-reveal-1080.png`

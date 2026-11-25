@@ -10,6 +10,52 @@ Handoff log, one entry per feature or bug. Newest first. Template:
 **How to try it:** exact commands / URLs / which devices
 ```
 
+## F177 — Screen lobby and chrome (2026-11-26)
+**What changed:**
+- **Lobby** (`Screen.tsx`, `.lobby-*` in `index.css`), rebuilt on `screen-lobby-*.png`:
+  - There is no header in the lobby. The set's title is in Antonio capitals.
+  - **Room board:** `bulbs` on the well with a 2px rule edge. It holds "Room code" (muted), the code as four DotGothic amber tiles on shade inside the `h1` (its text is still the code), and "Join at <address>" on one line. The ink QR card sits on the right.
+  - **Players:** "N players" in amber. Chips are the well on a rule edge with a round swatch, four columns × three rows, then "+N more" in the twelfth cell.
+  - The Overprint passes, the 12-column crossing grid and `mix-blend` are gone.
+- **Host row in the bar's band.** Start game, Settings ▾ and Pair host phone sit where the host bar shows, drawn as its strip. When the bar shows, it draws round them, with More, Shortcuts and Hide on the right. `--bar-min` holds the bar at the band's height in the lobby only. On a narrow stage the row is static at the foot. The `?` hint is off in the lobby.
+- **Host bar** (`ScreenHostControls.tsx`): the well under a 4px rule, an amber primary on its key edge, and amber secondaries (`SCREEN_BAR_PRIMARY` and `SCREEN_BAR_OUTLINE` in `ui.ts`, at M33's sizes). The judge tones stay for F178.
+- **Header** (`ScreenChrome.tsx`): BUZZR in amber Antonio. The pill is round, in Sofia Sans 800 amber. "Join at" is in ink and "Room CODE" in amber.
+- **Start gate** (`StartOverlay.tsx`): amber Antonio on its lead-deep key edge, with the caption muted under a 4px rule.
+- `PairHostPhone` takes an optional `look`. The remote keeps the old button until F180.
+- **Tests:**
+  - `Screen.test.tsx`: 12 tests moved from the Overprint look to Marquee. They cover the chips, the header-less lobby, the bulbs, the title, the bar's tones and primary, the narrow column, the height caps and Start's row. The pass-height, crossing and column tests became the players-take-the-room, the board-and-tiles and the 4×3-then-"+N more" tests.
+  - 2 new tests: the host row in the band with the hint off, and no `--bar-min` outside the lobby.
+  - `StartOverlay.test.tsx`: 1 test moved to the new look.
+  - 3477 tests in total. No new dependency.
+
+**Decisions:** six DECISIONS rows dated 2026-11-26 for F177: no header in the lobby; the room board; the 4×3 players; the host row in the band; the bar's tones and what is left for F178/F180; the header, the start gate and 4K.
+
+**Notes for next session:**
+- **Copy:** no string changed.
+- **Before/after:**
+  - The players were all shown down to 19px (F146). They are now capped at 11 plus "+N more".
+  - Swatches are round, not square.
+  - The join address follows "Join at" on the same line, not under it.
+- **4K (review Must-fix 2, recorded rather than changed):** the lobby scales 2× by cqw (chip text 64px at 3840×2160). The 10px bulbs are a fixed token, and the bar's text has been capped at 1.75rem since M33 (`12` § Open 3). Kim may want both scaled on a 4K TV; that would be a Backlog change to the bar in every phase.
+- A token-less Screen on a landscape phone (667×375) shows 1 chip plus "+5 more" at the 14px floor. The hosting one scrolls to every chip (`lobby-667x375-5p-host-scrolled.png`).
+- The playtest hit the server's 10 rooms an hour limit (`ROOM_CREATE_RATE_LIMIT`). `.playtest/F177/lobby.mjs` takes one player count and several viewports per room. Restart `npm run dev` to reset the limit.
+- **sloplint `--kept`** on `/screen/<code>` (`.playtest/F177/kept.txt`): 0 FAIL, 0 REFLEX, 1 WAIVED (23: the start gate, which the render tier shows because it never clicks through), 2 DISMISSED. The 2 WARNs are "not compared", because only one route was rendered. kept: links 1/1, fields 1/1, handlers 36/36, test hooks 1/1. The rendered lobby itself was checked by the playtest below.
+- **Review** (`review-feature`): PASS WITH FIXES. Must-fix 1 (the DECISIONS rows and this entry) is done, and Must-fix 2 is recorded above. On Should-fix 3:
+  - The URL-break rule is still pinned by "breaks the join address only before a slash" (F155), now on the board.
+  - "Start game does not move" is proven by the measurement below.
+- Main `index` chunk 518.58 → 519.43 kB.
+
+**Playtest** (puppeteer, `.playtest/F177/lobby.mjs`; screenshots in `.playtest/F177/`, the 1920 and 1280 lobbies, 4K, portrait, landscape phone, start gate and in-game header viewed):
+- Runs at 1920×1080, 1280×720 and 3840×2160, with and without the host token, with 0, 2, 5, 20 and 50 players. Also 1024×768, 820×1180, 1440×900, 2560×1080 and 667×375.
+- **Every run:** no horizontal or vertical page overflow, no console errors, and no text under another element (an `elementFromPoint` sweep). No text under 14px. Each join-address part is on one line.
+- **Start game with the bar shown** (`:bar` runs at 1280×720 with 0/2/5/20/50 players, 1440×900 and 1024×768): it moved under 0.5px, from `offsetHeight` rounding.
+- **20 players:** 11 chips plus "+9 more" at 32px (1920), 21px (1280) and 64px (4K).
+- **50 players:** tiles and QR step down, with "+30 more".
+- 1280×720 with 20 players matches `screen-lobby-20-720.png` row for row.
+- The in-game header (`game-1920x1080.png`) matches `components-screen.png`.
+
+**How to try it:** `npm run dev`. Host a game from `http://localhost:5173/` on a laptop; the Screen opens at `/screen/<code>`. Click to start, then join phones at `http://<LAN-IP>:5173/play/<code>`. Move the mouse to show the host bar round Start game, then wait 3 s for it to hide. Open `/screen/<code>` in a private window to see the token-less lobby. `npm test -- client/src/pages/Screen.test.tsx client/src/components/StartOverlay.test.tsx`.
+
 ## F176 — Player phone and the bulb-ring buzzer (2026-11-26)
 **What changed:**
 - **The buzzer** (`index.css` `.lit-buzzer`, `Play.tsx` `BulbRing`):

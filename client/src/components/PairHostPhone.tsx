@@ -17,6 +17,8 @@ interface PairHostPhoneProps {
   dialogClassName: string;
   /** CSS width and height of the QR. */
   qrSize: string;
+  /** The button's look and spacing, in place of the 2px ink outline: the Screen's host row (F177). */
+  look?: string;
 }
 
 /**
@@ -42,6 +44,7 @@ export function PairHostPhone({
   className,
   dialogClassName,
   qrSize,
+  look,
 }: PairHostPhoneProps) {
   // A fixed deadline, not a tick count: throttled timers (background tabs, phones) fire late, and the
   // QR shows a usable token, so it must not outlive 60 s of wall-clock time.
@@ -83,7 +86,7 @@ export function PairHostPhone({
         onClick={show}
         aria-haspopup="dialog"
         // The secondary: a 2px ink outline, Antonio 700 in capitals (design.md Controls).
-        className={`rounded-control border-2 border-ink px-[1em] py-[0.5em] font-display font-semibold uppercase transition not-disabled:active:bg-bg-deep ${HOVER} ${className}`}
+        className={`${look ?? `rounded-control border-2 border-ink px-[1em] py-[0.5em] font-display font-semibold uppercase transition not-disabled:active:bg-bg-deep ${HOVER}`} ${className}`}
       >
         Pair host phone
       </button>

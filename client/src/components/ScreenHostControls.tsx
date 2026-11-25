@@ -30,6 +30,7 @@ import { cycleSoundLevel, getSoundLevel, SOUND_LEVEL_LABEL } from '../lib/sounds
 import type { HostCommand } from '../lib/useHostCommand.js';
 import { usePointerCoarse } from '../lib/usePointerFine.js';
 import { useSoundLevel } from '../lib/useSoundLevel.js';
+import { SCREEN_BAR_OUTLINE, SCREEN_BAR_PRIMARY } from '../lib/ui.js';
 import { OverflowMenu, type MenuItem } from './OverflowMenu.js';
 import { ShareResults } from './ShareResults.js';
 
@@ -192,8 +193,9 @@ export function ScreenHostControls({
       onPointerLeave={() => setHovering(false)}
       // One row, so it never grows over the content (SCR-09). Only a narrow or portrait stage,
       // where one row cannot fit, lets it wrap: the content then stops above its measured height.
-      // On the stock under the 4px ink bar, like any nav (design.md Rules).
-      className={`absolute inset-x-0 bottom-0 flex flex-nowrap items-center gap-[min(0.8vw,1.43vh)] border-t-4 border-ink bg-bg px-[min(2vw,3.56vh)] py-[1.2vh] ${BAR_TEXT} whitespace-nowrap stage-narrow:flex-wrap`}
+      // The well under a 4px rule (design.md Controls, Host bar). In the lobby `--bar-min` holds it
+      // at the band the lobby's host row sits in, so the two line up (F177).
+      className={`absolute inset-x-0 bottom-0 flex min-h-(--bar-min) flex-nowrap items-center gap-[min(0.8vw,1.43vh)] ${BAR_STRIP} px-[min(2vw,3.56vh)] ${BAR_TEXT} whitespace-nowrap stage-narrow:flex-wrap`}
     >
       <span className="flex items-center gap-[min(0.8vw,1.43vh)]">
         <MainButtons
@@ -240,7 +242,8 @@ export function ScreenHostControls({
           )}
       {/* With the bar out of sight, a faint reminder in the bottom-left corner that the keys still
           work (SCR-13). A keyboard is needed for it to mean anything, so not on touch. */}
-      {!barVisible && !coarse && !help && (
+      {/* Not in the lobby: its host row holds the band where the hint would sit (F177). */}
+      {!barVisible && !coarse && !help && view.phase !== 'LOBBY' && (
         <button
           type="button"
           aria-label="Keyboard shortcuts"
@@ -273,7 +276,9 @@ export function ScreenHostControls({
 }
 
 /** The bar's text: 14px at least, about 21px at 1080p. */
-const BAR_TEXT = 'text-[clamp(0.875rem,1.1vw,1.75rem)]';
+export const BAR_TEXT = 'text-[clamp(0.875rem,1.1vw,1.75rem)]';
+/** The bar's strip: the well under a 4px rule. Its padding sets the band's height; each user sets its own inline padding. */
+export const BAR_STRIP = 'border-t-4 border-edge bg-surface py-[1.2vh]';
 
 /**
  * The bar's left end: the phase's primary action, or the judge buttons, or the board's pick, or
@@ -303,7 +308,7 @@ function MainButtons({
               keyHint="C"
               onClick={act({ event: 'host:judge', payload: { result: 'correct' } })}
               disabled={busy}
-              tone="bg-win text-win-ink border-win disabled:opacity-40"
+              tone={`bg-win text-win-ink border-win disabled:opacity-40 ${JUDGE_HOVER}`}
             >
               Correct
             </BarButton>
@@ -318,7 +323,7 @@ function MainButtons({
               keyHint="X"
               onClick={act({ event: 'host:judge', payload: { result: 'wrong' } })}
               disabled={busy}
-              tone="bg-buzz text-buzz-ink border-buzz disabled:opacity-40"
+              tone={`bg-buzz text-buzz-ink border-buzz disabled:opacity-40 ${JUDGE_HOVER}`}
             >
               Wrong
             </BarButton>
@@ -487,15 +492,15 @@ function BoardPick({
 const CONTROL_TYPE = 'font-display font-semibold uppercase';
 /** Square, flat; the press does not tween (design.md Motion). */
 const BAR_BUTTON_SHAPE = `border-2 px-[min(1vw,1.78vh)] py-[0.6vh] ${CONTROL_TYPE}`;
-/**
- * The phase's one primary action: an ink block with paper type. Hover pulls it through the orange
- * pass, the press darkens it an ink step, and disabled it empties to an ink-2 outline (design.md Controls).
- */
-const PRIMARY_TONE =
-  'border-ink bg-ink text-paper not-disabled:hover:border-accent-2 not-disabled:hover:bg-accent-2 not-disabled:hover:text-accent-2-ink not-disabled:active:bg-ink-2 not-disabled:active:text-paper disabled:border-ink-2 disabled:bg-transparent disabled:text-ink-2';
-/** Every other bar button: a 2px ink outline (design.md Controls, secondary). */
-const OUTLINE_TONE = 'border-ink bg-transparent text-ink disabled:opacity-40';
-const barButton = `${BAR_BUTTON_SHAPE} ${HOVER}`;
+/** The phase's one primary action: amber on its lead-deep key edge (design.md Controls, F177). */
+const PRIMARY_TONE = SCREEN_BAR_PRIMARY;
+/** Every other bar button: the secondary, an amber outline on the well (design.md Controls, F177). */
+const OUTLINE_TONE = SCREEN_BAR_OUTLINE;
+/** The judge buttons keep the F44 hover until F178 recomposes them. */
+const JUDGE_HOVER = HOVER;
+/** A bar button's size and type; the lobby's host row uses it too, so it lines up with the bar (F177). */
+export const BAR_BUTTON = BAR_BUTTON_SHAPE;
+const barButton = BAR_BUTTON;
 
 interface BarButtonProps {
   children: ReactNode;

@@ -31,11 +31,13 @@ export function ScreenHeader({
 }: ScreenHeaderProps) {
   const t = useCopy();
   // Every size has a floor for small displays (F100); the editor's preview turns the floors off.
-  // A square ink-edged box, the number a display figure (M32; F177 restyles it).
-  const pill = `inset-ring-2 inset-ring-ink px-[min(1.6cqw,2.85cqh)] py-[min(0.6cqw,1.1cqh)] font-display font-black uppercase font-stretch-150% text-[max(var(--screen-min-label),min(1.56cqw,2.8cqh))] leading-none whitespace-nowrap tabular-nums`;
+  // A round pill on the well, the figures amber. Sofia Sans 800, as DotGothic smears under 40px
+  // (design.md Rules, F177).
+  const pill = `rounded-pill border-2 border-edge bg-surface px-[min(1.6cqw,2.85cqh)] py-[min(0.6cqw,1.1cqh)] font-sans font-extrabold text-accent text-[max(var(--screen-min-label),min(1.56cqw,2.8cqh))] leading-none whitespace-nowrap tabular-nums`;
   return (
     <header className="grid shrink-0 grid-cols-[1fr_auto_1fr] items-center gap-[min(2cqw,3.56cqh)] px-[min(3.75cqw,6.67cqh)] py-[min(1.2cqw,2.1cqh)]">
-      <p className="font-display text-[max(var(--screen-min-body),min(2.4cqw,4.3cqh))] leading-none font-black text-ink uppercase font-stretch-140%">
+      {/* The wordmark in amber Antonio capitals (design.md Rules). */}
+      <p className="font-display text-[max(var(--screen-min-body),min(2.4cqw,4.3cqh))] leading-none text-accent uppercase">
         {APP_NAME}
       </p>
       {numbered && tileLabel ? (
@@ -51,16 +53,13 @@ export function ScreenHeader({
         <div
           role="group"
           aria-label="How to join"
-          className="min-w-0 justify-self-end text-right text-[max(var(--screen-min-label),min(1.4cqw,2.5cqh))] leading-snug text-muted"
+          className="min-w-0 justify-self-end text-right text-[max(var(--screen-min-label),min(1.4cqw,2.5cqh))] leading-snug font-semibold text-ink"
         >
           <p>
-            {t('joinAt')} <JoinAddress url={url} className="font-semibold text-ink" />
+            {t('joinAt')} <JoinAddress url={url} />
           </p>
-          <p>
-            {t('roomLabel')}{' '}
-            <span className="font-display font-black text-ink font-stretch-150% tabular-nums">
-              {code}
-            </span>
+          <p className="text-accent">
+            {t('roomLabel')} <span className="font-extrabold tabular-nums">{code}</span>
           </p>
         </div>
       ) : (

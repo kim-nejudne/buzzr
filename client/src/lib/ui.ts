@@ -64,9 +64,11 @@ const PRIMARY_EDGE =
 const SECONDARY_EDGE =
   'shadow-[0_var(--edge-key)_0_var(--color-rule)] not-disabled:hover:shadow-[0_calc(var(--edge-key)+2px)_0_var(--color-rule)] not-disabled:active:shadow-[0_var(--edge-press)_0_var(--color-rule)]';
 /** Primary: amber with ground type on the lead-deep edge. One per screen. */
-const PRIMARY = `${CONTROL} bg-accent text-accent-ink ${PRIMARY_EDGE} ${PRESS}`;
+const PRIMARY_TONE = `bg-accent text-accent-ink ${PRIMARY_EDGE} ${PRESS}`;
+const PRIMARY = `${CONTROL} ${PRIMARY_TONE}`;
 /** Secondary: the well, a 2px amber outline, amber type, the rule edge; chosen (`aria-pressed`), it turns blue with ground type. */
-const SECONDARY = `${CONTROL} border-2 border-accent bg-surface text-accent ${SECONDARY_EDGE} aria-pressed:border-accent-2 aria-pressed:bg-accent-2 aria-pressed:text-accent-2-ink ${PRESS}`;
+const SECONDARY_TONE = `border-2 border-accent bg-surface text-accent ${SECONDARY_EDGE} aria-pressed:border-accent-2 aria-pressed:bg-accent-2 aria-pressed:text-accent-2-ink ${PRESS}`;
+const SECONDARY = `${CONTROL} ${SECONDARY_TONE}`;
 
 /** The primary: Join, Host a game, Start game, Next question. */
 export const BUTTON_PRIMARY = `${PRIMARY} ${SIZE_SM} py-3`;
@@ -90,6 +92,12 @@ export const BUTTON_OUTLINE = `${SECONDARY} ${SIZE_SM} py-3`;
 /** The primary and the secondary without their size: the Screen sizes its own in cqw for the sofa (F146). */
 export const SCREEN_BUTTON_PRIMARY = PRIMARY;
 export const SCREEN_BUTTON_OUTLINE = SECONDARY;
+/**
+ * The primary's and the secondary's colours, edge and press without the 54px block: the Screen's
+ * host bar keeps M33's sizes and takes only the look (`12` § Open 3, F177).
+ */
+export const SCREEN_BAR_PRIMARY = `border-2 border-accent ${PRIMARY_TONE}`;
+export const SCREEN_BAR_OUTLINE = SECONDARY_TONE;
 
 /** The set pages' row buttons, the secondary at Size s: Edit, Duplicate, Preview, Export JSON. */
 export const BUTTON_SMALL = `${SECONDARY} ${SIZE_S} py-2`;
